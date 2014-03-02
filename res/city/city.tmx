@@ -14,7 +14,7 @@
  </tileset>
  <layer name="Roads" width="50" height="50">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3Y127EIBCFYb9lqtOz6b1ueu+992fNf+HLwZmAjSw0SN8NLGeEhLSM8yzLcvShHwMYxJDANS+tazM1NHuHCyMYRQtjGBe45qV1baaGZu9EYRJTmMYMZgWueWldm6mh2TtXmMcCFrGEZYFrXlrXZmpo9q4UVrGGdbSxIXDNS+vaTA3N3k1sYRs72MVeFj5i59o5/OrVlbuPAxziCMc4qaBe7NxTnOEcF7jEVQX1Yude4wa3uMM9HiqoFzv3EU94xgte8VZBvdi57/jAJ77wjZ8K6sXOTeUcdq/Kh90rv1w7h1+9unLtHH716sq19275sPeuX669d8uHvUv8clM5Ryr3Ks/sO7V9p7bv1Kl/p7b3Vfmw95Vfbir/g6m8S1I5h92r8mH3yi83lXN0FDrRhW70oFfgmpfW//rtf2iy6uo/QvqNJvUfIf1Gk/qPkH6jSf1HSL/RpP4jpN/w6T9+AW+e3eYQJwAA
+   H4sIAAAAAAAAA+2a125DIQyGec/u3Zs23XulK917jzxrfytFRaeGwwhIiWzpu4HwOz4hBlunqZQaAsNgBIyCMTDOYBvn5n01fahb+wBavz6132kwA2YZbOPc/ASYBFM1mj7UrX0D10YcZjzzDHOWcW7e1DJxrQ/RNWmDR9AAC2ARLIFlsMJgG+fmfTV9qFtL++rd8Gf63mLYtIxz840A3TrqdGlfbYMdsAv2wD44UOlWUrdd2F9O3X6JowkOwRE4BifgtAv+SuvS+XEGzsEFuARXXfBXWpfOjxtwC+7AverksVQrrUvnxxN4Bi/gVXXyWKqV1qXz4wN8gi/wrTp5LNVK6/ZLHLKv3Cb7Kk5X4ojzl0tX4ojzl0tX7rtuk/tunK7cd90m95I43X6Jg/JYr+8r+p9THuv1PjXF0VL/e7BEap/a1Mrdp9Z5txqDrR8d0qfmnk2uPrXOu73ep9Z5l3tuqX1q2++Ro09N+arJ+JL71Z/J/SpOV+5XbpP7VZyu7Cu3yb6K083pT5+rpeoP86zXDDIMWMa5ea3ZqOi71vvqVr8vnee56o+qv9jaI6T+8H2nJaT+SKk3Qv3SeZ77PRkf3dT6g/Jurvojpd4I9avz1SpYA+tgQ9nrjJD6o+6zsfWHjR9RrrnpECcAAA==
   </data>
  </layer>
  <layer name="Houses" width="50" height="50">
@@ -25,8 +25,10 @@
    H4sIAAAAAAAAA+3WQQ6DMAxEUaBAgZZCKfc/K3OBLCJ5ooj+J/2d5a3dNAD+Vas69VB94Lxrb8qgRvVUU+C8a2/KrBb1Uu/AedfelFV91Kb2wHnX3pSvOtRPnYHzrr3AHZS+Hy6l74dL6fvhUvp+uHA/ACBGrf9Drlr/h1y1/g+5av0fcvE/AAAAAACAu7gAXvEXHxAnAAA=
   </data>
  </layer>
- <objectgroup name="Collisions" width="50" height="50">
-  <object x="288" y="80" width="64" height="80"/>
+ <objectgroup name="House" width="50" height="50">
   <object x="96" y="80" width="64" height="80"/>
+  <object x="288" y="80" width="64" height="80"/>
+  <object x="448" y="80" width="64" height="80"/>
+  <object x="640" y="80" width="64" height="80"/>
  </objectgroup>
 </map>

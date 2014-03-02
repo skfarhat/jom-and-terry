@@ -61,7 +61,6 @@ public class Player extends SpriteSheet {
 
 		// set the rectangle of the player 
 		this.rect = new Rectangle(this.spriteX, this.spriteY, spriteWidth, spriteHeight);
-//		System.out.println(String.format("%f,%f,%f,%f", this.rect.getX(), this.rect.getY(), this.rect.getHeight(), this.rect.getWidth()));
 
 
 		// initially the player is moving to the right

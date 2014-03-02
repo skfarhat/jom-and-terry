@@ -1,5 +1,7 @@
 package game;
 
+import game.city.person.Policeman;
+
 import java.util.ArrayList;
 
 import org.newdawn.slick.AppGameContainer;
@@ -10,96 +12,100 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.tiled.TiledMap;
 
 public class Game extends BasicGame {
+	// ==============================================================================================================================
+	// Paths
+	// ==============================================================================================================================
 	private String cityTileMapPath = "/Users/Apple/Documents/new-eclipse-workspace/Slick Tutorial/res/city/city.tmx";
 	private String playerSpriteSheet = "/Users/Apple/Documents/new-eclipse-workspace/Slick Tutorial/res/player1.png";
 
-
-	private Integer TILE_SIZE = 16; 
-	private TiledMap cityTileMap; 
-	private Player player; 
-
-
-	//	float spriteSheetWidth;
-	//	float spriteSheetHeight;
 	int spritesPerRow = 6;
 	int spritesPerColumn = 2;
-
-	int targetDelta = 16;	//msec
-
 	int spriteWidth;
 	int spriteHeight;
 
+	int targetDelta = 16;	//msec
+	private Integer TILE_SIZE = 16;
+
+
+	// Characters
+	// ==============================================================================================================================		
+	private Player player; // Main Player 
+	private Policeman police1; // Policeman 
+
+
+	private TiledMap cityTileMap;
+
 
 	// For Collision Detection
-	ArrayList<Object> blockedObjects; 
-	
+	// ==============================================================================================================================
+	ArrayList<Rectangle> blocks; 
 	boolean blocked[][]; 
 
+
+	// CONSTRUCTOR
+	// ==============================================================================================================================
 	public Game(String title) {
 		super(title);
 	}
 
-
 	@Override
 	public void init(GameContainer gc) throws SlickException {
-		// Tile Map 
-		initMap();
 
-		// Player
-		initPlayer(); 
+		blocks = new ArrayList<>(20);
 
-		System.out.println(cityTileMap.getLayerCount());
+		initMap();			// Tile Map
+		initPlayer();		// Player 
+		initPoliceman();	// Policeman
+
 	}
 
 	private void initMap() throws SlickException
 	{
 		cityTileMap = new TiledMap(cityTileMapPath);
-		System.out.println(cityTileMap.getHeight() + " " + cityTileMap.getWidth());
-
-		//		Integer roadsID = cityTileMap.getLayerIndex("Roads"); 
-		//		System.out.println("Roads ID : " + roadsID);
-
-		Integer housesLayerID = cityTileMap.getLayerIndex("Houses"); 
-//		System.out.println("Houses ID : " + housesLayerID);
-
 
 		//puts tiles with blocked set true in the collision array
-		blocked = new boolean[cityTileMap.getWidth()*TILE_SIZE][cityTileMap.getHeight()*TILE_SIZE];
-		
-		for (int x=0; x < blocked.length; x++) {
-			for (int y=0; y < blocked.length;y++) {
-				
+		blocked = new boolean[cityTileMap.getWidth()][cityTileMap.getHeight()];
+
+		for (int i=0; i < blocked.length; i++) {
+			for (int j=0; j < blocked.length;j++) {
+
 				// need to check if the houses layer has a tile on the given x,y position
-				int tileId = cityTileMap.getTileId(x/TILE_SIZE, y/TILE_SIZE, housesLayerID);
+				// TODO: WHY 1 ? ID of what ? 
+				int tileId = cityTileMap.getTileId(i, j, 1);
 
 				if (tileId!=0)
 				{
 					// then there is a tile at that position
-					blocked[x][y] = true; 
+					blocked[i][j] = true; 
+
+					blocks.add(new Rectangle((float)i * TILE_SIZE, (float)j * TILE_SIZE, TILE_SIZE, TILE_SIZE));
+
 				}
 			}
 		}
 
+		// save all the houses in an ArrayList
 
-//
-//		/// For Visualizing the blocked array 
-//		//		
-//		int ymax = blocked[0].length; 
-//		int xmax = blocked.length; 
-//		System.out.println(String.format("xmax:%d, ymax:%d",xmax, ymax));
-//		for (int i=0 ; i < xmax; i++)
-//		{
-//			for (int j=0; j < ymax; j++)
-//			{
-//				System.out.print(blocked[j][i]?"1 ":"0 ");
-//			}
-//			System.out.println();
-//		}
+		//		for (int i=0; i < cityTileMap.)
 
-
+		//
+		//		/// For Visualizing the blocked array 
+		//		//		
+		//		int ymax = blocked[0].length; 
+		//		int xmax = blocked.length; 
+		//		System.out.println(String.format("xmax:%d, ymax:%d",xmax, ymax));
+		//		for (int i=0 ; i < xmax; i++)
+		//		{
+		//			for (int j=0; j < ymax; j++)
+		//			{
+		//				System.out.print(blocked[j][i]?"1 ":"0 ");
+		//			}
+		//			System.out.println();
+		//		}
 	}
 
 	private void initPlayer() throws SlickException {
@@ -117,53 +123,62 @@ public class Game extends BasicGame {
 		player = new Player(playerSpriteSheet, spriteWidth, spriteHeight);
 	}
 
+	private void initPoliceman() throws SlickException {
+		// initial Position for the policeman
+		int x = 400, y =500;
+		police1 = new Policeman(x, y, "Police-1", 50.0f);
+
+	}
+
+
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException {
 		Input input = gc.getInput();
 
-		areKeysPressed(input);
+
+		processInput(input);
 
 	}
-
-	@Override
-	public void render(GameContainer gc, Graphics g) throws SlickException {
-		cityTileMap.render(0, 0);
-
-		//Draw the currently selected animation image at the
-		// specified location
-		player.currentAnimation.draw(player.getSpriteX(),player.getSpriteY());
-		//		g.drawRect(player.spriteX, player.spriteY,  5, 5);
-
-		int xPos= (int) ((player.getSpriteX() + player.spriteWidth)/TILE_SIZE) , yPos = (int)  ((player.getSpriteY()+player.spriteHeight)/TILE_SIZE);
-
-		String positionString = String.format("(%d, %d)", xPos, yPos); 
-		g.drawString(positionString, 0, 00);
-
-		int X= (int) player.getSpriteX()  , Y = (int) player.getSpriteY();
-
-		String positionS = String.format("(%d, %d)", X, Y); 
-		g.drawString(positionS, 0, 20);
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private boolean isLocked(int x, int y) {
+	
+	    boolean square = blocked[(int)x/TILE_SIZE][(int)y/TILE_SIZE];
+	    
+	    // The cell is locked if the square if filled 
+	    return square; 
 	}
 
-	public static void main(String []args)
-	{
-		Game game = new Game("Jom & Terry");
-		AppGameContainer container;
-		try {
-			container = new AppGameContainer(game);
-			container.setDisplayMode(800, 800, false);
-			container.start();
-		} catch (SlickException e) {
-			e.printStackTrace();
+	/**
+	 * Function that checks the input to the game be it Mouse Press or Keyboard Button
+	 * @param input
+	 * @return
+	 */
+	private boolean processInput(Input input) {
+
+		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
+			
+			int destX = input.getMouseX();
+			int destY = input.getMouseY();
+			
+			if (!isLocked(destX, destY)) {
+				System.out.println(String.format("Go here (%d,%d)", destX, destY));
+			
+				police1.move(destX, destY);
+//				// Move the policeman to this position
+//				police1.direction = new Vector2f(destX  - police1.xPos, destY - police1.yPos); // set the direction to which the policeman should go 
+//				police1.isMoving = true; 	// set the isMoving to true
+			
+			}
+			else
+				System.out.println("Is locked");
 		}
-	}
-
-	private boolean areKeysPressed(Input input) {
-
-
 		if (input.isKeyDown(Input.KEY_LEFT) || input.isKeyDown(Input.KEY_RIGHT) || input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_DOWN)) 
 		{
-
 			if (input.isKeyDown(Input.KEY_RIGHT))
 			{
 				player.moveRight();
@@ -222,25 +237,49 @@ public class Game extends BasicGame {
 
 	}
 
+
+	@Override
+	public void render(GameContainer gc, Graphics g) throws SlickException {
+		cityTileMap.render(0, 0);
+
+		//Draw the currently selected animation image at the
+		// specified location
+		player.currentAnimation.draw(player.getSpriteX(),player.getSpriteY());
+
+
+		// Draw Policeman
+		police1.draw();
+
+	}
+
 	private boolean collides()
 	{
 		// convert the position of the Player from pixels to 'Tile' position
 		// divide by the tile Size (in this case 16px) 
-		
-		int xBefore = (int)	(Math.floor(player.rect.getMinX()));
-		int xAfter 	= (int) (Math.ceil(player.rect.getMaxX()));
-		
-		int yBefore = (int)	(Math.floor(player.rect.getMinY()));
-		int yAfter	= (int) (Math.ceil(player.rect.getMaxY()));
-		
-		//		System.out.println(String.format("xpos,ypos: %d, %d", xPos, yPos));
-		// if the player is trying to move beyond the bounds of the city (index < 0) or (index > maxWidth or maxHeight) 
-		// return collision 
-		if (xBefore < 0|| xAfter >= blocked.length || yBefore < 0|| yAfter >= blocked[0].length )
-			return true; 
-		
 
-		boolean blockedBool =  blocked[xBefore][yBefore] || blocked[xBefore][yAfter]  || blocked[xAfter][yBefore]  || blocked[xAfter][yAfter]; 
-		return blockedBool; 
+		boolean isInCollision = false;
+		for(Rectangle ret : blocks) {
+			if(player.rect.intersects(ret)) {
+				isInCollision = true;
+			}
+		}
+
+		return isInCollision;
+	}
+
+	public static void main(String []args)
+	{
+		Game game = new Game("Jom & Terry");
+		AppGameContainer container;
+		try {
+			container = new AppGameContainer(game);
+			container.setDisplayMode(800, 800, false);
+
+			// hide the FPS Text
+			container.setShowFPS(false);
+			container.start();
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
 	}
 }
