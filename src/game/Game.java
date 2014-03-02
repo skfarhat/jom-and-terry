@@ -12,15 +12,16 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.tiled.TiledMap;
 
 public class Game extends BasicGame {
 	// ==============================================================================================================================
 	// Paths
 	// ==============================================================================================================================
-	private String cityTileMapPath = "/Users/Apple/Documents/new-eclipse-workspace/Slick Tutorial/res/city/city.tmx";
-	private String playerSpriteSheet = "/Users/Apple/Documents/new-eclipse-workspace/Slick Tutorial/res/player1.png";
+	//	private String cityTileMapPath = "/Users/Apple/Documents/new-eclipse-workspace/Slick Tutorial/res/city/city.tmx";
+	//	private String playerSpriteSheet = "/Users/Apple/Documents/new-eclipse-workspace/Slick Tutorial/res/player1.png";
+	private String cityTileMapPath = "res/city/city.tmx";
+	private String playerSpriteSheet = "res/player1.png";
 
 	int spritesPerRow = 6;
 	int spritesPerColumn = 2;
@@ -33,9 +34,10 @@ public class Game extends BasicGame {
 
 	// Characters
 	// ==============================================================================================================================		
-	private Player player; // Main Player 
+	private Robber robber; // Main Player 
 	private Policeman police1; // Policeman 
 
+	public ArrayList<Policeman> policeForceArray; 
 
 	private TiledMap cityTileMap;
 
@@ -58,9 +60,12 @@ public class Game extends BasicGame {
 		blocks = new ArrayList<>(20);
 
 		initMap();			// Tile Map
-		initPlayer();		// Player 
+		initRobber();		// Robber 
 		initPoliceman();	// Policeman
 
+		
+		// pass instance of police force to Robber
+		this.robber.setPoliceForceArray(policeForceArray);
 	}
 
 	private void initMap() throws SlickException
@@ -108,7 +113,7 @@ public class Game extends BasicGame {
 		//		}
 	}
 
-	private void initPlayer() throws SlickException {
+	private void initRobber() throws SlickException {
 		//Get, save, and display the width and the height
 		// of the sprite sheet.
 		Image spriteSheetImage = new Image(playerSpriteSheet);
@@ -120,7 +125,7 @@ public class Game extends BasicGame {
 		spriteWidth = (int)(spriteSheetWidth/spritesPerRow);
 		spriteHeight =(int)(spriteSheetHeight/spritesPerColumn);
 
-		player = new Player(playerSpriteSheet, spriteWidth, spriteHeight);
+		robber = new Robber(playerSpriteSheet, spriteWidth, spriteHeight);
 	}
 
 	private void initPoliceman() throws SlickException {
@@ -128,8 +133,11 @@ public class Game extends BasicGame {
 		int x = 400, y =500;
 		police1 = new Policeman(x, y, "Police-1", 50.0f);
 
-	}
 
+		// init the Police Force Array
+		policeForceArray = new ArrayList<>(5); 
+		policeForceArray.add(police1); // add Police1 to the force
+	}
 
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException {
@@ -146,11 +154,11 @@ public class Game extends BasicGame {
 	 * @return
 	 */
 	private boolean isLocked(int x, int y) {
-	
-	    boolean square = blocked[(int)x/TILE_SIZE][(int)y/TILE_SIZE];
-	    
-	    // The cell is locked if the square if filled 
-	    return square; 
+
+		boolean square = blocked[(int)x/TILE_SIZE][(int)y/TILE_SIZE];
+
+		// The cell is locked if the square if filled 
+		return square; 
 	}
 
 	/**
@@ -161,18 +169,13 @@ public class Game extends BasicGame {
 	private boolean processInput(Input input) {
 
 		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
-			
+
 			int destX = input.getMouseX();
 			int destY = input.getMouseY();
-			
+
 			if (!isLocked(destX, destY)) {
-				System.out.println(String.format("Go here (%d,%d)", destX, destY));
-			
-				police1.move(destX, destY);
-//				// Move the policeman to this position
-//				police1.direction = new Vector2f(destX  - police1.xPos, destY - police1.yPos); // set the direction to which the policeman should go 
-//				police1.isMoving = true; 	// set the isMoving to true
-			
+				// Move the policeman to this position
+				police1.move(destX, destY);			
 			}
 			else
 				System.out.println("Is locked");
@@ -181,57 +184,57 @@ public class Game extends BasicGame {
 		{
 			if (input.isKeyDown(Input.KEY_RIGHT))
 			{
-				player.moveRight();
+				robber.moveRight();
 
 				// if Player collides with an object
 				// decrement the position back (reverse the position change)
 				if (collides())
 				{
-					player.spriteX--;
-					player.rect.setX(player.spriteX);
+					robber.spriteX--;
+					robber.rect.setX(robber.spriteX);
 				}
 			}
 			else if (input.isKeyDown(Input.KEY_LEFT))
 			{
-				player.moveLeft();
+				robber.moveLeft();
 
 				// if Player collides with an object
 				// decrement the position back (reverse the position change)
 				if (collides())
 				{
-					player.spriteX++;
-					player.rect.setX(player.spriteX);
+					robber.spriteX++;
+					robber.rect.setX(robber.spriteX);
 				}
 			}
 			else if (input.isKeyDown(Input.KEY_UP))
 			{
-				player.moveUp();
+				robber.moveUp();
 
 				// if Player collides with an object 
 				// increment the position back (reverse the position change)
 				if (collides())
 				{
-					player.spriteY++;
-					player.rect.setY(player.spriteY);
+					robber.spriteY++;
+					robber.rect.setY(robber.spriteY);
 				}
 			}
 			else if (input.isKeyDown(Input.KEY_DOWN))
 			{
-				player.moveDown();
+				robber.moveDown();
 
 				// if Player collides with an object 
 				// decrement the position back (reverse the position change)
 				if (collides())
 				{
-					player.spriteY--;
-					player.rect.setX(player.spriteY);
+					robber.spriteY--;
+					robber.rect.setX(robber.spriteY);
 				} 
 			}
 
 			return true;
 		}
 		else {
-			player.stop();
+			robber.stop();
 			return false;
 		}
 
@@ -244,8 +247,8 @@ public class Game extends BasicGame {
 
 		//Draw the currently selected animation image at the
 		// specified location
-		player.currentAnimation.draw(player.getSpriteX(),player.getSpriteY());
-
+		//		robber.currentAnimation.draw(robber.getSpriteX(),robber.getSpriteY());
+		robber.draw();
 
 		// Draw Policeman
 		police1.draw();
@@ -259,7 +262,7 @@ public class Game extends BasicGame {
 
 		boolean isInCollision = false;
 		for(Rectangle ret : blocks) {
-			if(player.rect.intersects(ret)) {
+			if(robber.rect.intersects(ret)) {
 				isInCollision = true;
 			}
 		}
@@ -281,5 +284,9 @@ public class Game extends BasicGame {
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public ArrayList<Policeman> getPoliceForceArray() {
+		return policeForceArray;
 	}
 }

@@ -1,11 +1,17 @@
 package game;
+import game.city.person.Policeman;
+
+import java.util.ArrayList;
+
 import org.newdawn.slick.Animation;
+import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Vector2f;
 
-public class Player extends SpriteSheet {
+public class Robber extends SpriteSheet {
 
 	// Declare Direction enumerator
 	enum Direction { 
@@ -14,6 +20,8 @@ public class Player extends SpriteSheet {
 		RIGHT, 
 		LEFT
 	}
+
+	private ArrayList<Policeman> policeForceArray;
 
 	public Rectangle rect; 
 	public Direction direction; 
@@ -49,7 +57,7 @@ public class Player extends SpriteSheet {
 	int spritesPerColumn = 2;
 	//====================================================================================================
 
-	public Player(String ref, int spriteWidth, int spriteHeight) throws SlickException {    
+	public Robber(String ref, int spriteWidth, int spriteHeight) throws SlickException {    
 		super(ref, spriteWidth, spriteHeight);
 
 		// initially the player is moving to the right
@@ -85,9 +93,13 @@ public class Player extends SpriteSheet {
 				true//autoupdate
 				);
 
-		currentAnimation.stop(); 
+		currentAnimation.stop();  
 	}
 
+
+	public void setPoliceForceArray(ArrayList<Policeman> policeForceArray) {
+		this.policeForceArray = policeForceArray;
+	}
 
 	public void stop() {
 		this.currentAnimation.stop();
@@ -97,14 +109,14 @@ public class Player extends SpriteSheet {
 		this.currentAnimation.start();
 		this.spriteX++;
 		this.rect.setX(this.spriteX);
-		this.currentAnimation = Player.rightWalkAnimation;
+		this.currentAnimation = Robber.rightWalkAnimation;
 
 	}
 
 	public void moveLeft() {
 		this.currentAnimation.start();
 		this.spriteX--;
-		this.currentAnimation = Player.leftWalkAnimation;
+		this.currentAnimation = Robber.leftWalkAnimation;
 		this.rect.setX(this.spriteX);
 		//		this.setCurrentAnimation(Player.leftWalkAnimation);
 	}
@@ -117,12 +129,36 @@ public class Player extends SpriteSheet {
 		this.spriteY++;
 		this.rect.setY(this.spriteY);
 	}
-	
+
 	public void setCurrentAnimation(Animation animation)
 	{
 		this.currentAnimation = animation;
 	}
-	
+
+	@Override
+	public void draw() {
+		this.currentAnimation.draw(this.getSpriteX(), this.getSpriteY());
+		if (canSeePolice())
+//			this.getGraphics().drawString("Can see Police", 0, 0);
+					System.out.println("Can see police");
+
+	}
+
+	public boolean canSeePolice()
+	{
+		// check that the distance between the robber and all the police force is less than 50.0 
+		// If less than 50.0f for some police return true
+		for (Policeman police : this.policeForceArray)
+		{
+			float distance = (float)  Math.sqrt(Math.pow(police.xPos-this.spriteX, 2.0) + Math.pow(police.yPos-this.spriteY, 2.0)); 
+			if (distance < 50.0f)
+				return true;
+		}
+
+		// return false if there is no nearby Police
+		return false; 	
+	}
+
 	// ========================================================================================================================================================================
 	// GETTERS AND SETTERS for Sprite Position 
 	// ========================================================================================================================================================================
@@ -132,37 +168,37 @@ public class Player extends SpriteSheet {
 	public float getSpriteY() {
 		return spriteY;
 	}
-//	public void decrementY(){
-//		this.spriteY--; 
-//		this.rect.setY(this.spriteY);
-//	}
-//	public void incrementY(){
-//		this.spriteY++; 
-//		this.rect.setY(this.spriteY);
-//	}
-//	
-//	public void decrementX(){
-//		this.spriteX--; 
-//		this.rect.setX(this.spriteX);
-//		this.rect = new Rectangle(this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight);
-//	}
-//	public void incrementX(){
-//		this.spriteX++; 
-//		this.rect.setX(this.spriteX);
-//	}
-	
-//	// Setters for xPos and yPos
-//	// Needed because we need to change the position of the rect whenever the positions of the sprite are changed
-//	public void setSpriteX(float spriteX) {
-//		this.spriteX = spriteX;
-//		System.out.println("Set Sprite X");
-//		this.rect.setX(this.spriteX);
-//	}
-//	public void setSpriteY(float spriteY) {
-//		this.spriteY = spriteY;
-//		System.out.println("Set Sprite Y");
-//		this.rect.setY(this.spriteY);
-//	}
+	//	public void decrementY(){
+	//		this.spriteY--; 
+	//		this.rect.setY(this.spriteY);
+	//	}
+	//	public void incrementY(){
+	//		this.spriteY++; 
+	//		this.rect.setY(this.spriteY);
+	//	}
+	//	
+	//	public void decrementX(){
+	//		this.spriteX--; 
+	//		this.rect.setX(this.spriteX);
+	//		this.rect = new Rectangle(this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight);
+	//	}
+	//	public void incrementX(){
+	//		this.spriteX++; 
+	//		this.rect.setX(this.spriteX);
+	//	}
+
+	//	// Setters for xPos and yPos
+	//	// Needed because we need to change the position of the rect whenever the positions of the sprite are changed
+	//	public void setSpriteX(float spriteX) {
+	//		this.spriteX = spriteX;
+	//		System.out.println("Set Sprite X");
+	//		this.rect.setX(this.spriteX);
+	//	}
+	//	public void setSpriteY(float spriteY) {
+	//		this.spriteY = spriteY;
+	//		System.out.println("Set Sprite Y");
+	//		this.rect.setY(this.spriteY);
+	//	}
 	// ========================================================================================================================================================================
 	// ========================================================================================================================================================================
 

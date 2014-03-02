@@ -11,7 +11,8 @@ import org.newdawn.slick.geom.Vector2f;
  * 
  */
 public class Policeman extends Person {
-	private String policemanImgPath = "/Users/Apple/Documents/new-eclipse-workspace/Slick Tutorial/res/police1.png";
+//	private String policemanImgPath = "/Users/Apple/Documents/new-eclipse-workspace/Slick Tutorial/res/police1.png";
+	private String policemanImgPath = "res/police1.png";
 
 	public float xPos, yPos;
 	
@@ -106,5 +107,10 @@ public class Policeman extends Person {
 		}
 		// draw the image at the positon of the policeman
 		this.image.draw(this.xPos, this.yPos);
+	}
+	
+	public boolean robberVisible()
+	{
+		return true; 
 	}
 }
