@@ -45,12 +45,13 @@ public abstract class Building  {
 	 */
 	public void displayBuildingInfo(Person person) {
 		// TODO complete implementation
-		if (person.getClass() == Robber.class) {
-			if (!robberNearBuilding((Robber) person))
-				return;
-		}
+//		if (person.getClass() == Robber.class) {
+//			if (!robberNearBuilding((Robber) person))
+//				return;
+//		}
 //		String info = String.format("Building position (%d,%d). Money:%d",
 //				positionX, positionY, money);
 //		System.out.println(info);
+//	}
 	}
 }

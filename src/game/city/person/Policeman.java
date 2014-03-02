@@ -3,6 +3,7 @@ package game.city.person;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.state.BasicGameState;
 
 /**
  * A policeman.
@@ -11,16 +12,21 @@ import org.newdawn.slick.geom.Vector2f;
  * 
  */
 public class Policeman extends Person {
-//	private String policemanImgPath = "/Users/Apple/Documents/new-eclipse-workspace/Slick Tutorial/res/police1.png";
 	private String policemanImgPath = "res/police1.png";
 
 	public float xPos, yPos;
-	
+
 	private float destX, destY; 
 	private Image image;
-	
+
 	public boolean isMoving = false; 
 	public Vector2f direction; 
+
+	public Robber robber; 
+
+
+	// Vision Attribute
+	private float visionDistance = 130.0f;
 
 	/**
 	 * Creates a policeman.
@@ -31,11 +37,12 @@ public class Policeman extends Person {
 	 * @param velocity
 	 * @throws SlickException 
 	 */
-	public Policeman(float positionX, float positionY, String name,
+	public Policeman(Robber robber,  float positionX, float positionY, String name,
 			double velocity) throws SlickException {
 
 		// call superclass constructor (Person) 
 		super(positionX, positionY, name, velocity);
+
 
 		// Set the position of the policeman 
 		this.xPos = positionX; 
@@ -43,6 +50,8 @@ public class Policeman extends Person {
 
 		// Set the image of the policeman 
 		this.image = new Image(policemanImgPath);
+
+		this.robber = robber;
 
 	}
 	/**
@@ -75,19 +84,19 @@ public class Policeman extends Person {
 		// TODO implement
 		return true;
 	}
-	
+
 	public void move(float destX, float destY)
 	{
 		// set the Destination coordinates
 		this.destX = destX; 
 		this.destY = destY; 
-		
+
 		// set the direction of the policeman 
 		this.direction = new Vector2f(destX  - this.xPos, destY - this.yPos);
-		
+
 		// set the boolean is moving to true
 		this.isMoving = true; 
-		
+
 	}
 
 	public void draw()
@@ -98,19 +107,36 @@ public class Policeman extends Person {
 			float speed = (float) (0.04f * velocity);
 			this.xPos += speed * Math.cos(Math.toRadians(this.direction.getTheta()));
 			this.yPos += speed * Math.sin(Math.toRadians(this.direction.getTheta()));
-			
+
 			// 1.0f margin of error
 			if (Math.abs(this.xPos-this.destX) <2.0f && Math.abs(this.yPos-this.destY) <2.0f)
 			{
 				this.isMoving = false; 
 			}
 		}
+		
+		
+		// see if the Robber is visible
+		lookForRobber();
+		
 		// draw the image at the positon of the policeman
 		this.image.draw(this.xPos, this.yPos);
 	}
-	
-	public boolean robberVisible()
+
+
+	public boolean lookForRobber()
 	{
-		return true; 
+		float distance = (float)  Math.sqrt(Math.pow(this.xPos-this.robber.spriteX, 2.0) + Math.pow(this.yPos-this.robber.spriteY, 2.0)); 
+		if (distance < visionDistance)
+		{
+			followRobber();
+			return true;
+		}
+		return false;
 	}
+	private void followRobber()
+	{
+		this.move(robber.spriteX, robber.spriteY);
+	}
+
 }
