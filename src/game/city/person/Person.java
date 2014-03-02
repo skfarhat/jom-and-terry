@@ -1,7 +1,5 @@
 package game.city.person;
 
-import org.lwjgl.opengl.Drawable;
-
 /**
  * An abstract class for the Person/Player in the game.
  * 
@@ -22,9 +20,9 @@ public abstract class Person {
 	 */
 	public Person(double positionX, double positionY, String name,
 			double velocity) {
-//		super(positionX, positionY);
+		// super(positionX, positionY);
 		this.name = name;
 		this.velocity = velocity;
 	}
-	
+
 }
