@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="50" height="50" tilewidth="16" tileheight="16">
+ <tileset firstgid="1" name="house" tilewidth="16" tileheight="16">
+  <image source="bank1.png" width="73" height="92"/>
+ </tileset>
+ <tileset firstgid="21" name="bank" tilewidth="16" tileheight="16">
+  <image source="bank2.png" width="191" height="111"/>
+ </tileset>
+ <tileset firstgid="87" name="road_east" tilewidth="16" tileheight="16">
+  <image source="road_east.png" width="100" height="100"/>
+ </tileset>
+ <tileset firstgid="123" name="road_north" tilewidth="16" tileheight="16">
+  <image source="road_up.png" width="100" height="100"/>
+ </tileset>
+ <layer name="Roads" width="50" height="50">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3Y127EIBCFYb9lqtOz6b1ueu+992fNf+HLwZmAjSw0SN8NLGeEhLSM8yzLcvShHwMYxJDANS+tazM1NHuHCyMYRQtjGBe45qV1baaGZu9EYRJTmMYMZgWueWldm6mh2TtXmMcCFrGEZYFrXlrXZmpo9q4UVrGGdbSxIXDNS+vaTA3N3k1sYRs72MVeFj5i59o5/OrVlbuPAxziCMc4qaBe7NxTnOEcF7jEVQX1Yude4wa3uMM9HiqoFzv3EU94xgte8VZBvdi57/jAJ77wjZ8K6sXOTeUcdq/Kh90rv1w7h1+9unLtHH716sq19275sPeuX669d8uHvUv8clM5Ryr3Ks/sO7V9p7bv1Kl/p7b3Vfmw95Vfbir/g6m8S1I5h92r8mH3yi83lXN0FDrRhW70oFfgmpfW//rtf2iy6uo/QvqNJvUfIf1Gk/qPkH6jSf1HSL/RpP4jpN/w6T9+AW+e3eYQJwAA
+  </data>
+ </layer>
+ <layer name="Houses" width="50" height="50">
+  <properties>
+   <property name="Passable" value="False"/>
+  </properties>
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3WQQ6DMAxEUaBAgZZCKfc/K3OBLCJ5ooj+J/2d5a3dNAD+Vas69VB94Lxrb8qgRvVUU+C8a2/KrBb1Uu/AedfelFV91Kb2wHnX3pSvOtRPnYHzrr3AHZS+Hy6l74dL6fvhUvp+uHA/ACBGrf9Drlr/h1y1/g+5av0fcvE/AAAAAACAu7gAXvEXHxAnAAA=
+  </data>
+ </layer>
+ <objectgroup name="Collisions" width="50" height="50">
+  <object x="288" y="80" width="64" height="80"/>
+  <object x="96" y="80" width="64" height="80"/>
+ </objectgroup>
+</map>
