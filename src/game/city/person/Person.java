@@ -18,8 +18,7 @@ public abstract class Person {
 	 * @param name
 	 * @param velocity
 	 */
-	public Person(double positionX, double positionY, String name,
-			double velocity) {
+	public Person (String name, double velocity) {
 		this.name = name;
 		this.velocity = velocity;
 	}

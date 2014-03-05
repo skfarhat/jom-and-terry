@@ -1,14 +1,15 @@
 package game;
 
+import game.city.building.House;
 import game.city.person.Policeman;
 import game.city.person.Robber;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
@@ -18,8 +19,10 @@ import org.newdawn.slick.tiled.TiledMap;
 
 public class Play extends BasicGameState{
 	private String cityTileMapPath = "res/city/city.tmx";
-	private String playerSpriteSheet = "res/player1.png";
-
+	
+	// The user can choose to be the robber or the policeman before he starts the game
+	boolean userIsRobber = true;
+	
 	int spritesPerRow = 6;
 	int spritesPerColumn = 2;
 	int spriteWidth;
@@ -30,8 +33,8 @@ public class Play extends BasicGameState{
 
 	// Characters
 	// ==============================================================================================================================		
-	private Robber robber; // Main Player 
-	private Policeman police1; // Policeman 
+	private Robber robber; 		// Main Player 
+	private Policeman police1; 	// Policeman 
 
 	public ArrayList<Policeman> policeForceArray; 
 
@@ -43,15 +46,13 @@ public class Play extends BasicGameState{
 	ArrayList<Rectangle> blocks; 
 	boolean blocked[][]; 
 
+	
+	// Buildings
+	// ==============================================================================================================================
+	ArrayList<House> houses; 
 
 	// CONSTRUCTOR
 	// ==============================================================================================================================
-	public Play() {
-		// TODO Auto-generated constructor stub
-	}
-
-
-
 	public Play(int state)
 	{
 
@@ -65,7 +66,6 @@ public class Play extends BasicGameState{
 		initMap();			// Tile Map
 		initRobber();		// Robber 
 		initPoliceman();	// Policeman
-
 
 		// pass instance of police force to Robber
 		this.robber.setPoliceForceArray(policeForceArray);
@@ -91,26 +91,39 @@ public class Play extends BasicGameState{
 					blocked[i][j] = true; 
 
 					blocks.add(new Rectangle((float)i * TILE_SIZE, (float)j * TILE_SIZE, TILE_SIZE, TILE_SIZE));
-
 				}
 			}
+		}
+		
+		// HOUSES
+		// ========================================================================================
+		// Houses Object Group has index 0 
+		int housesObjectCount = cityTileMap.getObjectCount(0);
+		
+		houses = new ArrayList<>(10);
+		
+		// create all Houses 
+		for (int objectIndex=0; objectIndex < housesObjectCount; objectIndex++)
+		{
+			int x = cityTileMap.getObjectX(0, objectIndex);
+			int y = cityTileMap.getObjectY(0, objectIndex);
+			float width = cityTileMap.getObjectWidth(0, objectIndex);
+			float height = cityTileMap.getObjectHeight(0, objectIndex);
+			
+			// some random number (1000 ? 3000 ? ...) and need it to be positive thus the Math.absolute
+			int money = Math.abs(((new Random()).nextInt() % 10 ) * 1000); 
+			House house = new House(x, y, width, height, money);
+			
+			// add the house to the houses Array
+			houses.add(house);			
 		}
 
 	}
 
 	private void initRobber() throws SlickException {
-		//Get, save, and display the width and the height
-		// of the sprite sheet.
-		Image spriteSheetImage = new Image(playerSpriteSheet);
-		int spriteSheetWidth 	= spriteSheetImage.getWidth();
-		int spriteSheetHeight 	= spriteSheetImage.getHeight();
-
-		//Compute the width and height of the individual 
-		// sprite images.
-		spriteWidth = (int)(spriteSheetWidth/spritesPerRow);
-		spriteHeight =(int)(spriteSheetHeight/spritesPerColumn);
-
-		robber = new Robber(playerSpriteSheet, spriteWidth, spriteHeight);
+		
+		robber = new Robber(userIsRobber); 
+		
 	}
 
 	private void initPoliceman() throws SlickException {
@@ -137,6 +150,19 @@ public class Play extends BasicGameState{
 
 		// Draw Policeman
 		police1.draw();
+		
+		
+		// Draw the Money above the houses 
+		int money = -1; 
+		String moneyStr ;
+		House house;
+		for (int i=0; i< houses.size(); i++)
+		{
+			house = houses.get(i);
+			money = house.money; 
+			moneyStr = String.format("$%d", money);	
+			g.drawString(moneyStr, house.xPos, house.yPos);
+		}
 	}
 
 
@@ -192,8 +218,8 @@ public class Play extends BasicGameState{
 				// decrement the position back (reverse the position change)
 				if (collides())
 				{
-					robber.spriteX--;
-					robber.rect.setX(robber.spriteX);
+					robber.xPos--;
+					robber.rect.setX(robber.xPos);
 				}
 			}
 			else if (input.isKeyDown(Input.KEY_LEFT))
@@ -204,8 +230,8 @@ public class Play extends BasicGameState{
 				// decrement the position back (reverse the position change)
 				if (collides())
 				{
-					robber.spriteX++;
-					robber.rect.setX(robber.spriteX);
+					robber.xPos++;
+					robber.rect.setX(robber.xPos);
 				}
 			}
 			else if (input.isKeyDown(Input.KEY_UP))
@@ -216,8 +242,8 @@ public class Play extends BasicGameState{
 				// increment the position back (reverse the position change)
 				if (collides())
 				{
-					robber.spriteY++;
-					robber.rect.setY(robber.spriteY);
+					robber.yPos++;
+					robber.rect.setY(robber.yPos);
 				}
 			}
 			else if (input.isKeyDown(Input.KEY_DOWN))
@@ -228,8 +254,8 @@ public class Play extends BasicGameState{
 				// decrement the position back (reverse the position change)
 				if (collides())
 				{
-					robber.spriteY--;
-					robber.rect.setX(robber.spriteY);
+					robber.yPos--;
+					robber.rect.setX(robber.yPos);
 				} 
 			}
 

@@ -24,9 +24,8 @@ public class Shop extends Building {
 	 * @param money
 	 * @param securityGuards
 	 */
-	public Shop(double positionX, double positionY, Integer money,
-			ArrayList<SecurityGuard> securityGuards) {
-		super(positionX, positionY, money);
+	public Shop(int positionX, int positionY, float width, float height, Integer money, ArrayList<SecurityGuard> securityGuards) {
+		super(positionX, positionY, width, height, money);
 		this.securityGuards = securityGuards;
 	}
 }

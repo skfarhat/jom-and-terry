@@ -12,9 +12,21 @@
  <tileset firstgid="123" name="road_north" tilewidth="16" tileheight="16">
   <image source="road_up.png" width="100" height="100"/>
  </tileset>
+ <tileset firstgid="159" name="tileset2" tilewidth="16" tileheight="16">
+  <image source="tileset2.png" width="1024" height="720"/>
+ </tileset>
+ <tileset firstgid="3039" name="tileset1" tilewidth="16" tileheight="16">
+  <image source="tileset1.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="4063" name="tileset3" tilewidth="16" tileheight="16">
+  <image source="tileset3.png" width="1408" height="704"/>
+ </tileset>
+ <tileset firstgid="7935" name="terrain" tilewidth="16" tileheight="16">
+  <image source="terrain.png" width="3010" height="2260"/>
+ </tileset>
  <layer name="Roads" width="50" height="50">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+2a125DIQyGec/u3Zs23XulK917jzxrfytFRaeGwwhIiWzpu4HwOz4hBlunqZQaAsNgBIyCMTDOYBvn5n01fahb+wBavz6132kwA2YZbOPc/ASYBFM1mj7UrX0D10YcZjzzDHOWcW7e1DJxrQ/RNWmDR9AAC2ARLIFlsMJgG+fmfTV9qFtL++rd8Gf63mLYtIxz840A3TrqdGlfbYMdsAv2wD44UOlWUrdd2F9O3X6JowkOwRE4BifgtAv+SuvS+XEGzsEFuARXXfBXWpfOjxtwC+7AverksVQrrUvnxxN4Bi/gVXXyWKqV1qXz4wN8gi/wrTp5LNVK6/ZLHLKv3Cb7Kk5X4ojzl0tX4ojzl0tX7rtuk/tunK7cd90m95I43X6Jg/JYr+8r+p9THuv1PjXF0VL/e7BEap/a1Mrdp9Z5txqDrR8d0qfmnk2uPrXOu73ep9Z5l3tuqX1q2++Ro09N+arJ+JL71Z/J/SpOV+5XbpP7VZyu7Cu3yb6K083pT5+rpeoP86zXDDIMWMa5ea3ZqOi71vvqVr8vnee56o+qv9jaI6T+8H2nJaT+SKk3Qv3SeZ77PRkf3dT6g/Jurvojpd4I9avz1SpYA+tgQ9nrjJD6o+6zsfWHjR9RrrnpECcAAA==
+   H4sIAAAAAAAAA+3aZW/bQADGcX+AvN1WZki5Y2Zox7w3Y2zfbGXGlNIx89bPM17HHe+j7G9lVizvLvbFtZVUtfRTJMNzd417pIQ0TTuKYziOEziJUwKy86LrTjOdsHv2FsL/yjTKPYc61AvIzouun8YZnLXJdMLu2Qe4amqHuT0XBM5Lzouum7PMYj2vkms2gdtoQCOa0IwWtArIzouuO810wu5Z/b16aCrPXHa3QJfkvOh6g0KuHbtc/b3qQS/60I8BDGruDz9zJ3wuz8vcmdKOEIYwjBGMYmwayvM7Vx8/xnERl3AZV6ahPFlucUDTgoHop91hvV+Wq48f13AdN3BTi/Rjbg9Zbg11qQ1EP+0O6/2yXH38uIO7uIf7WqQfc3vIcuuoS30g+ml3WO+X5erjxyM8xhM81SL9mNtDlhumLuOB6KfdYb1flut3O7zK9fu98ip3pnwffpen2u86zfW7Har9rtPcRP8+rPcnSjvcjoOJ0g6346As1+95qdtxcHa+G9/hd67f812vcmfnJbGPmT4v8SpX78eS/b3S/8/1fizZ96n1doS1//dgdW73qc1ZXu9TG/2utQ2y/WiVfWrR38arfWqj3032fWqj3xX93dzuU8u+Dy/2qfX+KiQoy8t50BzMxTykIBVpSEcGMpGFbMVc2XwlhdBUpCEdGchEFrKRkxG7HbLcHOQiD/koQCGKUIwgSlCqmCubrzRSzyY0owWtaEM7OtBp0w5ZbhnKUYFKVKEa87EAC7EIixVzZePVM+r5HC/wEq/wGm/wFpM27ZDlLsFSLMNyrMBKrMJqrMFarFPMlY3zObyouchDPgpQiCIUI5gZux2y3PXYgI3YhM3YghrUYiu2Ybtirux8J/XsQjd60Is+9GMAg3G2Ywd2Yhd2Yw/2Yh/24wAO4pBirux7mqSe7/AeH/ARn/AZXzBl045EmbcH6fxKUIoylKMClahCdVbs8hJl3j5IPUMYwjBGMIoxhDGeJO2Yop5f8Q3f8QM/8Qu/8cdBO4xx1a/1h3msNxwROCw5L7puZDZY8mM97zTXWl99PPdq/WEtL961h8r6w+lvWlTWH27WG6rl6uO517+TcZLrdv2h97terT/crDdUyzX6qza0owOdmnydobL+sLs33vWHzF/hw155ECcAAA==
   </data>
  </layer>
  <layer name="Houses" width="50" height="50">
@@ -30,5 +42,8 @@
   <object x="288" y="80" width="64" height="80"/>
   <object x="448" y="80" width="64" height="80"/>
   <object x="640" y="80" width="64" height="80"/>
+  <object x="448" y="208" width="64" height="80"/>
+  <object x="640" y="208" width="64" height="80"/>
+  <object x="288" y="384" width="64" height="80"/>
  </objectgroup>
 </map>

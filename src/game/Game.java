@@ -22,6 +22,7 @@ public class Game extends StateBasedGame {
 		this.getState(menu).init(gc, this);
 		this.getState(play).init(gc, this);
 		this.enterState(play);
+//		this.enterState(menu);
 	}
 	
 	
@@ -34,7 +35,8 @@ public class Game extends StateBasedGame {
 			container.setDisplayMode(800, 800, false);
 
 			// hide the FPS Text
-			container.setShowFPS(false);
+			container.setTargetFrameRate(250);
+			container.setShowFPS(true);
 			container.start();
 		} catch (SlickException e) {
 			e.printStackTrace();

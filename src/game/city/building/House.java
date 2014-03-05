@@ -14,7 +14,7 @@ public class House extends Building {
 	 * @param positionY
 	 * @param money
 	 */
-	public House(double positionX, double positionY, Integer money) {
-		super(positionX, positionY, money);
+	public House(int positionX, int positionY, float width, float height, Integer money) {
+		super(positionX, positionY, width, height, money);
 	}
 }

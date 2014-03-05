@@ -14,7 +14,9 @@ public abstract class Building  {
 	 * The amount of money a building has.
 	 */
 	public Integer money;
-
+	public int xPos, yPos; 
+	public float width, height;
+	
 	/**
 	 * Abstract constructor only called by subclasses.
 	 * 
@@ -22,9 +24,16 @@ public abstract class Building  {
 	 * @param positionY
 	 * @param money
 	 */
-	public Building(double positionX, double positionY, Integer money) {
-//		super(positionX, positionY);
+	public Building(int positionX, int positionY, float width, float height, Integer money) {
+		
+		this.xPos = positionX; 
+		this.yPos = positionY;
+		this.width = width; 
+		this.height = height; 
+		
 		this.money = money;
+		
+		
 	}
 
 	/**

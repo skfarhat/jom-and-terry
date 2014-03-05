@@ -27,8 +27,11 @@ public class Menu extends BasicGameState {
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
-		// TODO Auto-generated method stub
-		
+		// 
+		int x = gc.getWidth()/2 -50; 
+		g.drawString("Play Now", x, 100);
+		g.drawString("Settings", x, 200);
+		g.drawString("Stats",  x, 300);
 	}
 
 

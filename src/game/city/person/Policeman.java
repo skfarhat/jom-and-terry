@@ -40,7 +40,7 @@ public class Policeman extends Person {
 			double velocity) throws SlickException {
 
 		// call superclass constructor (Person)
-		super(positionX, positionY, name, velocity);
+		super(name, velocity);
 
 
 		// Set the position of the policeman
@@ -130,7 +130,7 @@ public class Policeman extends Person {
 
 	public boolean lookForRobber()
 	{
-		float distance = (float)  Math.sqrt(Math.pow(this.xPos-this.robber.spriteX, 2.0) + Math.pow(this.yPos-this.robber.spriteY, 2.0)); 
+		float distance = (float)  Math.sqrt(Math.pow(this.xPos-this.robber.xPos, 2.0) + Math.pow(this.yPos-this.robber.yPos, 2.0)); 
 		if (distance < visionDistance)
 		{
 			followRobber();
@@ -140,7 +140,7 @@ public class Policeman extends Person {
 	}
 	private void followRobber()
 	{
-		this.move(robber.spriteX, robber.spriteY);
+		this.move(robber.xPos, robber.yPos);
 	}
 
 }

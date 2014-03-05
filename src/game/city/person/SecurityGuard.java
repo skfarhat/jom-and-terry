@@ -17,7 +17,7 @@ public class SecurityGuard extends Person {
 	 */
 	public SecurityGuard(double positionX, double positionY, String name,
 			double velocity) {
-		super(positionX, positionY, name, velocity);
+		super(name, velocity);
 	}
 
 	/**
