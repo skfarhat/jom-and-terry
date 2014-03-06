@@ -10,18 +10,26 @@ import java.util.Random;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
 import org.newdawn.slick.tiled.TiledMap;
 
-public class Play extends BasicGameState{
+public class Play extends BasicGameState {
 	private String cityTileMapPath = "res/city/city.tmx";
-	
+
+	private GameContainer gameContainer = null;
+	private StateBasedGame sbg = null;
+
+
 	// The user can choose to be the robber or the policeman before he starts the game
 	boolean userIsRobber = true;
+	boolean isGameOver = false; 
 	
 	int spritesPerRow = 6;
 	int spritesPerColumn = 2;
@@ -30,6 +38,8 @@ public class Play extends BasicGameState{
 
 	int targetDelta = 16;	//msec
 	private Integer TILE_SIZE = 16;
+
+	boolean highlightHouse = false; 
 
 	// Characters
 	// ==============================================================================================================================		
@@ -46,21 +56,30 @@ public class Play extends BasicGameState{
 	ArrayList<Rectangle> blocks; 
 	boolean blocked[][]; 
 
-	
+
 	// Buildings
 	// ==============================================================================================================================
-	ArrayList<House> houses; 
+	private ArrayList<House> houses; 
 
+	public ArrayList<House> getHouses() {
+		return houses;
+	}
+	
 	// CONSTRUCTOR
 	// ==============================================================================================================================
 	public Play(int state)
 	{
-
 	}
-	
 
+
+	// INIT
+	//===============================================================================================================================
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException
-	{
+	{	
+		System.out.println("Init");
+		this.gameContainer = gc;
+		this.sbg = sbg;
+
 		blocks = new ArrayList<>(20);
 
 		initMap();			// Tile Map
@@ -94,14 +113,14 @@ public class Play extends BasicGameState{
 				}
 			}
 		}
-		
+
 		// HOUSES
 		// ========================================================================================
 		// Houses Object Group has index 0 
 		int housesObjectCount = cityTileMap.getObjectCount(0);
-		
+
 		houses = new ArrayList<>(10);
-		
+
 		// create all Houses 
 		for (int objectIndex=0; objectIndex < housesObjectCount; objectIndex++)
 		{
@@ -109,11 +128,11 @@ public class Play extends BasicGameState{
 			int y = cityTileMap.getObjectY(0, objectIndex);
 			float width = cityTileMap.getObjectWidth(0, objectIndex);
 			float height = cityTileMap.getObjectHeight(0, objectIndex);
-			
+
 			// some random number (1000 ? 3000 ? ...) and need it to be positive thus the Math.absolute
 			int money = Math.abs(((new Random()).nextInt() % 10 ) * 1000); 
-			House house = new House(x, y, width, height, money);
-			
+			House house = new House(objectIndex, x, y, width, height, money);
+
 			// add the house to the houses Array
 			houses.add(house);			
 		}
@@ -121,37 +140,44 @@ public class Play extends BasicGameState{
 	}
 
 	private void initRobber() throws SlickException {
-		
+
 		robber = new Robber(userIsRobber); 
-		
+
 	}
 
 	private void initPoliceman() throws SlickException {
 		// initial Position for the policeman
 		int x = 400, y =500;
-		police1 = new Policeman(this.robber, x, y, "Police-1", 50.0f);
-
+		police1 = new Policeman(this, this.robber, x, y, "Police-1", 40.0f);
 
 		// init the Police Force Array
 		policeForceArray = new ArrayList<>(5); 
 		policeForceArray.add(police1); // add Police1 to the force
 	}
 
-	
+	//===============================================================================================================================
+
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
-		
+
 		// Render the City Map
-		cityTileMap.render(0, 0);
+		cityTileMap.render(0, 0, 0);
+		cityTileMap.render(0, 0, 1);
+
+		// Highlight the house near the robber
+		if (highlightHouse)
+			cityTileMap.render(0, 0, 2 + robber.nearByBldg.ID);
 
 		//Draw Robber
 		robber.draw();
 
 		// Draw Policeman
 		police1.draw();
-		
-		
+
+		// Draw the money the Robber has
+		g.drawString(String.format("Money: $%d", robber.money), Game.width-120, 0);
+
 		// Draw the Money above the houses 
 		int money = -1; 
 		String moneyStr ;
@@ -163,8 +189,8 @@ public class Play extends BasicGameState{
 			moneyStr = String.format("$%d", money);	
 			g.drawString(moneyStr, house.xPos, house.yPos);
 		}
-	}
 
+	}
 
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int delta)
@@ -173,8 +199,8 @@ public class Play extends BasicGameState{
 
 		processInput(input);
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * @param x
@@ -194,8 +220,8 @@ public class Play extends BasicGameState{
 	 * @param input
 	 * @return
 	 */
-	private boolean processInput(Input input) {
-
+	private void processInput(Input input) {
+		// MOUSE: Control for Police 
 		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
 
 			int destX = input.getMouseX();
@@ -208,79 +234,84 @@ public class Play extends BasicGameState{
 			else
 				System.out.println("Is locked");
 		}
-		if (input.isKeyDown(Input.KEY_LEFT) || input.isKeyDown(Input.KEY_RIGHT) || input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_DOWN)) 
+
+		// ARROWS: UP DOWN LEFT RIGHT
+
+		if (input.isKeyDown(Input.KEY_RIGHT))
 		{
-			if (input.isKeyDown(Input.KEY_RIGHT))
-			{
-				robber.moveRight();
+			robber.moveRight();
 
-				// if Player collides with an object
-				// decrement the position back (reverse the position change)
-				if (collides())
-				{
-					robber.xPos--;
-					robber.rect.setX(robber.xPos);
-				}
+			// if Player collides with an object
+			// decrement the position back (reverse the position change)
+			if (collides())
+			{	
+				robber.normalForceLeft();
 			}
-			else if (input.isKeyDown(Input.KEY_LEFT))
-			{
-				robber.moveLeft();
-
-				// if Player collides with an object
-				// decrement the position back (reverse the position change)
-				if (collides())
-				{
-					robber.xPos++;
-					robber.rect.setX(robber.xPos);
-				}
-			}
-			else if (input.isKeyDown(Input.KEY_UP))
-			{
-				robber.moveUp();
-
-				// if Player collides with an object 
-				// increment the position back (reverse the position change)
-				if (collides())
-				{
-					robber.yPos++;
-					robber.rect.setY(robber.yPos);
-				}
-			}
-			else if (input.isKeyDown(Input.KEY_DOWN))
-			{
-				robber.moveDown();
-
-				// if Player collides with an object 
-				// decrement the position back (reverse the position change)
-				if (collides())
-				{
-					robber.yPos--;
-					robber.rect.setX(robber.yPos);
-				} 
-			}
-
-			return true;
 		}
+		else if (input.isKeyDown(Input.KEY_LEFT))
+		{
+			robber.moveLeft();
+
+			// if Player collides with an object
+			// decrement the position back (reverse the position change)
+			if (collides())
+			{
+				robber.normalForceRight(); 
+			}
+		}
+		else if (input.isKeyDown(Input.KEY_UP))
+		{
+			robber.moveUp();
+
+			// if Player collides with an object 
+			// increment the position back (reverse the position change)
+			if (collides())
+			{
+				robber.normalForceDown(); 
+			}
+		}
+		else if (input.isKeyDown(Input.KEY_DOWN))
+		{
+			robber.moveDown();
+
+			// if Player collides with an object 
+			// decrement the position back (reverse the position change)
+			if (collides())
+			{
+				robber.normalForceUp(); 
+			} 
+		}
+		else if (input.isKeyDown(Input.KEY_SPACE))
+		{
+			robber.rob();
+		}
+		else if (input.isKeyDown(Input.KEY_ESCAPE))
+		{
+			// 3 --> PAUSE
+			sbg.enterState(3);			
+		}
+
 		else {
 			robber.stop();
-			return false;
 		}
 
 	}
-	
+
 	private boolean collides()
 	{
 		// convert the position of the Player from pixels to 'Tile' position
 		// divide by the tile Size (in this case 16px) 
 
 		boolean isInCollision = false;
-		for(Rectangle ret : blocks) {
-			if(robber.rect.intersects(ret)) {
-				isInCollision = true;
+		robber.nearByBldg = null;
+		for(House house : houses){
+			if (robber.rect.intersects(house.frame))
+			{
+				highlightHouse = isInCollision = true;
+				robber.nearByBldg = house;
 			}
 		}
-
-		return isInCollision;
+		return highlightHouse = isInCollision;
 	}
 
 	public static void main(String []args)
@@ -312,4 +343,13 @@ public class Play extends BasicGameState{
 		return 1;
 	}
 
+	
+	public void gameOver() {
+		System.out.println("Game OVER");
+		robber.isCaught = true;
+		isGameOver = true;
+		
+		// GAME OVER STATE
+		this.sbg.enterState(4, new FadeOutTransition(), new FadeInTransition());
+	}
 }

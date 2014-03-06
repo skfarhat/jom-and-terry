@@ -1,6 +1,7 @@
 package game.city.person;
-import java.util.ArrayList;
+import game.city.building.Building;
 
+import java.util.ArrayList;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
@@ -20,46 +21,60 @@ public class Robber extends Person{
 		LEFT
 	}
 
+	public boolean isCaught = false; 
 	private boolean isUser; 
 
+	public Integer money; 
+	
+	// sprite drawing location
+	public float xPos = 0;
+	// sprite drawing location
+	public float yPos = 0;
+	
 	// Vision Attribute
 	private float visionDistance = 100.0f; 
 
 	// Movement attributes
 	private float destX, destY;
-	private float velocity = 50.0f; 
+	private float velocity = 120.0f; 
 	public boolean isMoving = false; 
 	public Vector2f vectorDirection;
 
-	private ArrayList<Policeman> policeForceArray;
 
 	public Rectangle rect; 
 	public Direction direction; 
+	
+	// =================================================================================================== 
+	// ENVIRONMENT AROUND
+	// =================================================================================================== 
 
+	// Police Related
+	private ArrayList<Policeman> policeForceArray;
+	// Building
+	public Building nearByBldg; 
+	// ===================================================================================================
+	
+	
+	//time to display each sprite
+	int duration = 200;
+
+	
 	// TODO: the following 2 should be 'constants'
 	// Animations
 	Animation currentAnimation = null; 
 	static Animation rightWalkAnimation = null;
-	static Animation leftWalkAnimation = null; 	
-
-
-	//time to display each sprite
-	int duration = 200;
-
-	// sprite drawing location
-	public float xPos = 0;
-	// sprite drawing location
-	public float yPos = 0;	
-
-
-
+	static Animation leftWalkAnimation = null;
+	static Animation downWalkAnimation = null;
+	static Animation upWalkAnimation = null;
+	
 	//====================================================================================================
 	//SpriteSheet
 	//====================================================================================================
 	SpriteSheet spriteSheet; 
 
 	// Path to the Sprite Sheet
-	private String playerSpriteSheet = "res/player1.png";
+//	private String playerSpriteSheet = "res/player1.png";
+	private String playerSpriteSheet = "res/SpriteSheets/robber-2.png";
 
 	// Dimensions a single sprite
 	int spriteWidth;
@@ -69,8 +84,13 @@ public class Robber extends Person{
 	float spriteSheetWidth;
 	float spriteSheetHeight;
 
-	int spritesPerRow = 6;
-	int spritesPerColumn = 2;
+	
+	// OLD 6 per ROW, 2 PER COLUMN
+//	int spritesPerRow = 6;
+//	int spritesPerColumn = 2;
+	// NEW
+	int spritesPerRow = 4; 
+	int spritesPerColumn = 4;
 
 	//====================================================================================================
 
@@ -97,6 +117,9 @@ public class Robber extends Person{
 		this.xPos = 0;
 		this.yPos = 0;
 
+		// The robber is initially broke
+		this.money = 0; 
+		
 		// set the rectangle of the player 
 		this.rect = new Rectangle(this.xPos, this.yPos, spriteWidth, spriteHeight);
 
@@ -104,21 +127,45 @@ public class Robber extends Person{
 		// initially the player is moving to the right
 		//Create a new animation based on a selection of
 		// sprites from the sprite sheet.
-
+		int lastColumn = 3;
+		int rightWalkRow = 2; 
+		int leftWalkRow = 1; 
+		int upWalkRow = 3; 
+		int downWalkRow = 0;
+		
 		currentAnimation =  rightWalkAnimation = new Animation(this.spriteSheet,
 				0,//first column
-				0,//first row
-				5,//last column
-				0,//last row
+				rightWalkRow,//first row
+				lastColumn,//last column
+				rightWalkRow,//last row
 				true,//horizontal
 				duration,//display time
 				true//autoupdate
 				);
 		leftWalkAnimation = new Animation(this.spriteSheet,
 				0,//first column
-				1,//first row
-				5,//last column 
-				1,//last row
+				leftWalkRow,//first row
+				lastColumn,//last column 
+				leftWalkRow,//last row
+				true,//horizontal
+				duration,//display time
+				true//autoupdate
+				);
+		upWalkAnimation = new Animation(this.spriteSheet,
+				0,//first column
+				upWalkRow,//first row
+				lastColumn,//last column 
+				upWalkRow,//last row
+				true,//horizontal
+				duration,//display time
+				true//autoupdate
+				);
+		
+		downWalkAnimation = new Animation(this.spriteSheet,
+				0,//first column
+				downWalkRow,//first row
+				lastColumn,//last column 
+				downWalkRow,//last row
 				true,//horizontal
 				duration,//display time
 				true//autoupdate
@@ -176,13 +223,16 @@ public class Robber extends Person{
 		this.policeForceArray = policeForceArray;
 	}
 
+	
+	// MOVEMENT
+	//=====================================================================================================
 	public void stop() {
 		this.currentAnimation.stop();
 	}
 
 	public void moveRight() {
 		this.currentAnimation.start();
-		this.xPos++;
+		this.xPos+=0.02*velocity;
 		this.rect.setX(this.xPos);
 		this.currentAnimation = Robber.rightWalkAnimation;
 
@@ -190,19 +240,45 @@ public class Robber extends Person{
 
 	public void moveLeft() {
 		this.currentAnimation.start();
-		this.xPos--;
+		this.xPos-=velocity * 0.02f;
 		this.rect.setX(this.xPos);
 		this.currentAnimation = Robber.leftWalkAnimation;
 	}
 
 	public void moveUp() {
-		this.yPos--;
+		this.yPos-=velocity *0.02f;
 		this.rect.setY(this.yPos);
+		this.currentAnimation = Robber.upWalkAnimation;
 	}
+
 	public void moveDown() {
-		this.yPos++;
+		this.yPos+=0.02f*velocity;
+		this.rect.setY(this.yPos);
+		this.currentAnimation = Robber.downWalkAnimation;
+	}
+	
+	
+	public void normalForceRight() {
+		this.xPos+=0.02*velocity;
+		this.rect.setX(this.xPos);
+
+	}
+
+	public void normalForceLeft() {
+		this.xPos-=velocity * 0.02f;
+		this.rect.setX(this.xPos);
+	}
+
+	public void normalForceUp() {
+		this.yPos-=velocity *0.02f;
 		this.rect.setY(this.yPos);
 	}
+
+	public void normalForceDown() {
+		this.yPos+=0.02f*velocity;
+		this.rect.setY(this.yPos);
+	}
+	
 
 	public void setCurrentAnimation(Animation animation)
 	{
@@ -232,8 +308,8 @@ public class Robber extends Person{
 		if (isMoving)
 		{
 			float speed = (float) (0.04f * velocity);
-			this.xPos += speed * Math.cos(Math.toRadians(this.vectorDirection.getTheta()));
-			this.yPos += speed * Math.sin(Math.toRadians(this.vectorDirection.getTheta()));
+			this.xPos += speed ;///* Math.cos(Math.toRadians(this.vectorDirection.getTheta()));
+			this.yPos += speed ;//* Math.sin(Math.toRadians(this.vectorDirection.getTheta()));
 
 			// 1.0f margin of error
 			if (Math.abs(this.xPos-this.destX) <2.0f && Math.abs(this.yPos-this.destY) <2.0f)
@@ -244,6 +320,25 @@ public class Robber extends Person{
 
 	}
 
+	
+	public boolean rob()
+	{
+		// if there is no nearby buildg then the robber cannot rob anything
+		if (this.nearByBldg == null)
+			return false; 
+		
+		Integer money = this.nearByBldg.money; 
+		
+		// add the sum of money to the player's cash
+		this.money += money;
+		
+		// completely rob the building
+		this.nearByBldg.money = 0; 
+		return true;
+	}
+	
+	// VISION
+	// ====================================================================================================
 	public Policeman canSeePolice()
 	{
 		// check that the distance between the robber and all the police force is less than 50.0 

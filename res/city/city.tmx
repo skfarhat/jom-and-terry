@@ -24,6 +24,9 @@
  <tileset firstgid="7935" name="terrain" tilewidth="16" tileheight="16">
   <image source="terrain.png" width="3010" height="2260"/>
  </tileset>
+ <tileset firstgid="34443" name="bank1-highlighted" tilewidth="16" tileheight="16">
+  <image source="../../../../../Desktop/435L/city/bank1-highlighted.png" width="73" height="92"/>
+ </tileset>
  <layer name="Roads" width="50" height="50">
   <data encoding="base64" compression="gzip">
    H4sIAAAAAAAAA+3aZW/bQADGcX+AvN1WZki5Y2Zox7w3Y2zfbGXGlNIx89bPM17HHe+j7G9lVizvLvbFtZVUtfRTJMNzd417pIQ0TTuKYziOEziJUwKy86LrTjOdsHv2FsL/yjTKPYc61AvIzouun8YZnLXJdMLu2Qe4amqHuT0XBM5Lzouum7PMYj2vkms2gdtoQCOa0IwWtArIzouuO810wu5Z/b16aCrPXHa3QJfkvOh6g0KuHbtc/b3qQS/60I8BDGruDz9zJ3wuz8vcmdKOEIYwjBGMYmwayvM7Vx8/xnERl3AZV6ahPFlucUDTgoHop91hvV+Wq48f13AdN3BTi/Rjbg9Zbg11qQ1EP+0O6/2yXH38uIO7uIf7WqQfc3vIcuuoS30g+ml3WO+X5erjxyM8xhM81SL9mNtDlhumLuOB6KfdYb1flut3O7zK9fu98ip3pnwffpen2u86zfW7Har9rtPcRP8+rPcnSjvcjoOJ0g6346As1+95qdtxcHa+G9/hd67f812vcmfnJbGPmT4v8SpX78eS/b3S/8/1fizZ96n1doS1//dgdW73qc1ZXu9TG/2utQ2y/WiVfWrR38arfWqj3032fWqj3xX93dzuU8u+Dy/2qfX+KiQoy8t50BzMxTykIBVpSEcGMpGFbMVc2XwlhdBUpCEdGchEFrKRkxG7HbLcHOQiD/koQCGKUIwgSlCqmCubrzRSzyY0owWtaEM7OtBp0w5ZbhnKUYFKVKEa87EAC7EIixVzZePVM+r5HC/wEq/wGm/wFpM27ZDlLsFSLMNyrMBKrMJqrMFarFPMlY3zObyouchDPgpQiCIUI5gZux2y3PXYgI3YhM3YghrUYiu2Ybtirux8J/XsQjd60Is+9GMAg3G2Ywd2Yhd2Yw/2Yh/24wAO4pBirux7mqSe7/AeH/ARn/AZXzBl045EmbcH6fxKUIoylKMClahCdVbs8hJl3j5IPUMYwjBGMIoxhDGeJO2Yop5f8Q3f8QM/8Qu/8cdBO4xx1a/1h3msNxwROCw5L7puZDZY8mM97zTXWl99PPdq/WEtL961h8r6w+lvWlTWH27WG6rl6uO517+TcZLrdv2h97terT/crDdUyzX6qza0owOdmnydobL+sLs33vWHzF/hw155ECcAAA==
@@ -38,12 +41,47 @@
   </data>
  </layer>
  <objectgroup name="House" width="50" height="50">
-  <object x="96" y="80" width="64" height="80"/>
-  <object x="288" y="80" width="64" height="80"/>
-  <object x="448" y="80" width="64" height="80"/>
-  <object x="640" y="80" width="64" height="80"/>
-  <object x="448" y="208" width="64" height="80"/>
-  <object x="640" y="208" width="64" height="80"/>
-  <object x="288" y="384" width="64" height="80"/>
+  <object name="House 1" x="96" y="80" width="64" height="80"/>
+  <object name="House 2" x="448" y="80" width="64" height="80"/>
+  <object name="House 3" x="640" y="80" width="64" height="80"/>
+  <object name="House 4" x="448" y="208" width="64" height="80"/>
+  <object name="House 5" x="640" y="208" width="64" height="80"/>
+  <object name="House 6" x="288" y="384" width="64" height="80"/>
+  <object name="House 7" x="288" y="80" width="64" height="80"/>
  </objectgroup>
+ <layer name="House 1- highlighted" width="50" height="50" visible="0">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3PSQ6CQABE0T59b8QBQUUGz0qdwQ3p8F7y91WlAGd1qaV06Zpu9eg1/7tn+yP16dnwjyHbx/RK74Z/fLJ9St80N/xjyfY1benX8A8AAAAAAAAAOJMdNeqwahAnAAA=
+  </data>
+ </layer>
+ <layer name="House 2- highlighted" width="50" height="50" visible="0">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3PSQ6CQABE0T49G0QQlMGBs1JnICbayXvJ31eVAvBdbVPKJXXp2vx6zXl9tg/plsaKf0zZfk+PNFf8Y8n2NW3pWfGPV7a/0yftFf8AAAAAAAAAgH90AOKmAsMQJwAA
+  </data>
+ </layer>
+ <layer name="House 3- highlighted" width="50" height="50" visible="0">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3PSQ6CQABE0T49G0QQlMGBs1JnYCHp5L3k76tKAbhW25RyS126N1evOa/P9iE90ljxjynbn+mV5op/LNm+pi29K/7xyfZv+qW94h8AAAAAAAAA8A8H6f8zJhAnAAA=
+  </data>
+ </layer>
+ <layer name="House 4- highlighted" width="50" height="50" visible="0">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3PSQqDQABE0T69G2M0mjhk8KzWGYQgDe/B31eVAgAA12ubUm6pS/fm6jXn9dk+pEcaK/4xZfszvdJc8Y8l29e0pXfFPz7Z/k2/tFf8AwAAAAAA4N8O5fdmEhAnAAA=
+  </data>
+ </layer>
+ <layer name="House 5 -highlighted" width="50" height="50" visible="0">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3PSw6CUBREwbd6JoIi+AEE12pvQSfmJlXJmXe3BgAA9Zy61vo0pHP37zW/u2T7mK5pKvxjzvZbuqdH4R/PbF/SmrbCP17ZvqcjvQv/AAAAAAAA+NYH0NVcmBAnAAA=
+  </data>
+ </layer>
+ <layer name="House 6- highlighted" width="50" height="50" visible="0">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3PSQ6CQABE0T49G1EBwYHprNQZ2JA27yV/X1UKAAAAAPy/W1NKm+7p0Vy95rxntnepT0PFP17ZPqYpvSv+8cn2b/qlueIfS7avaUt7xT8AAAAADvu43IQQJwAA
+  </data>
+ </layer>
+ <layer name="House 7- highlighted" width="50" height="50" visible="0">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3PSw6CUBREwbd6JoIi+AEE12ovwTgxN6lKzry7NYDvnLrW+jSkc/fvNb+7ZPuYrmkq/GPO9lu6p0fhH89sX9KatsI/Xtm+pyO9C/8AAAAAAAAAgMo+zL5Z6RAnAAA=
+  </data>
+ </layer>
 </map>

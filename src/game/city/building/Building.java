@@ -13,10 +13,12 @@ public abstract class Building  {
 	/**
 	 * The amount of money a building has.
 	 */
+	
+	public Integer ID; 
 	public Integer money;
 	public int xPos, yPos; 
 	public float width, height;
-	
+	public boolean isHighlighted;
 	/**
 	 * Abstract constructor only called by subclasses.
 	 * 
@@ -30,9 +32,10 @@ public abstract class Building  {
 		this.yPos = positionY;
 		this.width = width; 
 		this.height = height; 
-		
 		this.money = money;
-		
+
+		// initially the building is not highlighted
+		this.isHighlighted = false;
 		
 	}
 
@@ -45,7 +48,6 @@ public abstract class Building  {
 	
 	//TODO: FIX
 	public boolean robberNearBuilding(Robber robber) {
-//		return (calculateDistance(robber) < 40.0);
 		return false;
 	}
 
@@ -53,14 +55,6 @@ public abstract class Building  {
 	 * Output the info of a building when the robber is near
 	 */
 	public void displayBuildingInfo(Person person) {
-		// TODO complete implementation
-//		if (person.getClass() == Robber.class) {
-//			if (!robberNearBuilding((Robber) person))
-//				return;
-//		}
-//		String info = String.format("Building position (%d,%d). Money:%d",
-//				positionX, positionY, money);
-//		System.out.println(info);
-//	}
+		
 	}
 }
