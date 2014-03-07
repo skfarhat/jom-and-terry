@@ -26,6 +26,7 @@ public class Play extends BasicGameState {
 	private GameContainer gameContainer = null;
 	private StateBasedGame sbg = null;
 
+	private Camera camera; 
 
 	// The user can choose to be the robber or the policeman before he starts the game
 	boolean userIsRobber = true;
@@ -82,12 +83,18 @@ public class Play extends BasicGameState {
 
 		blocks = new ArrayList<>(20);
 
+		
 		initMap();			// Tile Map
 		initRobber();		// Robber 
 		initPoliceman();	// Policeman
+		initCamera();		// Camera to center on the robber
 
 		// pass instance of police force to Robber
 		this.robber.setPoliceForceArray(policeForceArray);
+	}
+	
+	private void initCamera() throws SlickException {
+		camera = new Camera(gameContainer, cityTileMap);
 	}
 
 	private void initMap() throws SlickException
@@ -98,7 +105,7 @@ public class Play extends BasicGameState {
 		blocked = new boolean[cityTileMap.getWidth()][cityTileMap.getHeight()];
 
 		for (int i=0; i < blocked.length; i++) {
-			for (int j=0; j < blocked.length;j++) {
+			for (int j=0; j < blocked[0].length;j++) {
 
 				// need to check if the houses layer has a tile on the given x,y position
 				// TODO: WHY 1 ? ID of what ? 
@@ -161,20 +168,25 @@ public class Play extends BasicGameState {
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
 
-		// Render the City Map
-		cityTileMap.render(0, 0, 0);
-		cityTileMap.render(0, 0, 1);
+//		// Render the City Map
+//		cityTileMap.render(0, 0, 0);
+//		cityTileMap.render(0, 0, 1);
+//		
+//		// Highlight the house near the robber
+//		if (highlightHouse)
+//			cityTileMap.render(0, 0, 2 + robber.nearByBldg.ID);
 
-		// Highlight the house near the robber
-		if (highlightHouse)
-			cityTileMap.render(0, 0, 2 + robber.nearByBldg.ID);
-
+		camera.centerOn(robber.rect);
+		camera.drawMap();
+		camera.translateGraphics();
+		
 		//Draw Robber
 		robber.draw();
 
 		// Draw Policeman
 		police1.draw();
 
+		
 		// Draw the money the Robber has
 		g.drawString(String.format("Money: $%d", robber.money), Game.width-120, 0);
 
