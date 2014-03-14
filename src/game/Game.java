@@ -8,15 +8,8 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 public class Game extends StateBasedGame {
-
-	public static final String gamename = "Jom & Terry";
-	public static final int menuIndex = 0;
-	public static final int playIndex = 1;
-	public static final int pauseIndex = 3;
-	public static final int gameOverIndex = 4;
-
-	static public float width = 800.0f;
-	static public float height = 800.0f;
+	
+	public static final Game game  = new Game(Globals.gamename);
 	
 	public Game(String gamename) {
 		super(gamename);
@@ -25,25 +18,35 @@ public class Game extends StateBasedGame {
 		this.addState(new Menu(this));
 		
 		// 1 PLAY
-		Play play = new Play(playIndex);		
+		Play play = new Play(Globals.playIndex);		
 		this.addState(play);
 		
 		// 3  PAUSE
-		PausedState pause = new PausedState(pauseIndex, this);
+		PausedState pause = new PausedState(Globals.pauseIndex, this);
 		this.addState(pause);
 		
 		// 5 GAME OVER
-		GameOverState gameOver = new GameOverState(gameOverIndex, this);
+		GameOverState gameOver = new GameOverState(Globals.gameOverIndex, this);
 		this.addState(gameOver);
+		
+		
+		// 5 LOADING GAME STATE
+		LoadingState loadingState = new LoadingState(Globals.loadingIndex, this);
+		this.addState(loadingState);
  	}
 
+	
+	public static Game getGame() {
+		return game;
+	}
+	
 	public void initStatesList(GameContainer gc) throws SlickException {
-		this.getState(menuIndex).init(gc, this);
-		this.getState(playIndex).init(gc, this);
-		this.getState(pauseIndex).init(gc, this);
-		this.getState(gameOverIndex).init(gc, this);
+		this.getState(Globals.menuIndex).init(gc, this);
+		this.getState(Globals.playIndex).init(gc, this);
+		this.getState(Globals.pauseIndex).init(gc, this);
+		this.getState(Globals.gameOverIndex).init(gc, this);
 		
-		this.enterState(menuIndex);
+		this.enterState(Globals.menuIndex);
 	}
 	
 	
@@ -51,7 +54,7 @@ public class Game extends StateBasedGame {
 
 		AppGameContainer container;
 		try {
-			container = new AppGameContainer(new Game(gamename));
+			container = new AppGameContainer(new Game(Globals.gamename));
 
 			container.setDisplayMode(800, 800, false);
 

@@ -12,25 +12,17 @@ import org.newdawn.slick.geom.Vector2f;
 
 
 public class Robber extends Person{
-
-	// Declare Direction enumerator
-	enum Direction { 
-		UP, 
-		DOWN, 
-		RIGHT, 
-		LEFT
-	}
-
+	
+	private String playerSpriteSheet = "res/SpriteSheets/robber-2.png";
 	public boolean isCaught = false; 
 	private boolean isUser; 
 
+	public Rectangle rect;
+	public float xPos = 0;// sprite drawing location
+	public float yPos = 0;	// sprite drawing location
+
 	public Integer money; 
-	
-	// sprite drawing location
-	public float xPos = 0;
-	// sprite drawing location
-	public float yPos = 0;
-	
+
 	// Vision Attribute
 	private float visionDistance = 100.0f; 
 
@@ -41,24 +33,12 @@ public class Robber extends Person{
 	public Vector2f vectorDirection;
 
 
-	public Rectangle rect; 
-	public Direction direction; 
+	// =================================================================================================== 
+	// ENVIRONMENT AROUND 
+	private ArrayList<Policeman> policeForceArray;		// Police Related
+	public Building nearByBldg;							// Building
 	
-	// =================================================================================================== 
-	// ENVIRONMENT AROUND
-	// =================================================================================================== 
-
-	// Police Related
-	private ArrayList<Policeman> policeForceArray;
-	// Building
-	public Building nearByBldg; 
 	// ===================================================================================================
-	
-	
-	//time to display each sprite
-	int duration = 200;
-
-	
 	// TODO: the following 2 should be 'constants'
 	// Animations
 	Animation currentAnimation = null; 
@@ -66,33 +46,7 @@ public class Robber extends Person{
 	static Animation leftWalkAnimation = null;
 	static Animation downWalkAnimation = null;
 	static Animation upWalkAnimation = null;
-	
-	//====================================================================================================
-	//SpriteSheet
-	//====================================================================================================
-	SpriteSheet spriteSheet; 
 
-	// Path to the Sprite Sheet
-//	private String playerSpriteSheet = "res/player1.png";
-	private String playerSpriteSheet = "res/SpriteSheets/robber-2.png";
-
-	// Dimensions a single sprite
-	int spriteWidth;
-	int spriteHeight;
-
-	// Dimensions for the whole sheet containing all the sprites
-	float spriteSheetWidth;
-	float spriteSheetHeight;
-
-	
-	// OLD 6 per ROW, 2 PER COLUMN
-//	int spritesPerRow = 6;
-//	int spritesPerColumn = 2;
-	// NEW
-	int spritesPerRow = 4; 
-	int spritesPerColumn = 4;
-
-	//====================================================================================================
 
 	/**
 	 * 
@@ -110,16 +64,13 @@ public class Robber extends Person{
 		// set the Sprite Sheet
 		this.initSpriteSheet();
 
-		// initially the player is moving to the right
-		direction = Direction.RIGHT;
-
 		// set initial position
 		this.xPos = 0;
 		this.yPos = 0;
 
 		// The robber is initially broke
 		this.money = 0; 
-		
+
 		// set the rectangle of the player 
 		this.rect = new Rectangle(this.xPos, this.yPos, spriteWidth, spriteHeight);
 
@@ -132,7 +83,9 @@ public class Robber extends Person{
 		int leftWalkRow = 1; 
 		int upWalkRow = 3; 
 		int downWalkRow = 0;
+
 		
+		int duration = 200;
 		currentAnimation =  rightWalkAnimation = new Animation(this.spriteSheet,
 				0,//first column
 				rightWalkRow,//first row
@@ -160,7 +113,7 @@ public class Robber extends Person{
 				duration,//display time
 				true//autoupdate
 				);
-		
+
 		downWalkAnimation = new Animation(this.spriteSheet,
 				0,//first column
 				downWalkRow,//first row
@@ -175,6 +128,9 @@ public class Robber extends Person{
 	}
 
 	private void initSpriteSheet() throws SlickException {
+
+		spritesPerRow = 4; 
+		spritesPerColumn = 4;
 		//Get, save, and display the width and the height
 		// of the sprite sheet.
 		Image spriteSheetImage = new Image(playerSpriteSheet);
@@ -223,7 +179,7 @@ public class Robber extends Person{
 		this.policeForceArray = policeForceArray;
 	}
 
-	
+
 	// MOVEMENT
 	//=====================================================================================================
 	public void stop() {
@@ -256,12 +212,11 @@ public class Robber extends Person{
 		this.rect.setY(this.yPos);
 		this.currentAnimation = Robber.downWalkAnimation;
 	}
-	
-	
+
+
 	public void normalForceRight() {
 		this.xPos+=0.02*velocity;
 		this.rect.setX(this.xPos);
-
 	}
 
 	public void normalForceLeft() {
@@ -278,7 +233,7 @@ public class Robber extends Person{
 		this.yPos+=0.02f*velocity;
 		this.rect.setY(this.yPos);
 	}
-	
+
 
 	public void setCurrentAnimation(Animation animation)
 	{
@@ -289,19 +244,20 @@ public class Robber extends Person{
 		this.currentAnimation.draw(this.xPos, this.yPos);
 
 		Policeman policeman; 
+		if (!isUser){
+			if ((policeman = canSeePolice()) !=null)
+			{
+				// move in opposite direction
+				// get vector to policeman 
+				Vector2f directionToPoliceman = new Vector2f(policeman.xPos-this.xPos, policeman.yPos-this.yPos);
 
-		if ((policeman = canSeePolice()) !=null)
-		{
-			// move in opposite direction
-			// get vector to policeman 
-			Vector2f directionToPoliceman = new Vector2f(policeman.xPos-this.xPos, policeman.yPos-this.yPos);
+				// get the negative vector the one in the opposite direction
+				Vector2f negativeVector = directionToPoliceman.negate();
 
-			// get the negative vector the one in the opposite direction
-			Vector2f negativeVector = directionToPoliceman.negate();
 
-			if (!isUser)
 				// flee the policeman only if the user has chosen to play as the police
 				this.fleePoliceman(negativeVector);
+			}
 		}
 
 		// if Robber is moving, change xPos and yPos 
@@ -320,24 +276,23 @@ public class Robber extends Person{
 
 	}
 
-	
 	public boolean rob()
 	{
 		// if there is no nearby buildg then the robber cannot rob anything
 		if (this.nearByBldg == null)
 			return false; 
-		
+
 		Integer money = this.nearByBldg.money; 
-		
+
 		// add the sum of money to the player's cash
 		this.money += money;
-		
+
 		// completely rob the building
 		this.nearByBldg.money = 0; 
 		return true;
 	}
-	
-	// VISION
+
+	// VISION - ONLY WHEN USER IS POLICE
 	// ====================================================================================================
 	public Policeman canSeePolice()
 	{

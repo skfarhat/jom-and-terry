@@ -1,5 +1,7 @@
 package game;
 
+import game.city.person.Robber;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.tiled.TiledMap;
@@ -36,13 +38,16 @@ public class Camera {
    /** the y-position of our "camera" in pixel */
    protected float cameraY;
    
+   
+   private Robber robber; 
+   
    /**
     * Create a new camera
     * 
     * @param gc the GameContainer, used for getting the size of the GameCanvas
     * @param map the TiledMap used for the current scene
     */
-   public Camera(GameContainer gc, TiledMap map) {
+   public Camera(GameContainer gc, TiledMap map, Robber robber) {
       this.map = map;
       
       this.numTilesX = map.getWidth();
@@ -53,6 +58,8 @@ public class Camera {
       
       this.mapWidth = this.numTilesX * this.tileWidth;
       this.mapHeight = this.numTilesY * this.tileHeight;
+      
+      this.robber = robber; 
       
       this.gc = gc;
    }
@@ -104,6 +111,11 @@ public class Camera {
       this.drawMap(0, 0);
    }
    
+   public void draw() {
+	   this.drawMap(0, 0);
+		// Draw the money the Robber has
+		this.gc.getGraphics().drawString(String.format("Money: $%d", robber.money), Globals.APP_WIDTH-120, 0);
+   }
    /**
     * draws the part of the map which is currently focussed by the camera on the screen.<br>
     * You need to draw something over the offset, to prevent the edge of the map to be displayed below it<br>

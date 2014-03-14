@@ -14,9 +14,9 @@ public class GameOverState extends BasicGameState {
 	
 	private String gameOverPath = "res/GameOver/GameOver.png";
 	private GameContainer gc;
-	private StateBasedGame sbg; 	
 	
 	private Image gameOverImage; 
+	
 	public GameOverState(int state, StateBasedGame sbg){
 	}
 
@@ -24,7 +24,6 @@ public class GameOverState extends BasicGameState {
 	public void init(GameContainer gc, StateBasedGame sbg)
 			throws SlickException {
 		this.gc = gc;
-		this.sbg = sbg; 
 		
 		try{
 			this.gameOverImage = new Image(gameOverPath);

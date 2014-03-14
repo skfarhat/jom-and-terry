@@ -1,0 +1,16 @@
+
+		// // Render the City Map
+		// cityTileMap.render(0, 0, 0);
+		// cityTileMap.render(0, 0, 1);
+		//
+		// // Highlight the house near the robber
+		// if (highlightHouse)
+		// cityTileMap.render(0, 0, 2 + robber.nearByBldg.ID);
+		
+		
+			// public void move(float destX, float destY)
+	// {
+	// this.direction = new Vector2f(destX - this.xPos, destY - this.yPos);
+	//
+	// this.isMoving = true;
+	// }

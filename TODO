@@ -2,13 +2,18 @@ TODO LIST
 
 Robber
 --------------
-Robber SpriteSheet
-Fix Collision Detection
 
 Police
 --------------
-Police SpriteSheet
-Police Random Movement
+Police Moving SpriteSheet	
+Be alerted of Robber position
+
+Security Guards
+---------------
+Rotate Around the Building
+Alert Police to Position of the Robber
+Arrest Robber if Distance (less than something) 
+
 
 
 Add Sounds
@@ -20,3 +25,7 @@ As Robber is fleeing Police he gains points
 ====================================
 			D O N E
 ====================================
+Police SpriteSheet				X
+Police Random Movement			X
+Robber SpriteSheet				X
+Fix Collision Detection			X

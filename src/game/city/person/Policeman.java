@@ -13,6 +13,8 @@ import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Circle;
+import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
@@ -24,58 +26,39 @@ import org.newdawn.slick.geom.Vector2f;
  */
 public class Policeman extends Person {
 
+	//	Random rand = new Random(); 
+
 	private Play play; 
 	private String policemanImgPath = "res/police1.png";
-
+	private String policeSpriteSheet = "res/Spritesheets/police.png";
+	//=================================================================
+	private Image image;	
+	public Rectangle rect; 
 	public float xPos, yPos;
-
 	private float destX, destY; 
-	private Image image;
-
+	public Vector2f direction; 
+	private float visionDistance = 130.0f;	// Vision Attribute
+	//=================================================================
+	// Behavior
 	public boolean isMoving = false;
 	private boolean isPatrolling = false;
 	private boolean isFollowingRobber = false;
-	public Vector2f direction; 
-
+	private boolean isCheckingSuspectRegion= false;
+	//=================================================================
+	// 
 	private Timer patrolTimer; 
 	public Robber robber; 
+
+	private Circle suspectRegion; 
+
 
 	// TODO: the following 2 should be 'constants'
 	// Animations
 	Animation currentAnimation = null; 
 	static Animation rightWalkAnimation = null;
 	static Animation leftWalkAnimation = null;
-
-	//time to display each sprite
-	int duration = 200;
-
-
-	public Rectangle rect; 
-
-	//====================================================================================================
-	//SpriteSheet
-	//====================================================================================================
-	SpriteSheet spriteSheet; 
-
-	// Path to the Sprite Sheet
-	private String policeSpriteSheet = "res/Spritesheets/police.png";
-
-	// Dimensions a single sprite
-	int spriteWidth;
-	int spriteHeight;
-
-	// Dimensions for the whole sheet containing all the sprites
-	float spriteSheetWidth;
-	float spriteSheetHeight;
-
-	int spritesPerRow = 6;
-	int spritesPerColumn = 2;
-
-	//====================================================================================================
-
-	// Vision Attribute
-	private float visionDistance = 130.0f;
-
+	//=================================================================
+	// Constructor
 	/**
 	 * Creates a policeman.
 	 * 
@@ -108,12 +91,12 @@ public class Policeman extends Person {
 
 		this.robber = robber;
 
-		this.patrol();
+		this.startPatrol();
 
 		// initially the player is moving to the right
 		//Create a new animation based on a selection of
 		// sprites from the sprite sheet.
-
+		int duration = 200;
 		currentAnimation =  rightWalkAnimation = new Animation(this.spriteSheet,
 				0,//first column
 				0,//first row
@@ -136,8 +119,11 @@ public class Policeman extends Person {
 		currentAnimation.stop();  
 	}
 
-
 	private void initSpriteSheet() throws SlickException {
+
+		spritesPerRow = 6;
+		spritesPerColumn = 2;
+
 		//Get, save, and display the width and the height
 		// of the sprite sheet.
 		Image spriteSheetImage = new Image(policeSpriteSheet);
@@ -163,28 +149,8 @@ public class Policeman extends Person {
 		return image;
 	}
 
-	/**
-	 * Warns the police if a robber is near.
-	 * 
-	 * @param robber
-	 * @return
-	 */
-	public boolean warnPolice(Robber robber) {
-		// return (calculateDistance(robber) < 40.0);
-		return false;
-	}
-
-	/**
-	 * Attempt to arrest a robber.
-	 * 
-	 * @param robber
-	 * @return whether the arrest was successful.
-	 */
-
-	public boolean arrestRobber(Robber robber) {
-		robber.isCaught = true; 
-		this.play.gameOver();
-		return true;
+	public void setSuspectRegion(Circle suspectRegionCircle) {
+		this.suspectRegion = suspectRegionCircle;
 	}
 
 	public void move(float destX, float destY)
@@ -196,7 +162,21 @@ public class Policeman extends Person {
 		this.isMoving = true;
 	}
 
+
+	private Point randomPointInCircle(Circle circle){
+		Random rand = new Random(); 
+
+		float randAngle =  (float) (rand.nextFloat() * (Math.PI * 2.0f)); 		// random angle 
+		float randRadius = (float)  (rand.nextFloat()%circle.radius); 			// random radius
+
+		float x = circle.getCenterX() + (float) (randRadius * Math.cos(randAngle));
+		float y = circle.getCenterY() + (float) (randRadius* Math.sin(randAngle));
+
+		return new Point(x,y);
+	}
+
 	public void draw() {
+
 		// if Policeman is moving, change xPos and yPos
 		if (isMoving) {
 			float speed = (float) (0.04f * velocity);
@@ -224,13 +204,20 @@ public class Policeman extends Person {
 			// 2.0f margin of error
 			if (Math.abs(this.xPos - this.destX) < 2.0f
 					&& Math.abs(this.yPos - this.destY) < 2.0f) {
+
+
 				this.isMoving = false;	
+				if (isCheckingSuspectRegion)
+				{
+					this.isCheckingSuspectRegion = false;
+					this.suspectRegion = null; 
+				}
 			}
 		}
-		
+
 		// if the Policeman is neither patrolling nor following the robber then he should patrol
 		if (!this.isPatrolling && !this.isFollowingRobber)
-			patrol();
+			startPatrol();
 
 		// see if the Robber is visible
 		lookForRobber();
@@ -239,21 +226,51 @@ public class Policeman extends Person {
 		this.image.draw(this.xPos, this.yPos);
 	}
 
-	public void patrol()
+	public void startPatrol()
 	{ 
+		isPatrolling = true;
+
 		patrolTimer = new Timer(2000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Random rand = new Random(); 
+				//				// if the Policeman is already moving don't interrupt him
+				//				// wait until he reaches his position
+				//				if (isMoving)
+				//					return;  
 
-				Integer index = rand.nextInt(play.getHouses().size());
+				Integer index = (new Random()).nextInt(play.getHouses().size());
 				House house = play.getHouses().get(index);
+
+				System.out.println("house " + house.xPos + " " + house.yPos);
 				move(house.xPos, house.yPos);
 			}
 		});
 		patrolTimer.start();
-		
-		this.isPatrolling = true;
+
 	}
+
+	private void stopPatrol(){
+		patrolTimer.stop();
+		this.isPatrolling = false;
+	}
+
+
+	public void checkoutRegion(Circle region){
+		// to check out a region
+
+		//first stop patroling
+		stopPatrol();
+
+		setSuspectRegion(region);
+
+		// get a random point inside the region
+		Point randPoint = randomPointInCircle(suspectRegion);
+
+		move(randPoint.getX(), randPoint.getY());
+
+		// set flag for isCheckingRegion
+		this.isCheckingSuspectRegion = true;
+	}
+
 
 	public boolean lookForRobber()
 	{
@@ -278,10 +295,19 @@ public class Policeman extends Person {
 
 	private void followRobber()
 	{
-		patrolTimer.stop();
-		this.isPatrolling = false;
 		this.isFollowingRobber = true;
 		this.move(robber.xPos, robber.yPos);
+	}
+	/**
+	 * Attempt to arrest a robber.
+	 * 
+	 * @param robber
+	 * @return whether the arrest was successful.
+	 */
+	public boolean arrestRobber(Robber robber) {
+		robber.isCaught = true; 
+		this.play.gameOver();
+		return true;
 	}
 
 }

@@ -26,7 +26,7 @@ public abstract class Building  {
 	 * @param positionY
 	 * @param money
 	 */
-	public Building(int positionX, int positionY, float width, float height, Integer money) {
+	public Building(int ID, int positionX, int positionY, float width, float height, Integer money) {
 		
 		this.xPos = positionX; 
 		this.yPos = positionY;
