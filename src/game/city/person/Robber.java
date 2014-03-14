@@ -12,7 +12,7 @@ import org.newdawn.slick.geom.Vector2f;
 
 
 public class Robber extends Person{
-	
+
 	private String playerSpriteSheet = "res/SpriteSheets/robber-2.png";
 	public boolean isCaught = false; 
 	private boolean isUser; 
@@ -21,7 +21,7 @@ public class Robber extends Person{
 	public float xPos = 0;// sprite drawing location
 	public float yPos = 0;	// sprite drawing location
 
-	public Integer money; 
+	private Integer money; 
 
 	// Vision Attribute
 	private float visionDistance = 100.0f; 
@@ -37,7 +37,7 @@ public class Robber extends Person{
 	// ENVIRONMENT AROUND 
 	private ArrayList<Policeman> policeForceArray;		// Police Related
 	public Building nearByBldg;							// Building
-	
+
 	// ===================================================================================================
 	// TODO: the following 2 should be 'constants'
 	// Animations
@@ -84,7 +84,7 @@ public class Robber extends Person{
 		int upWalkRow = 3; 
 		int downWalkRow = 0;
 
-		
+
 		int duration = 200;
 		currentAnimation =  rightWalkAnimation = new Animation(this.spriteSheet,
 				0,//first column
@@ -179,7 +179,18 @@ public class Robber extends Person{
 		this.policeForceArray = policeForceArray;
 	}
 
-
+	public Integer getMoney() {
+		return money;
+	}
+	/**
+	 * Money is set to private for encapsulation
+	 * Other classes can only add to the amount the robber has
+	 * @param addedAmount
+	 */
+	public void addMoney(Integer addedAmount){
+		// 
+		this.money+=addedAmount;
+	}
 	// MOVEMENT
 	//=====================================================================================================
 	public void stop() {
@@ -281,14 +292,10 @@ public class Robber extends Person{
 		// if there is no nearby buildg then the robber cannot rob anything
 		if (this.nearByBldg == null)
 			return false; 
+		
+		// Rob the building and pass parameter to self
+		this.nearByBldg.rob(this); 
 
-		Integer money = this.nearByBldg.money; 
-
-		// add the sum of money to the player's cash
-		this.money += money;
-
-		// completely rob the building
-		this.nearByBldg.money = 0; 
 		return true;
 	}
 

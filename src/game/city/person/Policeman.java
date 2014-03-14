@@ -232,15 +232,9 @@ public class Policeman extends Person {
 
 		patrolTimer = new Timer(2000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//				// if the Policeman is already moving don't interrupt him
-				//				// wait until he reaches his position
-				//				if (isMoving)
-				//					return;  
-
 				Integer index = (new Random()).nextInt(play.getHouses().size());
 				House house = play.getHouses().get(index);
 
-				System.out.println("house " + house.xPos + " " + house.yPos);
 				move(house.xPos, house.yPos);
 			}
 		});

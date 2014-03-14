@@ -8,53 +8,54 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 public class Game extends StateBasedGame {
-	
+
 	public static final Game game  = new Game(Globals.gamename);
-	
-	public Game(String gamename) {
+
+	private Game(String gamename) {
 		super(gamename);
-		
+
 		// 0 MENU
 		this.addState(new Menu(this));
-		
+
 		// 1 PLAY
 		Play play = new Play(Globals.playIndex);		
 		this.addState(play);
-		
+
 		// 3  PAUSE
 		PausedState pause = new PausedState(Globals.pauseIndex, this);
 		this.addState(pause);
-		
+
 		// 5 GAME OVER
 		GameOverState gameOver = new GameOverState(Globals.gameOverIndex, this);
 		this.addState(gameOver);
-		
-		
+
+
 		// 5 LOADING GAME STATE
 		LoadingState loadingState = new LoadingState(Globals.loadingIndex, this);
 		this.addState(loadingState);
- 	}
+	}
 
-	
-	public static Game getGame() {
+	public static Game getInstance() {
 		return game;
 	}
-	
+
+
 	public void initStatesList(GameContainer gc) throws SlickException {
 		this.getState(Globals.menuIndex).init(gc, this);
 		this.getState(Globals.playIndex).init(gc, this);
 		this.getState(Globals.pauseIndex).init(gc, this);
 		this.getState(Globals.gameOverIndex).init(gc, this);
-		
+
 		this.enterState(Globals.menuIndex);
 	}
-	
-	
+
+
 	public static void main(String[] args) {
 
 		AppGameContainer container;
 		try {
-			container = new AppGameContainer(new Game(Globals.gamename));
+			Game game = Game.getInstance(); 
+			container = new AppGameContainer(game);
 
 			container.setDisplayMode(800, 800, false);
 

@@ -1,7 +1,16 @@
 package game.city.building;
 
+import game.Game;
 import game.city.person.Person;
 import game.city.person.Robber;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
+
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Rectangle;
 
 /**
  * Buildings abstract class.
@@ -13,12 +22,29 @@ public abstract class Building  {
 	/**
 	 * The amount of money a building has.
 	 */
+
+	
+	//==============================================================================================================================
+	// ROBBING
+	// FIXME: ROBBING DURATION modify for each building
+	private final static int ROBBING_DURATION = 3000;
+	private final static int ROBBING_UPDATE = 10;
+	private Timer robbingTimer = null;
+
+	private boolean isBeingRobbed;
+	private boolean isCompletelyRobbed = false; 
+	private float robbedPercent = 0.0f; 
+	private FillingBar fillingBar; 
+	//==============================================================================================================================
+	
 	
 	public Integer ID; 
 	public Integer money;
 	public int xPos, yPos; 
 	public float width, height;
 	public boolean isHighlighted;
+	public Rectangle frame;
+
 	/**
 	 * Abstract constructor only called by subclasses.
 	 * 
@@ -26,8 +52,10 @@ public abstract class Building  {
 	 * @param positionY
 	 * @param money
 	 */
-	public Building(int ID, int positionX, int positionY, float width, float height, Integer money) {
-		
+	public Building(int ID, int positionX,  int positionY, float width, float height, Integer money) {
+
+		this.frame = new Rectangle(positionX, positionY, width, height);
+
 		this.xPos = positionX; 
 		this.yPos = positionY;
 		this.width = width; 
@@ -37,6 +65,10 @@ public abstract class Building  {
 		// initially the building is not highlighted
 		this.isHighlighted = false;
 		
+
+		// init the filling bar 
+		fillingBar = new FillingBar(xPos, yPos-20, width);
+
 	}
 
 	/**
@@ -45,16 +77,72 @@ public abstract class Building  {
 	 * @param robber
 	 * @return
 	 */
-	
-	//TODO: FIX
-	public boolean robberNearBuilding(Robber robber) {
-		return false;
-	}
 
 	/**
 	 * Output the info of a building when the robber is near
 	 */
 	public void displayBuildingInfo(Person person) {
+
+	}
+
+	public void rob(final Robber robber){
+		
+		if (isBeingRobbed)
+			return; 
+
+		final Building thisBuilding = this; 
+		final Building nearByBldg = robber.nearByBldg; 
+		
+		robbingTimer = new Timer(ROBBING_DURATION/ROBBING_UPDATE, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if (isCompletelyRobbed)
+					return;  
+
+				// the robber is in fact robbing this bank
+				if (nearByBldg == thisBuilding){
+
+					// add 10% to the robbed percent of the bank
+					robbedPercent+=0.1f;
+
+					// update the filling bar of the building
+
+					if (robbedPercent >= 1.0f){
+
+						// robber finished robbing this bank
+						robber.addMoney(thisBuilding.money);
+
+						// set the money of the bank to zero
+						thisBuilding.money = 0; 
+
+						// set the boolean is completely robbed to avoid robber re-robbing
+						isCompletelyRobbed = true; 
+						
+						// stop the robbing timer
+						robbingTimer.stop();
+					}
+					fillingBar.update(robbedPercent);
+				}
+				else return; 
+			}
+		});
+
+		// start the timer
+		robbingTimer.start(); 
+		isBeingRobbed = true; 
+	}
+
+
+	public void draw(){
+		// Get Graphics Instance 
+		Graphics g = Game.getInstance().getContainer().getGraphics();
+		
+		// Draw the filling bar at the xPos of the building but a bit above 
+		fillingBar.draw(0,0);
+				
+		g.drawString(String.format("$%d", money), xPos, yPos);
+
 		
 	}
 }

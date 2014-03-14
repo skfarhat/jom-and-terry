@@ -114,7 +114,7 @@ public class Camera {
    public void draw() {
 	   this.drawMap(0, 0);
 		// Draw the money the Robber has
-		this.gc.getGraphics().drawString(String.format("Money: $%d", robber.money), Globals.APP_WIDTH-120, 0);
+		this.gc.getGraphics().drawString(String.format("Money: $%d", robber.getMoney()), Globals.APP_WIDTH-120, 0);
    }
    /**
     * draws the part of the map which is currently focussed by the camera on the screen.<br>

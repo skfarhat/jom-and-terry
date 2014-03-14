@@ -14,3 +14,10 @@
 	//
 	// this.isMoving = true;
 	// }
+	
+	
+					//				// if the Policeman is already moving don't interrupt him
+				//				// wait until he reaches his position
+				//				if (isMoving)
+				//					return;  
+	

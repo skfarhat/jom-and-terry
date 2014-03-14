@@ -49,7 +49,6 @@ public class LoadingState extends BasicGameState {
 
         @Override
         public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-//                g.setFont(font);
 
                 if (nextResource != null) {
                         g.setColor(Color.gray);
