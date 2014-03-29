@@ -1,16 +1,21 @@
 package game.city.building;
 
+import game.AudioGame;
 import game.Game;
 import game.city.person.Person;
 import game.city.person.Robber;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.Timer;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.openal.Audio;
+import org.newdawn.slick.openal.AudioLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
 /**
  * Buildings abstract class.
@@ -28,7 +33,7 @@ public abstract class Building  {
 	// ROBBING
 	// FIXME: ROBBING DURATION modify for each building
 	private final static int ROBBING_DURATION = 3000;
-	private final static int ROBBING_UPDATE = 10;
+	private final static int ROBBING_UPDATE = 100;
 	private Timer robbingTimer = null;
 
 	private boolean isBeingRobbed;
@@ -90,6 +95,15 @@ public abstract class Building  {
 		if (isBeingRobbed)
 			return; 
 
+		AudioGame.play("Glass-Smash.ogg");
+		try {
+			Audio oggStream = AudioLoader.getStreamingAudio("OGG", ResourceLoader.getResource("res/Sounds/Glass-Smash.ogg"));
+			oggStream.playAsMusic(1.0f, 1.0f, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
 		final Building thisBuilding = this; 
 		final Building nearByBldg = robber.nearByBldg; 
 		
@@ -104,7 +118,7 @@ public abstract class Building  {
 				if (nearByBldg == thisBuilding){
 
 					// add 10% to the robbed percent of the bank
-					robbedPercent+=0.1f;
+					robbedPercent+= (1.0f/ROBBING_UPDATE);
 
 					// update the filling bar of the building
 
@@ -141,8 +155,6 @@ public abstract class Building  {
 		// Draw the filling bar at the xPos of the building but a bit above 
 		fillingBar.draw(0,0);
 				
-		g.drawString(String.format("$%d", money), xPos, yPos);
-
-		
+		g.drawString(String.format("$%d", money), xPos, yPos-40);
 	}
 }

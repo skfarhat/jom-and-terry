@@ -1,8 +1,8 @@
 package game.city.person;
 
-import game.Play;
 import game.city.building.Bank;
 import game.city.building.PoliceOffice;
+import game.states.Play;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -72,7 +72,7 @@ public class SecurityGuard extends Person {
 	SpriteSheet spriteSheet;
 
 	// Path to the Sprite Sheet
-	private String sgSpriteSheet = "res/SpriteSheets/security-guard.png";
+	//private String sgSpriteSheet = "res/SpriteSheets/security-guard.png";
 
 	// Dimensions a single sprite
 	int spriteWidth;
@@ -133,6 +133,7 @@ public class SecurityGuard extends Person {
 		this.startRoundPatrol();
 	}
 
+	/*
 	private final void initSpriteSheet() throws SlickException {
 		// Get, save, and display the width and the height
 		// of the sprite sheet.
@@ -148,6 +149,7 @@ public class SecurityGuard extends Person {
 		this.spriteSheet = new SpriteSheet(spriteSheetImage, spriteWidth,
 				spriteHeight);
 	}
+	*/
 	
 	public void setRobber(Robber robber) {
 		this.robber = robber; 
@@ -314,7 +316,7 @@ public class SecurityGuard extends Person {
 	 */
 	public boolean callPolice(Point center, float error) {
 		
-		policeOffice.suspectedRegion(center, error);
+		policeOffice.callPolice(center, error);
 		// TODO implement
 		return false;
 	}

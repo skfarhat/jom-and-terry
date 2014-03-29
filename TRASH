@@ -20,4 +20,5 @@
 				//				// wait until he reaches his position
 				//				if (isMoving)
 				//					return;  
+	//		Dimension screenSize= Toolkit.getDefaultToolkit().getScreenSize();
 	

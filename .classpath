@@ -17,5 +17,8 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Slick Tutorial/src/mac-native"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="jars/jogg-0.0.7.jar"/>
+	<classpathentry kind="lib" path="jars/jorbis-0.0.15.jar"/>
+	<classpathentry kind="lib" path="jars/json-simple-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

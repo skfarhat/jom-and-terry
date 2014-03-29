@@ -1,7 +1,7 @@
 package game.city.person;
 
-import game.Play;
-import game.city.building.House;
+import game.city.building.Building;
+import game.states.Play;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -162,7 +162,6 @@ public class Policeman extends Person {
 		this.isMoving = true;
 	}
 
-
 	private Point randomPointInCircle(Circle circle){
 		Random rand = new Random(); 
 
@@ -233,9 +232,10 @@ public class Policeman extends Person {
 		patrolTimer = new Timer(2000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Integer index = (new Random()).nextInt(play.getHouses().size());
-				House house = play.getHouses().get(index);
+//				House house = play.getHouses().get(index);
+				Building bldg = play.getBuildings().get(index);
 
-				move(house.xPos, house.yPos);
+				move(bldg.xPos, bldg.yPos);
 			}
 		});
 		patrolTimer.start();
@@ -246,7 +246,6 @@ public class Policeman extends Person {
 		patrolTimer.stop();
 		this.isPatrolling = false;
 	}
-
 
 	public void checkoutRegion(Circle region){
 		// to check out a region

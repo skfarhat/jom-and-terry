@@ -21,6 +21,7 @@ public class Robber extends Person{
 	public float xPos = 0;// sprite drawing location
 	public float yPos = 0;	// sprite drawing location
 
+	private Integer score; 
 	private Integer money; 
 
 	// Vision Attribute
@@ -28,7 +29,7 @@ public class Robber extends Person{
 
 	// Movement attributes
 	private float destX, destY;
-	private float velocity = 120.0f; 
+	private float velocity = 130.0f; 
 	public boolean isMoving = false; 
 	public Vector2f vectorDirection;
 
@@ -70,7 +71,8 @@ public class Robber extends Person{
 
 		// The robber is initially broke
 		this.money = 0; 
-
+		this.score = 0;
+		
 		// set the rectangle of the player 
 		this.rect = new Rectangle(this.xPos, this.yPos, spriteWidth, spriteHeight);
 
@@ -182,6 +184,11 @@ public class Robber extends Person{
 	public Integer getMoney() {
 		return money;
 	}
+
+	public Integer getScore() {
+		return score;
+	}
+	
 	/**
 	 * Money is set to private for encapsulation
 	 * Other classes can only add to the amount the robber has

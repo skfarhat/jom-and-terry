@@ -1,91 +1,41 @@
 package game.menu;
 
-import game.Globals;
-
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.UnicodeFont;
-import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.loading.DeferredResource;
-import org.newdawn.slick.loading.LoadingList;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-
-
-/*
- *  The part with the leftMouseButtonReleased was found in an online source
- */
-
-public class Menu extends BasicGameState
-{
-
-	private StateBasedGame gameContainer = null;
+public abstract class Menu extends BasicGameState {
 
 	protected boolean leftMouseButtonReleased;
 	protected MenuButton[] buttons;
 	protected Image background;
 
-	private String playNowImagePath 		= "res/buttons/play-now.png";
-	private String settingsImagePath 		= "res/buttons/settings.png";
-	private String statisticsImagePath 		= "res/buttons/statistics.png";
-	private String exitImagePath 			= "res/buttons/exit.png";
-	private String backgroundImagePath 		= "res/buttons/background.png";
 
-	private Image backgroundImage = null;
+	public abstract int getID();
+	public abstract void initButtons();  
 
-
-	private UnicodeFont font = null;
-	private DeferredResource nextResource = null;
-
-	private int barWidth = Globals.APP_WIDTH / 3;
-	private int yPos = Globals.APP_HEIGHT / 2 - 50;
-
-	private Rectangle bar = null;
-	private Rectangle fill = null;
-
-
-
-	public Menu(StateBasedGame sbg) {
-		this.gameContainer = sbg; 
+	public Menu(int state, StateBasedGame sbg){
 	}
 
-	@Override
-	public void init(GameContainer arg0, StateBasedGame arg1)
-			throws SlickException {
-		// TODO Auto-generated method stub
-
-		initButtons();
-		this.backgroundImage = new Image(backgroundImagePath);
+	public final void setButtons(MenuButton... buttons) {
+		this.buttons = buttons;
 	}
 
-
-	@Override
-	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
-			throws SlickException {
-
-		g.drawImage(this.backgroundImage, 0, 0);
-		for(MenuButton b : buttons)
-		{
-			b.render(g);
+	private void clickButton() {
+		for (MenuButton b : buttons) {
+			if (b.isMouseOver())
+				b.performAction();
 		}
 	}
-	@Override
-	public void update(GameContainer arg0, StateBasedGame arg1, int arg2)
-			throws SlickException {
-		this.checkForButtonClicks();
 
-		if (nextResource != null) {
-			try {
-				nextResource.load();
-			} catch (Exception e) {
-				throw new SlickException("Failed to load: " + nextResource.getDescription(), e);
-			}
-
-			nextResource = null;
+	protected final void checkForButtonClicks() {
+		if (leftMouseButtonReleased) {
+			leftMouseButtonReleased = false;
+			clickButton();
 		}
 	}
 
@@ -96,90 +46,29 @@ public class Menu extends BasicGameState
 		}
 	}
 
-	protected final void checkForButtonClicks() {
-		if(leftMouseButtonReleased) {
-			leftMouseButtonReleased = false;
-			this.clickButton();
-		}
+	@Override
+	public void init(GameContainer arg0, StateBasedGame arg1)
+			throws SlickException {
+		initButtons();
 	}
-
-	private void clickButton() {
-		for(MenuButton b : buttons) {
-			if(b.isMouseOver())
-				b.performAction();
-		}
-	}
-
 
 	@Override
-	public int getID() {
-		return 0;
+	public void update(GameContainer arg0, StateBasedGame arg1, int arg2)
+			throws SlickException {
+		this.checkForButtonClicks();
+
 	}
 
-	public void initButtons() {
-		Image playNowImage = null, exitImage = null, statisticsImage = null, settingsImage = null; 
+	@Override
+	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
+			throws SlickException {
 
-		try{
-			playNowImage = new Image(playNowImagePath);
-			settingsImage = new Image(settingsImagePath);
-			statisticsImage = new Image(statisticsImagePath);
-			exitImage = new Image(exitImagePath);
+//		g.drawImage(background, 0, 0);
+		for (MenuButton b : buttons) {
+			b.render(g);
 		}
-		catch (SlickException se)
-		{
-			se.printStackTrace();
-		}
-
-		float height = 50.0f; 
-		int verticalMargin = 100; 
-
-		int x1 = (int) (gameContainer.getContainer().getWidth()/2.0f - playNowImage.getWidth()/2.0f); 
-		int y1 = (int) (gameContainer.getContainer().getHeight()/2.0f - height/2.0f);
-
-
-		int x2 = (int) (gameContainer.getContainer().getWidth()/2.0f - statisticsImage.getWidth()/2.0f); 
-		int y2 = (int) y1 + verticalMargin*1;
-
-		int x3 = (int) (gameContainer.getContainer().getWidth()/2.0f - settingsImage.getWidth()/2.0f); 
-		int y3 = (int) y1 + verticalMargin*2;
-
-		int x4 = (int) (gameContainer.getContainer().getWidth()/2.0f - exitImage.getWidth()/2.0f); 
-		int y4 = (int) y1 + verticalMargin*3;
-
-
-
-		MenuButton playNowButton = new MenuButton(this.gameContainer.getContainer(), playNowImage, x1, y1) {
-			@Override
-			public void performAction() {
-				gameContainer.enterState(5);
-			}
-		};
-		MenuButton statisticsButton = new MenuButton(this.gameContainer.getContainer(), statisticsImage, x2, y2) {
-			@Override
-			public void performAction() {
-				gameContainer.enterState(2);
-
-			}
-		};
-		MenuButton settingsButton = new MenuButton(this.gameContainer.getContainer(), settingsImage, x3, y3) {
-			@Override
-			public void performAction() {
-				gameContainer.enterState(3);
-
-			}
-		};
-		MenuButton exitButton = new MenuButton(this.gameContainer.getContainer(), exitImage, x4, y4) {
-			@Override
-			public void performAction() {
-				gameContainer.getContainer().exit();
-			}
-		};
-
-		this.setButtons(playNowButton,settingsButton, statisticsButton, exitButton); 
 	}
-	public final void setButtons(MenuButton...buttons) {
-		this.buttons = buttons;
-	}
+
 
 
 }
