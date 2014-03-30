@@ -117,11 +117,11 @@ public class Camera {
 		this.drawMap(0, 0);
 	}
 
-	public void draw() {
+	public void draw(int playTimer) {
 		this.centerOn(robber.rect);
 		this.drawMap(0, 0);
 		// Draw the money the Robber has
-		this.playerLog.draw();
+		this.playerLog.draw(playTimer);
 		this.translateGraphics();
 	}
 	/**

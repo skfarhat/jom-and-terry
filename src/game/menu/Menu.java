@@ -19,6 +19,7 @@ public abstract class Menu extends BasicGameState {
 	public abstract void initButtons();  
 
 	public Menu(int state, StateBasedGame sbg){
+		super();
 	}
 
 	public final void setButtons(MenuButton... buttons) {
@@ -62,8 +63,6 @@ public abstract class Menu extends BasicGameState {
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
-
-//		g.drawImage(background, 0, 0);
 		for (MenuButton b : buttons) {
 			b.render(g);
 		}

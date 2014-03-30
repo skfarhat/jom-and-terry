@@ -1,6 +1,9 @@
-package game.menu;
+package game.states;
 
+import game.Account;
 import game.Globals;
+import game.menu.Menu;
+import game.menu.MenuButton;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -18,6 +21,7 @@ public class MainMenu extends Menu
 
 	private StateBasedGame gameContainer = null;
 
+	private final String BACK_BUTTON_PATH 	= "res/buttons/back-button.png";
 	private String playNowImagePath 		= "res/buttons/play-now.png";
 	private String settingsImagePath 		= "res/buttons/settings.png";
 	private String statisticsImagePath 		= "res/buttons/statistics.png";
@@ -25,35 +29,30 @@ public class MainMenu extends Menu
 	private String backgroundImagePath 		= "res/background.png";
 
 	private static Integer backgroundX; 
-	
 	private Image backgroundImage = null;
 
-
-	public MainMenu(int state, StateBasedGame sbg){
+	private Account account = null; 
+	
+ 	public MainMenu(int state, StateBasedGame sbg){
 		super(state,sbg);
 		this.gameContainer = sbg; 
 	}
-
+ 	
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1)
 			throws SlickException {
+		System.out.println("MainMenu-init"); 
 
-		initButtons();
 		this.backgroundImage = new Image(backgroundImagePath);
 		backgroundX = (Globals.APP_WIDTH-backgroundImage.getWidth())/2;
+		
+		initButtons();
 	}
 	
 	@Override
-	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) 
-			throws SlickException{
-		super.update(arg0, arg1, arg2);
-		
-	}
-
-	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
-
+		System.out.println("MainMenu-render"); 
 		g.drawImage(this.backgroundImage, backgroundX, 0);
 		for(MenuButton b : buttons)
 		{
@@ -63,9 +62,10 @@ public class MainMenu extends Menu
 	
 	@Override
 	public void initButtons() {
-		Image playNowImage = null, exitImage = null, statisticsImage = null, settingsImage = null; 
+		Image playNowImage = null, exitImage = null, statisticsImage = null, settingsImage = null, backButtonImage = null; 
 
 		try{
+			backButtonImage = new Image(BACK_BUTTON_PATH);
 			playNowImage = new Image(playNowImagePath);
 			settingsImage = new Image(settingsImagePath);
 			statisticsImage = new Image(statisticsImagePath);
@@ -92,7 +92,12 @@ public class MainMenu extends Menu
 		int x4 = (int) (gameContainer.getContainer().getWidth()/2.0f - exitImage.getWidth()/2.0f); 
 		int y4 = (int) y1 + verticalMargin*3;
 
-
+		MenuButton backButton = new MenuButton(this.gameContainer.getContainer(), backButtonImage, 0, this.backgroundImage.getHeight()) {
+			@Override
+			public void performAction() {
+				gameContainer.enterState(Globals.ACCOUNT_PICK);
+			}
+		};
 
 		MenuButton playNowButton = new MenuButton(this.gameContainer.getContainer(), playNowImage, x1, y1) {
 			@Override
@@ -103,8 +108,16 @@ public class MainMenu extends Menu
 		MenuButton statisticsButton = new MenuButton(this.gameContainer.getContainer(), statisticsImage, x2, y2) {
 			@Override
 			public void performAction() {
-				gameContainer.enterState(2);
-
+				
+//				 get the stats view
+				StatsView statsView = (StatsView) gameContainer.getState(Globals.STATS_VIEW);
+				
+				
+				// set the account
+				statsView.setAccount(account);
+				
+				// enter the new view (state) 
+				gameContainer.enterState(Globals.STATS_VIEW);
 			}
 		};
 		MenuButton settingsButton = new MenuButton(this.gameContainer.getContainer(), settingsImage, x3, y3) {
@@ -121,15 +134,12 @@ public class MainMenu extends Menu
 			}
 		};
 
-		this.setButtons(playNowButton,settingsButton, statisticsButton, exitButton); 
+		this.setButtons(backButton, playNowButton,settingsButton, statisticsButton, exitButton); 
 	}
-
 
 	@Override
 	public int getID() {
 		return Globals.MAIN_MENU;
 	}
-
-
 
 }

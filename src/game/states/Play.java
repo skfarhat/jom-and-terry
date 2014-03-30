@@ -8,8 +8,14 @@ import game.city.building.PoliceOffice;
 import game.city.building.Shop;
 import game.city.person.Robber;
 import game.city.person.SecurityGuard;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
+
+import javax.swing.Timer;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -29,6 +35,7 @@ public class Play extends BasicGameState {
 
 	private Camera camera;
  
+	private Integer gameTime = 0; 
 
 	// The user can choose to be the robber or the policeman before he starts
 	// the game
@@ -71,7 +78,6 @@ public class Play extends BasicGameState {
 	// ===============================================================================================================================
 	public void init(GameContainer gc, StateBasedGame sbg)
 			throws SlickException {
-		System.out.println("Init");
 		this.gameContainer = gc;
 		this.sbg = sbg;
 
@@ -81,11 +87,9 @@ public class Play extends BasicGameState {
 		initRobber(); 			// Robber
 		initPoliceOffice(); 	// PoliceOffice
 		initCamera(); 			// Camera to center on the robber
-		initSecurityGuards(); 	// Initialize Security Guards
-		
+		initSecurityGuards(); 	// Initialize Security Guards		
 
-		
-
+		startGameTimer();		// Start timer
 	}
 	
 	private final void initCamera() throws SlickException {
@@ -242,7 +246,7 @@ public class Play extends BasicGameState {
 			throws SlickException {
 		
 		// Draw Camera
-		camera.draw();
+		camera.draw(gameTime);
 
 		// Draw Robber
 		robber.draw();
@@ -379,6 +383,16 @@ public class Play extends BasicGameState {
 		return 1;
 	}
 
+	
+	private void startGameTimer(){
+		Timer timer = new Timer(1000, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gameTime++; 
+			}
+		});
+		timer.start();
+	}
+	
 	public void gameOver() {
 		System.out.println("Game OVER");
 		robber.isCaught = true;

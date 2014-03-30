@@ -20,5 +20,8 @@
 	<classpathentry kind="lib" path="jars/jogg-0.0.7.jar"/>
 	<classpathentry kind="lib" path="jars/jorbis-0.0.15.jar"/>
 	<classpathentry kind="lib" path="jars/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="jars/jackson-core-2.2.3.jar"/>
+	<classpathentry kind="lib" path="jars/jackson-databind-2.2.3.jar"/>
+	<classpathentry kind="lib" path="jars/jackson-annotations-2.2.3-2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

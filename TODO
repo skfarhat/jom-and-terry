@@ -1,23 +1,19 @@
 TODO LIST
 
-Robber
---------------
 
-Police
---------------
+Create Account/save and resume play
+Robber passing in highway extensively
+Count Score
+Abort Robbing when move away
+Time in the LogPanel
+Collision for Police
 Police Moving SpriteSheet	
+Guard Moving SpriteSheet
 Be alerted of Robber position
-
-Security Guards
----------------
-Rotate Around the Building
-Alert Police to Position of the Robber
-Arrest Robber if Distance (less than something) 
-
-
+House occupant related functionalities
+Flag utility to be used by robber or police 
 
 Add Sounds
-See Eye Vision of Officer
 As Robber is fleeing Police he gains points
 
 
@@ -25,7 +21,11 @@ As Robber is fleeing Police he gains points
 ====================================
 			D O N E
 ====================================
-Police SpriteSheet				X
-Police Random Movement			X
-Robber SpriteSheet				X
-Fix Collision Detection			X
+Move the Avatar in Logpanel to top right
+SG arrest Robber				
+Alert Police abt of the Robber	
+Rotate Around the Building		
+Police SpriteSheet				
+Police Random Movement			
+Robber SpriteSheet				
+Fix Collision Detection			

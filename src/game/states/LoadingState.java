@@ -1,13 +1,11 @@
 package game.states;
 
-import game.Game;
 import game.Globals;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.loading.DeferredResource;
 import org.newdawn.slick.loading.LoadingList;
@@ -24,7 +22,6 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class LoadingState extends BasicGameState {
 
-        private UnicodeFont font = null;
         private DeferredResource nextResource = null;
 
         private int barWidth = Globals.APP_WIDTH / 3;
@@ -33,9 +30,7 @@ public class LoadingState extends BasicGameState {
         private Rectangle bar = null;
         private Rectangle fill = null;
 
-        public LoadingState(int loadingindex, Game game) {
-			// TODO Auto-generated constructor stub
-		}
+ 
 
 		@Override
         public int getID() {

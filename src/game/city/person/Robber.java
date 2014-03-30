@@ -33,7 +33,6 @@ public class Robber extends Person{
 	public boolean isMoving = false; 
 	public Vector2f vectorDirection;
 
-
 	// =================================================================================================== 
 	// ENVIRONMENT AROUND 
 	private ArrayList<Policeman> policeForceArray;		// Police Related

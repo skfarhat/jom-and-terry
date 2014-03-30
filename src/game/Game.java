@@ -1,12 +1,14 @@
 package game;
 
-import game.menu.AreaPick;
-import game.menu.MainMenu;
 import game.menu.PlayerPick;
+import game.states.AccountView;
+import game.states.AreaPick;
 import game.states.GameOverState;
-import game.states.LoadingState;
+import game.states.MainMenu;
+import game.states.NewAccountView;
 import game.states.PausedState;
 import game.states.Play;
+import game.states.StatsView;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -17,12 +19,18 @@ public class Game extends StateBasedGame {
 
 	public static final Game game  = new Game(Globals.gamename);
 
+	private Account account; 
+	
+	public Account getAccount() {
+		return account;
+	}
+	public void setAccount(Account account) {
+		this.account = account;
+	}
 	private Game(String gamename) {
 		super(gamename);
 
-		// 0 MENU
-		MainMenu mainMenu = new MainMenu(Globals.MAIN_MENU, this);
-		this.addState(mainMenu);
+		System.out.println("Game-constructor");
 
 		// 1 PLAY
 		Play play = new Play(Globals.PLAY);		
@@ -36,10 +44,6 @@ public class Game extends StateBasedGame {
 		GameOverState gameOver = new GameOverState(Globals.GAME_OVER, this);
 		this.addState(gameOver);
 
-		// 5 LOADING GAME STATE
-		LoadingState loadingState = new LoadingState(Globals.LOADING, this);
-		this.addState(loadingState);
-
 		// 6 AREA PICK
 		AreaPick areaPick = new AreaPick(Globals.AREA_PICK, this);
 		this.addState(areaPick);
@@ -47,6 +51,22 @@ public class Game extends StateBasedGame {
 		// 7 PLAYER PICK
 		PlayerPick playerPick= new PlayerPick(Globals.PLAYER_PICK, this);
 		this.addState(playerPick);
+
+		// 8 ACCOUNT PICK
+		AccountView accountView = new AccountView (Globals.ACCOUNT_PICK, this);
+		this.addState(accountView);
+		
+		// 9 ACCOUNT CREATE
+		NewAccountView newAccountView = new NewAccountView (Globals.ACCOUNT_PICK, this);
+		this.addState(newAccountView);
+		
+		// 0 MENU
+		MainMenu mainMenu = new MainMenu(Globals.MAIN_MENU, this);
+		this.addState(mainMenu);
+		
+		// 10 STATS VIEW
+		StatsView statsView = new StatsView(Globals.STATS_VIEW, this);
+		this.addState(statsView);
 		
 	}
 
@@ -55,15 +75,16 @@ public class Game extends StateBasedGame {
 	}
 
 	public void initStatesList(GameContainer gc) throws SlickException {
-		this.getState(Globals.MAIN_MENU).init(gc, this);
-		this.getState(Globals.PLAY).init(gc, this);
+//		this.getState(Globals.PLAY).init(gc, this);
 		this.getState(Globals.PAUSE).init(gc, this);
 		this.getState(Globals.GAME_OVER).init(gc, this);
-		this.getState(Globals.LOADING).init(gc, this);
 		this.getState(Globals.AREA_PICK).init(gc, this);
 		this.getState(Globals.PLAYER_PICK).init(gc, this);
-		
-		this.enterState(Globals.MAIN_MENU);
+		this.getState(Globals.ACCOUNT_PICK).init(gc, this);
+//		this.getState(Globals.MAIN_MENU).init(gc, this);
+
+//		this.getState(Globals.STATS_VIEW).init(gc, this);
+		this.enterState(Globals.ACCOUNT_PICK);
 	}
 
 	public static void main(String[] args) {

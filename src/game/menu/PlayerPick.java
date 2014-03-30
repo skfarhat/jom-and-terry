@@ -71,7 +71,7 @@ public class PlayerPick extends Menu{
 		MenuButton backButton = new MenuButton(sbg.getContainer(),backButtonImage , 0, 0) {
 			@Override
 			public void performAction() {
-				sbg.enterState(Globals.MAIN_MENU);
+//				sbg.enterState(Globals.MAIN_MENU);
 			}
 		};
 		MenuButton robberButton = new MenuButton(sbg.getContainer(), robberImage, BUTTON_2_X, BUTTON_2_Y) {

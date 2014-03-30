@@ -17,11 +17,13 @@ public class PlayerLog {
 	private final int MONEY_X = 0;
 	private final int MONEY_Y = 30;
 	
+	private final int TIMER_X = 0;
+	private final int TIMER_Y = 55;
+	
 	private final int LOG_X = 0;
 	private final int LOG_Y = 60;
 	
 	private String logText = ""; 
-	
 	private int xPos, yPos; 
 	
 	private Graphics g; 
@@ -46,16 +48,33 @@ public class PlayerLog {
 		this.logText = logText;
 	}
 	
+	public void draw(int timer){ 
 	
-	public void draw(){ 
-
 		String scoreString = String.format("Score: %d", robber.getScore());
 		String moneyString = String.format("$%d", robber.getMoney());
+		String timerString = String.format("%s", getTime(timer));
+		
 		g.setColor(Color.white);
 		g.drawImage(background, xPos, yPos);
 		g.drawString(scoreString, xPos + SCORE_X, yPos+ SCORE_Y);
 		g.drawString(moneyString, xPos + MONEY_X, yPos+ MONEY_Y);
+		g.drawString(moneyString, xPos + MONEY_X, yPos+ MONEY_Y);
+		g.drawString(timerString, xPos + TIMER_X, yPos+ TIMER_Y); 
 		g.drawString(logText,xPos + LOG_X, yPos+ LOG_Y);
 			
+	}
+	
+	private String getTime(int time){
+		int mn;
+		int sec;
+		
+		int rem = (int)(time%3600);
+		mn = rem/60;
+		sec = rem%60;
+		
+		String mnStr = (mn<10 ? "0" : "")+mn;
+		String secStr = (sec<10 ? "0" : "")+sec;
+		return String.format("%s:%s", mnStr, secStr);
+		
 	}
 }
