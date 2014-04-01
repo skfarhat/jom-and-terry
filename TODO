@@ -1,7 +1,7 @@
 TODO LIST
 
 
-Create Account/save and resume play
+save and resume play
 Robber passing in highway extensively
 Count Score
 Abort Robbing when move away
@@ -21,6 +21,7 @@ As Robber is fleeing Police he gains points
 ====================================
 			D O N E
 ====================================
+Create Account
 Move the Avatar in Logpanel to top right
 SG arrest Robber				
 Alert Police abt of the Robber	

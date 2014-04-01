@@ -30,8 +30,6 @@ public class Game extends StateBasedGame {
 	private Game(String gamename) {
 		super(gamename);
 
-		System.out.println("Game-constructor");
-
 		// 1 PLAY
 		Play play = new Play(Globals.PLAY);		
 		this.addState(play);

@@ -41,8 +41,7 @@ public class MainMenu extends Menu
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1)
 			throws SlickException {
-		System.out.println("MainMenu-init"); 
-
+		
 		this.backgroundImage = new Image(backgroundImagePath);
 		backgroundX = (Globals.APP_WIDTH-backgroundImage.getWidth())/2;
 		
@@ -52,7 +51,7 @@ public class MainMenu extends Menu
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
-		System.out.println("MainMenu-render"); 
+
 		g.drawImage(this.backgroundImage, backgroundX, 0);
 		for(MenuButton b : buttons)
 		{
@@ -109,9 +108,8 @@ public class MainMenu extends Menu
 			@Override
 			public void performAction() {
 				
-//				 get the stats view
+				// get the stats view
 				StatsView statsView = (StatsView) gameContainer.getState(Globals.STATS_VIEW);
-				
 				
 				// set the account
 				statsView.setAccount(account);

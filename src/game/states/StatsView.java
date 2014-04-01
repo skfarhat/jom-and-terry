@@ -6,6 +6,7 @@ import game.Globals;
 import game.menu.Menu;
 import game.menu.MenuButton;
 
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -19,7 +20,7 @@ public class StatsView extends Menu {
 
 	Account account; 
 
-	// position to start drawing the highscore strings
+	// position to start drawing the high-score strings
 	private static Integer xStatPosition = 30;
 	private static Integer yStatPosition;
 	private static Integer yMargin = 20;
@@ -32,7 +33,15 @@ public class StatsView extends Menu {
 
 	public StatsView(int state, StateBasedGame sbg){
 		super(state, sbg); 
-		System.out.println("StatsView-constructor");
+	}
+
+	@Override
+	public void enter(GameContainer container, StateBasedGame game)
+			throws SlickException {
+		super.enter(container, game);
+
+		// get the account from the singleton Game
+		this.account = Game.getInstance().getAccount(); 
 	}
 
 	public void setAccount(Account account) {
@@ -45,7 +54,7 @@ public class StatsView extends Menu {
 
 		this.backgroundImage = new Image(backgroundImagePath);
 		yStatPosition = this.backgroundImage.getHeight();
-
+		xStatPosition = this.backgroundImage.getWidth()/2; 
 		initButtons();
 
 	}
@@ -54,19 +63,23 @@ public class StatsView extends Menu {
 			throws SlickException {
 		super.render(gc, sbg, g);
 
+		this.backgroundImage.draw(0, 0);
 
 		if (account !=null){
+			
+			Font font = g.getFont(); 
+			
 			usernameStr = String.format("Username: %s", account.getUsername());								// username 
 			highscoreStr = String.format("Highscore: %d", account.getHighscore()); 							// highscore
 			highestLevelStr = String.format("Highest Level: %d", account.getHighestLevelReached());			// highest level reached 
-			timeSpentStr = String.format("Time Spent: %ld", account.getTimePlaying());  				// time spent playing
+			timeSpentStr = String.format("Time Spent: %d", account.getTimePlaying());  				// time spent playing
 
-			// previous scores	
+			//TODO previous scores	
 
-			g.drawString(usernameStr, xStatPosition, yStatPosition + yMargin);			// username
-			g.drawString(highscoreStr, xStatPosition, yStatPosition + yMargin*2);		// highscore
-			g.drawString(highestLevelStr, xStatPosition, yStatPosition + yMargin*3);	// highest level
-			g.drawString(timeSpentStr, xStatPosition, yStatPosition + yMargin*4);		// time spent playing
+			g.drawString(usernameStr, xStatPosition - font.getWidth(usernameStr)/2, yStatPosition + yMargin);			// username
+			g.drawString(highscoreStr, xStatPosition - font.getWidth(highscoreStr)/2, yStatPosition + yMargin*2);		// highscore
+			g.drawString(highestLevelStr, xStatPosition - font.getWidth(highestLevelStr)/2, yStatPosition + yMargin*3);	// highest level
+			g.drawString(timeSpentStr, xStatPosition - font.getWidth(timeSpentStr)/2, yStatPosition + yMargin*4);		// time spent playing
 
 		}
 	}
@@ -84,7 +97,7 @@ public class StatsView extends Menu {
 		MenuButton backButton = new MenuButton(container, backbuttonImage , 0, this.backgroundImage.getHeight()) {
 			@Override
 			public void performAction() {
-				//				Game.getInstance().enterState(Globals.MAIN_MENU);
+				Game.getInstance().enterState(Globals.MAIN_MENU);
 			}
 		};
 

@@ -119,7 +119,6 @@ public class AccountView extends Menu {
 					// set the current selected account 
 					Game.getInstance().setAccount(account);
 					
-					System.out.println("should go to main menu");
 					GameContainer container = Game.getInstance().getContainer(); 
 					try {
 						Game.getInstance().getState(Globals.MAIN_MENU).init(container, Game.getInstance());

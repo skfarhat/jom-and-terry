@@ -22,3 +22,46 @@
 				//					return;  
 	//		Dimension screenSize= Toolkit.getDefaultToolkit().getScreenSize();
 	
+	
+	/**
+	 * Method used to save game to a JSON file with path $DIRECTORY_PATH/$USERNAME
+	 * Data saved includes highscore, time spent playing the game, the highest level reached... 
+	 * 
+	 * @throws Exception
+	 */
+	public void save(Integer newScore) throws Exception{
+
+		// path 
+		File accountFile = new File(SAVE_DIRECTORY_PATH + username + ".json");
+
+		// if first time playing 
+		// create directory and save
+		if (accountFile.createNewFile())
+		{	
+			HashMap<Date, Integer> pastScoresMap = new HashMap<>();
+			pastScoresMap.put(new Date(), newScore);					// put the new score
+			pastScores.add(pastScoresMap);
+
+			HashMap<String, Object> map = new HashMap<>();
+			map.put(HIGHSCORE, highscore.toString());
+			map.put(LEVEL_REACHED, highestLevelReached.toString());
+			map.put(IS_ROBBER, isRobber.toString());
+			map.put(USERNAME, username);
+			map.put(TIME_PLAYING, timePlaying.toString());
+			map.put(PAST_SCORES, pastScores);
+
+			JSONObject jsonObj = new JSONObject(map);
+
+			FileWriter writer = new FileWriter(accountFile);
+			jsonObj.writeJSONString(writer);  
+
+		}
+		else {
+			// directory already exists 
+
+			// get data + modify what is necessary
+
+			// save
+
+		}
+	}
