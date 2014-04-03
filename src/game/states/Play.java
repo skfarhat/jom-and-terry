@@ -1,5 +1,6 @@
 package game.states;
 
+import game.Globals;
 import game.city.Camera;
 import game.city.building.Bank;
 import game.city.building.Building;
@@ -380,9 +381,8 @@ public class Play extends BasicGameState {
 	 */
 	@Override
 	public int getID() {
-		return 1;
+		return Globals.PLAY;
 	}
-
 	
 	private void startGameTimer(){
 		Timer timer = new Timer(1000, new ActionListener() {
@@ -394,7 +394,7 @@ public class Play extends BasicGameState {
 	}
 	
 	public void gameOver() {
-		System.out.println("Game OVER");
+
 		robber.isCaught = true;
 		isGameOver = true;
 
