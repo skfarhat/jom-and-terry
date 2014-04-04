@@ -1,25 +1,24 @@
 package game.city.person;
 import game.city.building.Building;
+import game.city.building.PoliceOffice;
 
 import java.util.ArrayList;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
 
-public class Robber extends Person{
+public class Robber extends Person implements Movable{
 
 	private String playerSpriteSheet = "res/SpriteSheets/robber-2.png";
 	public boolean isCaught = false; 
 	private boolean isUser; 
 
-	public Rectangle rect;
-	public float xPos = 0;// sprite drawing location
-	public float yPos = 0;	// sprite drawing location
 
 	private Integer score; 
 	private Integer money; 
@@ -35,8 +34,8 @@ public class Robber extends Person{
 
 	// =================================================================================================== 
 	// ENVIRONMENT AROUND 
-	private ArrayList<Policeman> policeForceArray;		// Police Related
-	public Building nearByBldg;							// Building
+	private ArrayList<Policeman> policeForceArray = PoliceOffice.policeForceArray;		// Police Related
+	public Building nearByBldg;															// Building
 
 	// ===================================================================================================
 	// TODO: the following 2 should be 'constants'
@@ -55,9 +54,8 @@ public class Robber extends Person{
 	 */
 	public Robber(boolean isUser) throws SlickException {
 
-		// TODO: set anem and velocity somewhere else
+		// TODO: set name and velocity somewhere else
 		super("Robber", 50.0f);
-
 
 		this.isUser = isUser; 
 
@@ -176,10 +174,6 @@ public class Robber extends Person{
 
 	}
 
-	public void setPoliceForceArray(ArrayList<Policeman> policeForceArray) {
-		this.policeForceArray = policeForceArray;
-	}
-
 	public Integer getMoney() {
 		return money;
 	}
@@ -197,6 +191,7 @@ public class Robber extends Person{
 		// 
 		this.money+=addedAmount;
 	}
+	
 	// MOVEMENT
 	//=====================================================================================================
 	public void stop() {
@@ -209,6 +204,9 @@ public class Robber extends Person{
 		this.rect.setX(this.xPos);
 		this.currentAnimation = Robber.rightWalkAnimation;
 
+		if (collides()){
+			normalForceLeft();
+		}
 	}
 
 	public void moveLeft() {
@@ -216,20 +214,28 @@ public class Robber extends Person{
 		this.xPos-=velocity * 0.02f;
 		this.rect.setX(this.xPos);
 		this.currentAnimation = Robber.leftWalkAnimation;
+		if (collides()){
+			normalForceRight();
+		}
 	}
 
 	public void moveUp() {
 		this.yPos-=velocity *0.02f;
 		this.rect.setY(this.yPos);
 		this.currentAnimation = Robber.upWalkAnimation;
+		if (collides()){
+			normalForceDown();
+		}
 	}
 
 	public void moveDown() {
 		this.yPos+=0.02f*velocity;
 		this.rect.setY(this.yPos);
 		this.currentAnimation = Robber.downWalkAnimation;
+		if (collides()){
+			normalForceUp();
+		}
 	}
-
 
 	public void normalForceRight() {
 		this.xPos+=0.02*velocity;
@@ -251,7 +257,23 @@ public class Robber extends Person{
 		this.rect.setY(this.yPos);
 	}
 
+	public boolean collides() {
+		// convert the position of the Player from pixels to 'Tile' position
+		// divide by the tile Size (in this case 16px)
 
+		boolean isInCollision = false;
+		this.nearByBldg = null;
+		
+		for (Building bldg: Building.buildings) {
+			if (this.rect.intersects(bldg.rect)) {
+				this.nearByBldg = bldg;
+				isInCollision = true;
+				break;
+			}
+		}
+		return isInCollision;
+	}
+	
 	public void setCurrentAnimation(Animation animation)
 	{
 		this.currentAnimation = animation;
@@ -319,5 +341,24 @@ public class Robber extends Person{
 		}
 
 		return null ;  	
+	}
+
+	@Override
+	public void processInput(Input input) {
+		// ARROWS: UP DOWN LEFT RIGHT
+		if (input.isKeyDown(Input.KEY_RIGHT)) {
+			moveRight();
+		} else if (input.isKeyDown(Input.KEY_LEFT)) {
+			moveLeft();
+		} else if (input.isKeyDown(Input.KEY_UP)) {
+			moveUp();
+		} else if (input.isKeyDown(Input.KEY_DOWN)) {
+			moveDown();
+		} else if (input.isKeyDown(Input.KEY_SPACE)) {
+			rob();
+		}
+		else {
+			stop();
+		}
 	}
 }

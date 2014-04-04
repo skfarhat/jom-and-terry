@@ -21,8 +21,8 @@ public class PoliceOffice {
 	private static final String EMERGENCY_SOUND = "res/Sounds/Emergency.ogg" ;
 
 	private Robber robber; 
-	private Integer numberOfPolicemen = 3; 
-	private ArrayList<Policeman> policeForceArray;
+	private static Integer numberOfPolicemen = 3; 
+	public static ArrayList<Policeman> policeForceArray = new ArrayList<>(numberOfPolicemen);
 	private Audio sound;
 	private boolean isPlayingSound = false; 
 
@@ -39,9 +39,9 @@ public class PoliceOffice {
 		for (int i=0; i< numberOfPolicemen; i++) {
 			int x = 400, y = 500;
 
-			Policeman police = new Policeman(play, this.robber, x, y, "Police-1", 50.0f);
+			Policeman police = new Policeman(play, this.robber, x, y, "Police-1", 80.0f);
 
-			policeForceArray.add(police); // add Police1 to the force
+			policeForceArray.add(police);
 		}
 
 		try {

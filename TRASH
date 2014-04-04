@@ -65,3 +65,27 @@
 
 		}
 	}
+	
+		private boolean collides() {
+		// convert the position of the Player from pixels to 'Tile' position
+		// divide by the tile Size (in this case 16px)
+
+		boolean isInCollision = false;
+		robber.nearByBldg = null;
+		
+		for (Building bldg: buildings) {
+			if (robber.rect.intersects(bldg.frame)) {
+				highlightHouse = isInCollision = true;
+				robber.nearByBldg = bldg;
+			}
+		}
+		return highlightHouse = isInCollision;
+	}
+	
+	
+	
+			//			if (!isLocked(destX, destY)) {
+			//				// Move the policeman to this position
+			//				// police1.move(destX, destY);
+			//			} else
+			//				System.out.println("Is locked");

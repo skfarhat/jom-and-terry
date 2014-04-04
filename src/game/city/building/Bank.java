@@ -12,6 +12,11 @@ import org.newdawn.slick.SlickException;
  */
 public class Bank extends Building {
 
+	/**
+	 * ArrayList that contains all the created banks
+	 */
+	public static ArrayList<Bank> banks = new ArrayList<>(10);
+	
 	// Each bank has one security guard (for now...)
 	int numberOfSecurityGuards = 1;
 
@@ -49,6 +54,9 @@ public class Bank extends Building {
 
 			// add the security guard to the array
 			this.securityGuards.add(sg);
+			
+			// add the created bank to the static banks array
+			banks.add(this);
 		}
 	}
 

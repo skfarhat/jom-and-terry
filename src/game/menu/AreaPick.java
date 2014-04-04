@@ -1,9 +1,7 @@
-package game.states;
+package game.menu;
 
 import game.Game;
 import game.Globals;
-import game.menu.Menu;
-import game.menu.MenuButton;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;

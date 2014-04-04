@@ -131,7 +131,7 @@ public class NewAccountView extends Menu {
 		MenuButton backButton = new MenuButton(container, backbuttonImage , 0, this.backgroundImage.getHeight()) {
 			@Override
 			public void performAction() {
-//				Game.getInstance().enterState(Globals.MAIN_MENU);
+				Game.getInstance().enterState(Globals.MAIN_MENU);
 			}
 		};
 

@@ -27,8 +27,6 @@ public class SecurityGuard extends Person {
 
 	private String sgImgPath = "res/bouncer.png";
 
-	public float xPos, yPos;
-
 	private Point destinationPoint;
 
 	private Image image;
@@ -119,14 +117,14 @@ public class SecurityGuard extends Person {
 		//
 		this.currentEdge = new Point(this.xPos, this.yPos);
 
-		topLeftEdge = new Point(guardedBank.frame.getMinX(),
-				guardedBank.frame.getMinY());
-		topRightEdge = new Point(guardedBank.frame.getMaxX(),
-				guardedBank.frame.getMinY());
-		bottomRightEdge = new Point(guardedBank.frame.getMaxX(),
-				guardedBank.frame.getMaxY());
-		bottomLeftEdge = new Point(guardedBank.frame.getMinX(),
-				guardedBank.frame.getMaxY());
+		topLeftEdge = new Point(guardedBank.rect.getMinX(),
+				guardedBank.rect.getMinY());
+		topRightEdge = new Point(guardedBank.rect.getMaxX(),
+				guardedBank.rect.getMinY());
+		bottomRightEdge = new Point(guardedBank.rect.getMaxX(),
+				guardedBank.rect.getMaxY());
+		bottomLeftEdge = new Point(guardedBank.rect.getMinX(),
+				guardedBank.rect.getMaxY());
 
 		this.destinationPoint = new Point(this.xPos, this.yPos);
 		
@@ -276,7 +274,7 @@ public class SecurityGuard extends Person {
 	public void lookForRobber(){
 		float distance = (float)  Math.sqrt(Math.pow(this.xPos-robber.xPos, 2.0) + Math.pow(this.yPos-robber.yPos, 2.0));
 
-		float distanceToBank = (float) Math.sqrt(Math.pow(this.xPos-guardedBank.frame.getCenterX(), 2.0) + Math.pow(this.yPos-guardedBank.frame.getCenterY(), 2.0));
+		float distanceToBank = (float) Math.sqrt(Math.pow(this.xPos-guardedBank.rect.getCenterX(), 2.0) + Math.pow(this.yPos-guardedBank.rect.getCenterY(), 2.0));
 		if (distance < 2.0f && !robber.isCaught)
 		{
 			// the Robber has been caught

@@ -11,6 +11,12 @@ import java.util.ArrayList;
  * 
  */
 public class Shop extends Building {
+	
+	/**
+	 * static ArrayList contains all the created shops
+	 */
+	public static ArrayList<Shop> shops = new ArrayList<>(10); 
+	
 	/**
 	 * Security guards in this shop.
 	 */

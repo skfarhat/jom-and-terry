@@ -1,6 +1,9 @@
 package game.city.person;
 
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Rectangle;
 
 /**
  * An abstract class for the Person/Player in the game.
@@ -10,7 +13,23 @@ import org.newdawn.slick.SpriteSheet;
  */
 public abstract class Person {
 	public String name;
-	public double velocity;
+	public double velocity;	
+	public float xPos, yPos;
+	
+	public Rectangle rect;
+
+	private static String selectedImgPath 		= "res/selection.png";
+	public static Image selectedImage;
+
+	// Initialize the selection image
+	static {
+		try {
+			selectedImage = new Image(selectedImgPath);
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	//====================================================================================================
 	//SpriteSheet
@@ -39,5 +58,5 @@ public abstract class Person {
 		this.name = name;
 		this.velocity = velocity;
 	}
-
+	
 }

@@ -1,6 +1,7 @@
 package game.city.person;
 
 import game.city.building.Building;
+import game.city.building.House;
 import game.states.Play;
 
 import java.awt.event.ActionEvent;
@@ -11,6 +12,7 @@ import javax.swing.Timer;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Circle;
@@ -24,22 +26,22 @@ import org.newdawn.slick.geom.Vector2f;
  * @author sami
  * 
  */
-public class Policeman extends Person {
-
-	//	Random rand = new Random(); 
+public class Policeman extends Person implements Movable{
 
 	private Play play; 
-	private String policemanImgPath = "res/police1.png";
-	private String policeSpriteSheet = "res/Spritesheets/police.png";
+	private String policemanImgPath 			= "res/police1.png";
+	private String policeSpriteSheet 			= "res/Spritesheets/police.png";
 	//=================================================================
-	private Image image;	
-	public Rectangle rect; 
-	public float xPos, yPos;
+	private Image image;
+
+	private Integer score = 0; 
+	
 	private float destX, destY; 
 	public Vector2f direction; 
 	private float visionDistance = 130.0f;	// Vision Attribute
 	//=================================================================
 	// Behavior
+	public boolean isSelected = false; 
 	public boolean isMoving = false;
 	private boolean isPatrolling = false;
 	private boolean isFollowingRobber = false;
@@ -79,19 +81,19 @@ public class Policeman extends Person {
 		// set the Sprite Sheet
 		this.initSpriteSheet();
 
-		// set the rectangle of the player 
-		this.rect = new Rectangle(this.xPos, this.yPos, spriteWidth, spriteHeight);
-
 		// Set the position of the policeman
 		this.xPos = positionX;
 		this.yPos = positionY;
+		
+		// set the rectangle of the player 
+		this.rect = new Rectangle(this.xPos, this.yPos, spriteWidth, spriteHeight);
 
 		// Set the image of the policeman
 		this.image = new Image(policemanImgPath);
 
 		this.robber = robber;
 
-		this.startPatrol();
+		//this.startPatrol();
 
 		// initially the player is moving to the right
 		//Create a new animation based on a selection of
@@ -149,6 +151,10 @@ public class Policeman extends Person {
 		return image;
 	}
 
+	public Integer getScore() {
+		return score;
+	}
+
 	public void setSuspectRegion(Circle suspectRegionCircle) {
 		this.suspectRegion = suspectRegionCircle;
 	}
@@ -191,19 +197,20 @@ public class Policeman extends Person {
 			if (Math.abs(deltaX) > 2.0f)
 			{
 				this.xPos += (deltaX<0)?speed: (-1)*speed; 	
+				this.rect.setX(this.xPos);
 				movingHorizontally = true;
 			}
 
 			// check on movingHorizontally done here
 			if (Math.abs(deltaY) > 2.0f && !movingHorizontally)
 			{	
-				this.yPos += (deltaY<0)?speed: (-1)*speed; 
+				this.yPos += (deltaY<0)?speed: (-1)*speed;
+				this.rect.setY(this.yPos);
 			}
 
 			// 2.0f margin of error
 			if (Math.abs(this.xPos - this.destX) < 2.0f
 					&& Math.abs(this.yPos - this.destY) < 2.0f) {
-
 
 				this.isMoving = false;	
 				if (isCheckingSuspectRegion)
@@ -215,14 +222,19 @@ public class Policeman extends Person {
 		}
 
 		// if the Policeman is neither patrolling nor following the robber then he should patrol
-		if (!this.isPatrolling && !this.isFollowingRobber)
-			startPatrol();
+//		if (!this.isPatrolling && !this.isFollowingRobber)
+//			startPatrol();
 
 		// see if the Robber is visible
 		lookForRobber();
 
 		// draw the image at the positon of the policeman
 		this.image.draw(this.xPos, this.yPos);
+		
+		if (isSelected){
+			selectedImage.draw(this.xPos, this.yPos-selectedImage.getHeight());
+		}
+
 	}
 
 	public void startPatrol()
@@ -231,9 +243,8 @@ public class Policeman extends Person {
 
 		patrolTimer = new Timer(2000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Integer index = (new Random()).nextInt(play.getHouses().size());
-//				House house = play.getHouses().get(index);
-				Building bldg = play.getBuildings().get(index);
+				Integer index = (new Random()).nextInt(House.getHouses().size());
+				Building bldg = Building.buildings.get(index);
 
 				move(bldg.xPos, bldg.yPos);
 			}
@@ -251,7 +262,8 @@ public class Policeman extends Person {
 		// to check out a region
 
 		//first stop patroling
-		stopPatrol();
+		if (isPatrolling)
+			stopPatrol();
 
 		setSuspectRegion(region);
 
@@ -301,6 +313,87 @@ public class Policeman extends Person {
 		robber.isCaught = true; 
 		this.play.gameOver();
 		return true;
+	}
+
+	@Override
+	public void processInput(Input input) {
+		// ARROWS: UP DOWN LEFT RIGHT
+		if (input.isKeyDown(Input.KEY_RIGHT)) {
+			moveRight();
+		} else if (input.isKeyDown(Input.KEY_LEFT)) {
+			moveLeft();
+		} else if (input.isKeyDown(Input.KEY_UP)) {
+			moveUp();
+		} else if (input.isKeyDown(Input.KEY_DOWN)) {
+			moveDown();
+		} 
+		else {
+			stop();
+		}		
+	}
+	public void moveRight() {
+		this.currentAnimation.start();
+		this.xPos+=0.02*velocity;
+		this.rect.setX(this.xPos);
+
+		if (collides()){
+			normalForceLeft();
+		}
+	}
+
+	public void moveLeft() {
+		this.currentAnimation.start();
+		this.xPos-=velocity * 0.02f;
+		this.rect.setX(this.xPos);
+		if (collides()){
+			normalForceRight();
+		}
+	}
+
+	public void moveUp() {
+		this.yPos-=velocity *0.02f;
+		this.rect.setY(this.yPos);
+		if (collides()){
+			normalForceDown();
+		}
+	}
+
+	public void moveDown() {
+		this.yPos+=0.02f*velocity;
+		this.rect.setY(this.yPos);
+		if (collides()){
+			normalForceUp();
+		}
+	}
+
+	public void normalForceRight() {
+		this.xPos+=0.02*velocity;
+		this.rect.setX(this.xPos);
+	}
+
+	public void normalForceLeft() {
+		this.xPos-=velocity * 0.02f;
+		this.rect.setX(this.xPos);
+	}
+
+	public void normalForceUp() {
+		this.yPos-=velocity *0.02f;
+		this.rect.setY(this.yPos);
+	}
+
+	public void normalForceDown() {
+		this.yPos+=0.02f*velocity;
+		this.rect.setY(this.yPos);
+	}
+
+	@Override
+	public boolean collides() {
+		return false;
+	}
+
+	@Override
+	public void stop() {
+		
 	}
 
 }

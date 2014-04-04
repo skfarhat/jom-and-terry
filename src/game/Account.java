@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -118,5 +119,19 @@ public class Account {
 		return pastScores;
 	}
 
+	
+	public void setIsRobber(Boolean isRobber) {
+		this.isRobber = isRobber;
+	}
+	
+	/**
+	 * Override toString() method to print the filed attributes of the Account class
+	 */
+	@Override
+	public String toString() {
+		String str = String.format("Username:%s\nHighscore:%d\nHighestLevelReached:%d\nTimePlaying:%d\nIsRobber:%b",
+				username, highscore, highestLevelReached, timePlaying, isRobber);
+		return str; 
+	}
 }
 

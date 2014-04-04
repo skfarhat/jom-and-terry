@@ -1,10 +1,8 @@
-package game.states;
+package game.menu;
 
 import game.Account;
 import game.Game;
 import game.Globals;
-import game.menu.Menu;
-import game.menu.MenuButton;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -15,7 +13,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
-public class AccountView extends Menu {
+public class AccountPick extends Menu {
 
 	private static String NEW_ACCOUNT_IMAGE_PATH 	= "res/Buttons/new-account-button.png";
 	private static String ACCOUNT_NAME_IMAGE_PATH 	= "res/Buttons/account-name.png";
@@ -28,7 +26,7 @@ public class AccountView extends Menu {
 
 	private static Integer TOP_MARGIN = 20; 
 	
-	public AccountView(int state, StateBasedGame sbg) {
+	public AccountPick(int state, StateBasedGame sbg) {
 		super(state, sbg);
 		loadAccountNames();
 	}
@@ -37,7 +35,6 @@ public class AccountView extends Menu {
 	public void enter(GameContainer container, StateBasedGame game)
 			throws SlickException {
 		super.enter(container, game);
-		System.out.println("AccountView-enter");
 		loadAccountNames();
 		initButtons();
 	}
@@ -52,11 +49,6 @@ public class AccountView extends Menu {
 		};
 
 		fileNames = saveDirectory.list(fileFilter);
-	}
-
-	@Override
-	public int getID() {
-		return Globals.ACCOUNT_PICK;
 	}
 
 	@Override
@@ -141,4 +133,8 @@ public class AccountView extends Menu {
 		this.setButtons(menuButtons);
 	}
 
+	@Override
+	public int getID() {
+		return Globals.ACCOUNT_PICK;
+	}
 }

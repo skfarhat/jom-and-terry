@@ -1,5 +1,6 @@
 package game.states;
 
+import game.Game;
 import game.Globals;
 import game.city.Camera;
 import game.city.building.Bank;
@@ -7,6 +8,9 @@ import game.city.building.Building;
 import game.city.building.House;
 import game.city.building.PoliceOffice;
 import game.city.building.Shop;
+import game.city.person.Movable;
+import game.city.person.Person;
+import game.city.person.Policeman;
 import game.city.person.Robber;
 import game.city.person.SecurityGuard;
 
@@ -17,6 +21,7 @@ import java.util.Random;
 
 import javax.swing.Timer;
 
+import org.lwjgl.opengl.Drawable;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -35,21 +40,21 @@ public class Play extends BasicGameState {
 	private StateBasedGame sbg = null;
 
 	private Camera camera;
- 
 	private Integer gameTime = 0; 
 
-	// The user can choose to be the robber or the policeman before he starts
-	// the game
-	boolean userIsRobber = true;
+	/**
+	 * Main character can either be police or robber
+	 */
+	private Person mainCharacter = null; 
+	public boolean userIsRobber;
 	boolean isGameOver = false;
 
-	int targetDelta = 16; // msec
+	public Rectangle toDraw;  
+	//	private Integer targetDelta = 16; // msec
 	private Integer TILE_SIZE = 16;
 
-	boolean highlightHouse = false;
-
 	// Characters
-	private Robber robber; // Main Player
+	private Robber robber;
 	public PoliceOffice policeOffice;
 	// ====================================================================================
 
@@ -64,15 +69,13 @@ public class Play extends BasicGameState {
 	ArrayList<Rectangle> blocks;
 	boolean blocked[][];
 
-	// Buildings
-	private ArrayList<Building> buildings;
-	private ArrayList<House> houses;
-	private ArrayList<Bank> banks;
-	private ArrayList<Shop> shops;
 
-	// CONSTRUCTOR
-	// ==============================================
-	public Play(int state) {
+	@Override
+	public void enter(GameContainer container, StateBasedGame game)
+			throws SlickException {
+		super.enter(container, game);
+		userIsRobber = Game.getInstance().getAccount().getIsRobber();
+		setMainCharacter();
 	}
 
 	// INIT
@@ -83,18 +86,21 @@ public class Play extends BasicGameState {
 		this.sbg = sbg;
 
 		blocks = new ArrayList<>(20);
-		
+
+
 		initMap(); 				// Tile Map
 		initRobber(); 			// Robber
 		initPoliceOffice(); 	// PoliceOffice
+		setMainCharacter(); 
+
 		initCamera(); 			// Camera to center on the robber
 		initSecurityGuards(); 	// Initialize Security Guards		
 
 		startGameTimer();		// Start timer
 	}
-	
+
 	private final void initCamera() throws SlickException {
-		camera = new Camera(gameContainer, cityTileMap, robber);
+		camera = new Camera(gameContainer, cityTileMap, mainCharacter);
 	}
 
 	private final void initMap() throws SlickException {
@@ -127,8 +133,6 @@ public class Play extends BasicGameState {
 		// Houses Object Group has index 0
 		int housesObjectCount = cityTileMap.getObjectCount(0);
 
-		houses = new ArrayList<>(10);
-
 		// create all Houses
 		for (int objectIndex = 0; objectIndex < housesObjectCount; objectIndex++) {
 			int x = cityTileMap.getObjectX(0, objectIndex);
@@ -142,14 +146,13 @@ public class Play extends BasicGameState {
 			House house = new House(objectIndex, x, y, width, height, money);
 
 			// add the house to the houses Array
-			houses.add(house);
 		}
 
 		// BANKS
 		// ========================================================================================
 		// Banks Object Group has index 1
 		int banksObjectCount = cityTileMap.getObjectCount(1);
-		banks = new ArrayList<>(10);
+		//		banks = new ArrayList<>(10);
 
 		// create all Banks
 		for (int objectIndex = 0; objectIndex < banksObjectCount; objectIndex++) {
@@ -166,13 +169,9 @@ public class Play extends BasicGameState {
 			Bank bank = new Bank(objectIndex, x, y, width, height, money);
 
 			// add the bank to the banks Array
-			banks.add(bank);
 		}
-		
-	
 
 		// TODO: SHOPS
-		shops = new ArrayList<>(10);
 		// Banks Object Group has index 1
 		int shopsObjectCount = cityTileMap.getObjectCount(2);
 		// create all Banks
@@ -188,21 +187,11 @@ public class Play extends BasicGameState {
 
 			Shop shop = new Shop(objectIndex, x, y, width, height, money);
 
-			// add the bank to the banks Array
-			shops.add(shop);
+			// the shop is added to the shops static ArrayList in the constructor
 		}
-		
-		
-
-		// add all houses, banks and shops to the buildings array
-		buildings = new ArrayList<>(banks.size() + houses.size() + shops.size());
-		buildings.addAll(0, houses);
-		buildings.addAll(0, banks);
-		buildings.addAll(0, shops);
 	}
 
 	private final void initRobber() throws SlickException {
-
 		robber = new Robber(userIsRobber);
 
 	}
@@ -220,7 +209,7 @@ public class Play extends BasicGameState {
 	 */
 	private final void initSecurityGuards() throws SlickException {
 		this.securityGuardsArray = new ArrayList<>();
-		for (Bank bank : banks) {
+		for (Bank bank : Bank.banks) {
 			for (SecurityGuard sg : bank.getSecurityGuards()) {
 				sg.setRobber(this.robber);
 				sg.setPlay(this);
@@ -231,21 +220,28 @@ public class Play extends BasicGameState {
 		}
 	}
 
-	// ===============================================================================================================================
+	public void setMainCharacter(Person mainCharacter) {
+		this.mainCharacter = mainCharacter;
+		if (mainCharacter instanceof Policeman){
+			Policeman police = (Policeman) mainCharacter; 
+			police.isSelected = true; 
+		}
+		if (camera !=null)
+			camera.setPerson(mainCharacter);
+	}
 
-	// GETTER AND SETTER FUNCTIONS
-	public ArrayList<Building> getBuildings() {
-		return buildings;
+	public void setMainCharacter(){
+		if (userIsRobber)
+			setMainCharacter(robber);
+		else
+			setMainCharacter(policeOffice.getPoliceForceArray().get(0));
 	}
-	
-	public ArrayList<House> getHouses() {
-		return houses;
-	}
+
 
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
-		
+
 		// Draw Camera
 		camera.draw(gameTime);
 
@@ -263,11 +259,9 @@ public class Play extends BasicGameState {
 		}
 
 		// Draw the Buildings 
-		for (Building bldg : buildings) {
+		for (Building bldg : Building.buildings) {
 			bldg.draw();
 		}
-
-
 	}
 
 	@Override
@@ -306,74 +300,116 @@ public class Play extends BasicGameState {
 			int destX = input.getMouseX();
 			int destY = input.getMouseY();
 
-			if (!isLocked(destX, destY)) {
-				// Move the policeman to this position
-				// police1.move(destX, destY);
-			} else
-				System.out.println("Is locked");
+			// if robber 
+			// can select a house to get information about it
+			if (userIsRobber){
+
+				// get the building
+				Building bldg = selectBuilding(destX, destY);
+
+				// display info for this building
+				bldg.displayBuildingInfo();
+			}
+			// if Policeman 
+			// can select different policemen to control
+			else {	
+				// save the previous policeman and deselect him later
+				Policeman prevPoliceman = (Policeman) mainCharacter;
+
+				// get the policeman that is selected by the mouse
+				Policeman policeman = selectPoliceman(destX, destY);
+
+				// 
+				if (policeman == null)
+					return; 
+
+				// set the isSelected to true
+				policeman.isSelected = true; 
+
+				// unselect the previous policeman
+				prevPoliceman.isSelected = false; 
+
+				// set the main character
+				setMainCharacter(policeman);
+
+				// TODO or get the house ?	
+			}
 		}
 
-		// ARROWS: UP DOWN LEFT RIGHT
 
-		if (input.isKeyDown(Input.KEY_RIGHT)) {
-			robber.moveRight();
+		// Move left, right, up, down		
+		Movable movable = (Movable) mainCharacter;
+		movable.processInput(input);
 
-			// if Player collides with an object
-			// decrement the position back (reverse the position change)
-			if (collides()) {
-				robber.normalForceLeft();
-			}
-		} else if (input.isKeyDown(Input.KEY_LEFT)) {
-			robber.moveLeft();
 
-			// if Player collides with an object
-			// decrement the position back (reverse the position change)
-			if (collides()) {
-				robber.normalForceRight();
-			}
-		} else if (input.isKeyDown(Input.KEY_UP)) {
-			robber.moveUp();
-
-			// if Player collides with an object
-			// increment the position back (reverse the position change)
-			if (collides()) {
-				robber.normalForceDown();
-			}
-		} else if (input.isKeyDown(Input.KEY_DOWN)) {
-			robber.moveDown();
-
-			// if Player collides with an object
-			// decrement the position back (reverse the position change)
-			if (collides()) {
-				robber.normalForceUp();
-			}
-		} else if (input.isKeyDown(Input.KEY_SPACE)) {
-			robber.rob();
-		} else if (input.isKeyDown(Input.KEY_ESCAPE)) {
+		if (input.isKeyDown(Input.KEY_ESCAPE)) {
 			// 3 --> PAUSE
 			sbg.enterState(3);
 		}
-
 		else {
 			robber.stop();
 		}
-
 	}
 
-	private boolean collides() {
-		// convert the position of the Player from pixels to 'Tile' position
-		// divide by the tile Size (in this case 16px)
 
-		boolean isInCollision = false;
-		robber.nearByBldg = null;
+	private Building selectBuilding(int destX, int destY){
+		// create a rectangle and use the intersect method to check whether 
+		// the policeman rect intersects with the mouse click
+		Rectangle rect = new Rectangle(
+				camera.getCameraX() + destX - Globals.SELECTION_ERROR/2, 
+				camera.getCameraY() + destY - Globals.SELECTION_ERROR/2,
+				Globals.SELECTION_ERROR,
+				Globals.SELECTION_ERROR);
 		
-		for (Building bldg: buildings) {
-			if (robber.rect.intersects(bldg.frame)) {
-				highlightHouse = isInCollision = true;
-				robber.nearByBldg = bldg;
+		
+		for (Building bldg: Building.buildings){
+			if (bldg.rect.intersects(rect))
+			{
+				return bldg;  
 			}
 		}
-		return highlightHouse = isInCollision;
+		return null;
+	}
+
+	/**
+	 * @param destX x-position of the mouse input
+	 * @param destY y-position of the mouse input
+	 * @return a policeman object if the destX and destY passed are close to a policeman in the map. Returns null otherwise
+	 */
+	private Policeman selectPoliceman(int destX, int destY){
+		// create a rectangle and use the intersect method to check whether 
+		// the policeman rect intersects with the mouse click
+		Rectangle rect = new Rectangle(
+				camera.getCameraX() + destX - Globals.SELECTION_ERROR/2, 
+				camera.getCameraY() + destY - Globals.SELECTION_ERROR/2,
+				Globals.SELECTION_ERROR,
+				Globals.SELECTION_ERROR);
+		
+		for (Policeman policeman: policeOffice.getPoliceForceArray()){
+			if (policeman.rect.intersects(rect))
+			{
+				return policeman;  
+			}
+		}
+		return null;
+	}
+
+	private void startGameTimer(){
+		Timer timer = new Timer(1000, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gameTime++; 
+			}
+		});
+		timer.start();
+	}
+
+	public void gameOver() {
+
+		robber.isCaught = true;
+		isGameOver = true;
+
+		// GAME OVER STATE
+		this.sbg.enterState(4, new FadeOutTransition(), new FadeInTransition());
 	}
 
 	/**
@@ -383,22 +419,6 @@ public class Play extends BasicGameState {
 	public int getID() {
 		return Globals.PLAY;
 	}
-	
-	private void startGameTimer(){
-		Timer timer = new Timer(1000, new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				gameTime++; 
-			}
-		});
-		timer.start();
-	}
-	
-	public void gameOver() {
 
-		robber.isCaught = true;
-		isGameOver = true;
 
-		// GAME OVER STATE
-		this.sbg.enterState(4, new FadeOutTransition(), new FadeInTransition());
-	}
 }

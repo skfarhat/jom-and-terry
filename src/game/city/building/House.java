@@ -1,5 +1,7 @@
 package game.city.building;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.geom.Rectangle;
 
 /**
@@ -9,6 +11,8 @@ import org.newdawn.slick.geom.Rectangle;
  * 
  */
 public class House extends Building {
+	
+	private static ArrayList<House> houses = new ArrayList<>(10);
 	
 	public Rectangle frame; 
 	/**
@@ -22,5 +26,11 @@ public class House extends Building {
 		super(ID, positionX, positionY, width, height, money);
 		
 		this.frame = new Rectangle(positionX, positionY, width, height);
+		
+		houses.add(this);
+	}
+	
+	public static ArrayList<House> getHouses() {
+		return houses;
 	}
 }

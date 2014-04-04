@@ -1,5 +1,8 @@
 package game.menu;
 
+import game.Game;
+import game.city.person.Person;
+import game.city.person.Policeman;
 import game.city.person.Robber;
 
 import org.newdawn.slick.Color;
@@ -16,65 +19,81 @@ public class PlayerLog {
 
 	private final int MONEY_X = 0;
 	private final int MONEY_Y = 30;
-	
+
 	private final int TIMER_X = 0;
 	private final int TIMER_Y = 55;
-	
+
 	private final int LOG_X = 0;
 	private final int LOG_Y = 60;
-	
+
 	private String logText = ""; 
 	private int xPos, yPos; 
-	
+
 	private Graphics g; 
-	private Robber robber; 
-	private Image background; 
-	
-	public PlayerLog(Graphics g, Robber robber, int xPos,int yPos) {
+	private Person person; 
+	private Image background;
+
+	public PlayerLog(Graphics g, Person person, int xPos,int yPos) {
 		this.g = g; 
 		this.xPos = xPos; 
 		this.yPos = yPos; 
-		
-		this.robber = robber;  	
+
+		this.person = person; 
+
 		try {
 			this.background = new Image(BACKGROUND_PATH);
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public void setLogText(String logText) {
 		this.logText = logText;
 	}
-	
+
 	public void draw(int timer){ 
-	
-		String scoreString = String.format("Score: %d", robber.getScore());
-		String moneyString = String.format("$%d", robber.getMoney());
-		String timerString = String.format("%s", getTime(timer));
-		
-		g.setColor(Color.white);
-		g.drawImage(background, xPos, yPos);
-		g.drawString(scoreString, xPos + SCORE_X, yPos+ SCORE_Y);
-		g.drawString(moneyString, xPos + MONEY_X, yPos+ MONEY_Y);
-		g.drawString(moneyString, xPos + MONEY_X, yPos+ MONEY_Y);
-		g.drawString(timerString, xPos + TIMER_X, yPos+ TIMER_Y); 
-		g.drawString(logText,xPos + LOG_X, yPos+ LOG_Y);
+
+		if (Game.getInstance().getAccount().getIsRobber()){
+			Robber robber = (Robber) person; 
+			String scoreString = String.format("Score: %d", robber.getScore());
+			String moneyString = String.format("$%d", robber.getMoney());
+			String timerString = String.format("%s", getTime(timer));
+
+			g.setColor(Color.white);
+			g.drawImage(background, xPos, yPos);
+			g.drawString(scoreString, xPos + SCORE_X, yPos+ SCORE_Y);
+			g.drawString(moneyString, xPos + MONEY_X, yPos+ MONEY_Y);
+			g.drawString(timerString, xPos + TIMER_X, yPos+ TIMER_Y); 
+			g.drawString(logText,xPos + LOG_X, yPos+ LOG_Y);
+		}
+		else {
+			Policeman policeman = (Policeman) person; 
 			
+			String scoreString = String.format("Score: %d", policeman.getScore());
+			String timerString = String.format("%s", getTime(timer));
+
+			g.setColor(Color.white);
+			g.drawImage(background, xPos, yPos);
+			g.drawString(scoreString, xPos + SCORE_X, yPos+ SCORE_Y);
+			g.drawString(timerString, xPos + TIMER_X, yPos+ TIMER_Y); 
+			g.drawString(logText,xPos + LOG_X, yPos+ LOG_Y);
+			
+		}
+
 	}
-	
+
 	private String getTime(int time){
 		int mn;
 		int sec;
-		
+
 		int rem = (int)(time%3600);
 		mn = rem/60;
 		sec = rem%60;
-		
+
 		String mnStr = (mn<10 ? "0" : "")+mn;
 		String secStr = (sec<10 ? "0" : "")+sec;
 		return String.format("%s:%s", mnStr, secStr);
-		
+
 	}
 }

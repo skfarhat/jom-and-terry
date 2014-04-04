@@ -2,12 +2,12 @@ package game.city.building;
 
 import game.AudioGame;
 import game.Game;
-import game.city.person.Person;
 import game.city.person.Robber;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.Timer;
 
@@ -28,6 +28,7 @@ public abstract class Building  {
 	 * The amount of money a building has.
 	 */
 
+	public static ArrayList<Building> buildings = new ArrayList<>(20); 
 	
 	//==============================================================================================================================
 	// ROBBING
@@ -48,7 +49,7 @@ public abstract class Building  {
 	public int xPos, yPos; 
 	public float width, height;
 	public boolean isHighlighted;
-	public Rectangle frame;
+	public Rectangle rect;
 
 	/**
 	 * Abstract constructor only called by subclasses.
@@ -59,7 +60,7 @@ public abstract class Building  {
 	 */
 	public Building(int ID, int positionX,  int positionY, float width, float height, Integer money) {
 
-		this.frame = new Rectangle(positionX, positionY, width, height);
+		this.rect = new Rectangle(positionX, positionY, width, height);
 
 		this.xPos = positionX; 
 		this.yPos = positionY;
@@ -74,11 +75,11 @@ public abstract class Building  {
 		// init the filling bar 
 		fillingBar = new FillingBar(xPos, yPos-20, width);
 
+		buildings.add(this);
 	}
 
 	/**
 	 * Checks whether a robber is near
-	 * 
 	 * @param robber
 	 * @return
 	 */
@@ -86,8 +87,8 @@ public abstract class Building  {
 	/**
 	 * Output the info of a building when the robber is near
 	 */
-	public void displayBuildingInfo(Person person) {
-
+	public void displayBuildingInfo() {
+		
 	}
 
 	public void rob(final Robber robber){

@@ -1,7 +1,7 @@
 package game.city;
 
 import game.Globals;
-import game.city.person.Robber;
+import game.city.person.Person;
 import game.menu.PlayerLog;
 
 import org.newdawn.slick.GameContainer;
@@ -43,7 +43,7 @@ public class Camera {
 	/** Information about the player's money and score */
 	private PlayerLog playerLog;
 
-	private Robber robber; 
+	private Person person; 
 
 	/**
 	 * Create a new camera
@@ -51,7 +51,7 @@ public class Camera {
 	 * @param gc the GameContainer, used for getting the size of the GameCanvas
 	 * @param map the TiledMap used for the current scene
 	 */
-	public Camera(GameContainer gc, TiledMap map, Robber robber) {
+	public Camera(GameContainer gc, TiledMap map, Person person) {
 		this.map = map;
 
 		this.numTilesX = map.getWidth();
@@ -63,11 +63,11 @@ public class Camera {
 		this.mapWidth = this.numTilesX * this.tileWidth;
 		this.mapHeight = this.numTilesY * this.tileHeight;
 
-		this.robber = robber; 
+		this.person = person; 
 
 		this.gc = gc;
 
-		this.playerLog = new PlayerLog(gc.getGraphics(), robber, Globals.APP_WIDTH-150, 0);
+		this.playerLog = new PlayerLog(gc.getGraphics(), person, Globals.APP_WIDTH-150, 0);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class Camera {
 	}
 
 	public void draw(int playTimer) {
-		this.centerOn(robber.rect);
+		this.centerOn(person.rect);
 		this.drawMap(0, 0);
 		// Draw the money the Robber has
 		this.playerLog.draw(playTimer);
@@ -164,6 +164,17 @@ public class Camera {
 	 */
 	public void untranslateGraphics() {
 		gc.getGraphics().translate(cameraX, cameraY);
+	}
+
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+
+	public float getCameraX() {
+		return cameraX;
+	}
+	public float getCameraY() {
+		return cameraY;
 	}
 
 }

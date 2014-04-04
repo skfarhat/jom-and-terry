@@ -1,8 +1,8 @@
 package game;
 
+import game.menu.AccountPick;
+import game.menu.AreaPick;
 import game.menu.PlayerPick;
-import game.states.AccountView;
-import game.states.AreaPick;
 import game.states.GameOverState;
 import game.states.MainMenu;
 import game.states.NewAccountView;
@@ -30,8 +30,12 @@ public class Game extends StateBasedGame {
 	private Game(String gamename) {
 		super(gamename);
 
+		// 8 ACCOUNT PICK
+		AccountPick accountView = new AccountPick (Globals.ACCOUNT_PICK, this);
+		this.addState(accountView);
+		
 		// 1 PLAY
-		Play play = new Play(Globals.PLAY);		
+		Play play = new Play();		
 		this.addState(play);
 
 		// 3  PAUSE
@@ -49,10 +53,6 @@ public class Game extends StateBasedGame {
 		// 7 PLAYER PICK
 		PlayerPick playerPick= new PlayerPick(Globals.PLAYER_PICK, this);
 		this.addState(playerPick);
-
-		// 8 ACCOUNT PICK
-		AccountView accountView = new AccountView (Globals.ACCOUNT_PICK, this);
-		this.addState(accountView);
 		
 		// 9 ACCOUNT CREATE
 		NewAccountView newAccountView = new NewAccountView (Globals.ACCOUNT_PICK, this);
@@ -73,15 +73,11 @@ public class Game extends StateBasedGame {
 	}
 
 	public void initStatesList(GameContainer gc) throws SlickException {
-//		this.getState(Globals.PLAY).init(gc, this);
 		this.getState(Globals.PAUSE).init(gc, this);
 		this.getState(Globals.GAME_OVER).init(gc, this);
 		this.getState(Globals.AREA_PICK).init(gc, this);
 		this.getState(Globals.PLAYER_PICK).init(gc, this);
 		this.getState(Globals.ACCOUNT_PICK).init(gc, this);
-//		this.getState(Globals.MAIN_MENU).init(gc, this);
-
-//		this.getState(Globals.STATS_VIEW).init(gc, this);
 		this.enterState(Globals.ACCOUNT_PICK);
 	}
 

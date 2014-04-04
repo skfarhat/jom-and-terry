@@ -19,5 +19,6 @@ public final class Globals {
 	public static final String SAVE_DIRECTORY_PATH		= "Save/";
 
 
+	public static final float SELECTION_ERROR = 50.0f; 
 	
 }
