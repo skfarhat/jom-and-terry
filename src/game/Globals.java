@@ -19,6 +19,15 @@ public final class Globals {
 	public static final String SAVE_DIRECTORY_PATH		= "Save/";
 
 
+	
+	// For policeman
 	public static final float SELECTION_ERROR = 50.0f; 
 	
+	
+	// Velocity
+	
+	public static final float VELOCITY_MULTIPLIER = 0.02f; 
+	public static final float ROBBER_VELOCITY = 130.0f;
+	public static final float POLICEMAN_VELOCITY = 80.0f;
+	public static final float SECURITY_GUARD_VELOCITY = 60.0f; 
 }

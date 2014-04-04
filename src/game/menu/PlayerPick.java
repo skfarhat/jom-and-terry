@@ -2,8 +2,6 @@ package game.menu;
 
 import game.Game;
 import game.Globals;
-import game.states.Play;
-
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -78,7 +76,6 @@ public class PlayerPick extends Menu{
 		MenuButton robberButton = new MenuButton(sbg.getContainer(), robberImage, BUTTON_2_X, BUTTON_2_Y) {
 			@Override
 			public void performAction() {
-				Play play = (Play) Game.getInstance().getState(Globals.PLAY);
 				Game.getInstance().getAccount().setIsRobber(true);
 				sbg.enterState(Globals.AREA_PICK);
 			}
@@ -86,7 +83,6 @@ public class PlayerPick extends Menu{
 		MenuButton policeButton = new MenuButton(sbg.getContainer(), policeImage, BUTTON_1_X, BUTTON_1_Y) {
 			@Override
 			public void performAction() {
-				Play play = (Play) Game.getInstance().getState(Globals.PLAY);
 				Game.getInstance().getAccount().setIsRobber(false);
 				sbg.enterState(Globals.AREA_PICK);
 			}

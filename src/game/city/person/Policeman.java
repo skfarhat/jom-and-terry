@@ -1,5 +1,6 @@
 package game.city.person;
 
+import game.Globals;
 import game.city.building.Building;
 import game.city.building.House;
 import game.states.Play;
@@ -60,8 +61,9 @@ public class Policeman extends Person implements Movable{
 	static Animation rightWalkAnimation = null;
 	static Animation leftWalkAnimation = null;
 	//=================================================================
-	// Constructor
+	
 	/**
+	 * CONSTRUCTOR
 	 * Creates a policeman.
 	 * 
 	 * @param positionX
@@ -184,7 +186,7 @@ public class Policeman extends Person implements Movable{
 
 		// if Policeman is moving, change xPos and yPos
 		if (isMoving) {
-			float speed = (float) (0.04f * velocity);
+			float speed = (float) (Globals.VELOCITY_MULTIPLIER * velocity);
 
 			float deltaX = this.xPos - this.destX; 
 			float deltaY = this.yPos - this.destY;
@@ -276,7 +278,6 @@ public class Policeman extends Person implements Movable{
 		this.isCheckingSuspectRegion = true;
 	}
 
-
 	public boolean lookForRobber()
 	{
 		float distance = (float)  Math.sqrt(Math.pow(this.xPos-this.robber.xPos, 2.0) + Math.pow(this.yPos-this.robber.yPos, 2.0));
@@ -331,9 +332,11 @@ public class Policeman extends Person implements Movable{
 			stop();
 		}		
 	}
+	
+
 	public void moveRight() {
 		this.currentAnimation.start();
-		this.xPos+=0.02*velocity;
+		this.xPos+=Globals.VELOCITY_MULTIPLIER*velocity;
 		this.rect.setX(this.xPos);
 
 		if (collides()){
@@ -343,7 +346,7 @@ public class Policeman extends Person implements Movable{
 
 	public void moveLeft() {
 		this.currentAnimation.start();
-		this.xPos-=velocity * 0.02f;
+		this.xPos-=velocity * Globals.VELOCITY_MULTIPLIER;
 		this.rect.setX(this.xPos);
 		if (collides()){
 			normalForceRight();
@@ -351,7 +354,7 @@ public class Policeman extends Person implements Movable{
 	}
 
 	public void moveUp() {
-		this.yPos-=velocity *0.02f;
+		this.yPos-=velocity *Globals.VELOCITY_MULTIPLIER;
 		this.rect.setY(this.yPos);
 		if (collides()){
 			normalForceDown();
@@ -359,7 +362,7 @@ public class Policeman extends Person implements Movable{
 	}
 
 	public void moveDown() {
-		this.yPos+=0.02f*velocity;
+		this.yPos+=Globals.VELOCITY_MULTIPLIER*velocity;
 		this.rect.setY(this.yPos);
 		if (collides()){
 			normalForceUp();
@@ -367,22 +370,22 @@ public class Policeman extends Person implements Movable{
 	}
 
 	public void normalForceRight() {
-		this.xPos+=0.02*velocity;
+		this.xPos+=Globals.VELOCITY_MULTIPLIER*velocity;
 		this.rect.setX(this.xPos);
 	}
 
 	public void normalForceLeft() {
-		this.xPos-=velocity * 0.02f;
+		this.xPos-=velocity * Globals.VELOCITY_MULTIPLIER;
 		this.rect.setX(this.xPos);
 	}
 
 	public void normalForceUp() {
-		this.yPos-=velocity *0.02f;
+		this.yPos-=velocity *Globals.VELOCITY_MULTIPLIER;
 		this.rect.setY(this.yPos);
 	}
 
 	public void normalForceDown() {
-		this.yPos+=0.02f*velocity;
+		this.yPos+=Globals.VELOCITY_MULTIPLIER*velocity;
 		this.rect.setY(this.yPos);
 	}
 

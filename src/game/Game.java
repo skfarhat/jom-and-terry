@@ -24,9 +24,11 @@ public class Game extends StateBasedGame {
 	public Account getAccount() {
 		return account;
 	}
+
 	public void setAccount(Account account) {
 		this.account = account;
 	}
+
 	private Game(String gamename) {
 		super(gamename);
 

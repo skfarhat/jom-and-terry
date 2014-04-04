@@ -1,17 +1,16 @@
 package game.city.building;
 
 import game.AudioGame;
-import game.Game;
 import game.city.person.Robber;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.Timer;
-
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.openal.Audio;
 import org.newdawn.slick.openal.AudioLoader;
@@ -23,13 +22,18 @@ import org.newdawn.slick.util.ResourceLoader;
  * @author sami
  * 
  */
-public abstract class Building  {
+public abstract class Building extends Observable{
+
 	/**
 	 * The amount of money a building has.
 	 */
-
 	public static ArrayList<Building> buildings = new ArrayList<>(20); 
-	
+
+	public ArrayList<Observer> observers = new ArrayList<>(3); 
+
+	private BuildingInfo bldgInfo; 
+
+	protected boolean showBuildingInfo = false; 
 	//==============================================================================================================================
 	// ROBBING
 	// FIXME: ROBBING DURATION modify for each building
@@ -40,10 +44,9 @@ public abstract class Building  {
 	private boolean isBeingRobbed;
 	private boolean isCompletelyRobbed = false; 
 	private float robbedPercent = 0.0f; 
-	private FillingBar fillingBar; 
 	//==============================================================================================================================
-	
-	
+
+
 	public Integer ID; 
 	public Integer money;
 	public int xPos, yPos; 
@@ -70,29 +73,17 @@ public abstract class Building  {
 
 		// initially the building is not highlighted
 		this.isHighlighted = false;
-		
 
-		// init the filling bar 
-		fillingBar = new FillingBar(xPos, yPos-20, width);
+
+		// Init the building info
+		this.bldgInfo = new BuildingInfo(this);
 
 		buildings.add(this);
 	}
 
-	/**
-	 * Checks whether a robber is near
-	 * @param robber
-	 * @return
-	 */
-
-	/**
-	 * Output the info of a building when the robber is near
-	 */
-	public void displayBuildingInfo() {
-		
-	}
 
 	public void rob(final Robber robber){
-		
+
 		if (isBeingRobbed)
 			return; 
 
@@ -103,26 +94,24 @@ public abstract class Building  {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		final Building thisBuilding = this; 
 		final Building nearByBldg = robber.nearByBldg; 
-		
+
 		robbingTimer = new Timer(ROBBING_DURATION/ROBBING_UPDATE, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 				if (isCompletelyRobbed)
 					return;  
 
-				// the robber is in fact robbing this bank
+				// the robber is in fact robbing this building
 				if (nearByBldg == thisBuilding){
 
-					// add 10% to the robbed percent of the bank
+					// add 1% (or some other percent) to the robbed percent of the building
 					robbedPercent+= (1.0f/ROBBING_UPDATE);
 
 					// update the filling bar of the building
-
 					if (robbedPercent >= 1.0f){
 
 						// robber finished robbing this bank
@@ -133,29 +122,35 @@ public abstract class Building  {
 
 						// set the boolean is completely robbed to avoid robber re-robbing
 						isCompletelyRobbed = true; 
-						
+
 						// stop the robbing timer
 						robbingTimer.stop();
 					}
-					fillingBar.update(robbedPercent);
+					// update the robbed percent
+					bldgInfo.getFillingBar().update(robbedPercent);
 				}
 				else return; 
 			}
 		});
 
 		// start the timer
-		robbingTimer.start(); 
-		isBeingRobbed = true; 
+		robbingTimer.start();
+		setBeingRobbed(true); 
 	}
 
-
 	public void draw(){
-		// Get Graphics Instance 
-		Graphics g = Game.getInstance().getContainer().getGraphics();
-		
-		// Draw the filling bar at the xPos of the building but a bit above 
-		fillingBar.draw(0,0);
-				
-		g.drawString(String.format("$%d", money), xPos, yPos-40);
+		// Draw the filling bar at the xPos of the building but a bit above
+		if (showBuildingInfo)
+			bldgInfo.draw(xPos, yPos- BuildingInfo.BUILDING_INFO_HEIGHT);
+	}
+
+	public void setShowBuildingInfo(boolean showBuildingInfo) {
+		this.showBuildingInfo = showBuildingInfo;
+	}
+
+	public void setBeingRobbed(boolean isBeingRobbed) {
+		this.isBeingRobbed = isBeingRobbed;
+		setChanged();
+		notifyObservers();
 	}
 }

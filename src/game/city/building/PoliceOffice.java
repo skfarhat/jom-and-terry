@@ -1,5 +1,6 @@
 package game.city.building;
 
+import game.Globals;
 import game.city.person.Policeman;
 import game.city.person.Robber;
 import game.states.Play;
@@ -23,8 +24,8 @@ public class PoliceOffice {
 	private Robber robber; 
 	private static Integer numberOfPolicemen = 3; 
 	public static ArrayList<Policeman> policeForceArray = new ArrayList<>(numberOfPolicemen);
-	private Audio sound;
-	private boolean isPlayingSound = false; 
+	private static Audio sound;
+	private static boolean isPlayingSound = false; 
 
 
 	public PoliceOffice(Play play, Robber robber) throws SlickException {
@@ -35,17 +36,19 @@ public class PoliceOffice {
 		// init the Police Force Array
 		policeForceArray = new ArrayList<>(numberOfPolicemen);
 
-
+		// Create Policemen 
 		for (int i=0; i< numberOfPolicemen; i++) {
 			int x = 400, y = 500;
 
-			Policeman police = new Policeman(play, this.robber, x, y, "Police-1", 80.0f);
-
+			// Create Policeman 
+			Policeman police = new Policeman(play, this.robber, x, y, "Police-1", Globals.POLICEMAN_VELOCITY);
+			// Add Policeman to the Policeman
 			policeForceArray.add(police);
 		}
 
+		// Initialize the Emergency calling sound
 		try {
-			this.sound = AudioLoader.getStreamingAudio("OGG", ResourceLoader.getResource(EMERGENCY_SOUND));
+			sound = AudioLoader.getStreamingAudio("OGG", ResourceLoader.getResource(EMERGENCY_SOUND));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -56,7 +59,7 @@ public class PoliceOffice {
 	 * @param center
 	 * @param error
 	 */
-	public void callPolice(Point center, float error){
+	public static void callPolice(Point center, float error){
 
 		Circle region;
 		for (Policeman police: policeForceArray){	
@@ -71,7 +74,7 @@ public class PoliceOffice {
 	 * Draw all the policemen
 	 */
 	public void draw(){ 
-		for (Policeman police : this.policeForceArray)
+		for (Policeman police : policeForceArray)
 			police.draw();
 	}
 	/**
@@ -82,11 +85,10 @@ public class PoliceOffice {
 		return policeForceArray;
 	}
 
-
-	private void playSound(){
+	private static void playSound(){
 		if (!isPlayingSound)
 		{
-			this.sound.playAsSoundEffect(1.0f, 1.0f, false);
+			sound.playAsSoundEffect(1.0f, 1.0f, false);
 			new javax.swing.Timer(3000, new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -96,7 +98,11 @@ public class PoliceOffice {
 		}
 
 		isPlayingSound = true; 
+	}
 
 
+	public static void callPolice(Building bldg){
+		Point center = new Point(bldg.xPos, bldg.yPos);
+		callPolice(center, 10.0f);
 	}
 }

@@ -1,5 +1,6 @@
 package game.city;
 
+import game.Game;
 import game.Globals;
 import game.city.person.Person;
 import game.menu.PlayerLog;
@@ -32,7 +33,7 @@ public class Camera {
 	protected int tileHeight;
 
 	/** the GameContainer, used for getting the size of the GameCanvas */
-	protected GameContainer gc;
+	protected GameContainer gc = Game.getInstance().getContainer();
 
 	/** the x-position of our "camera" in pixel */
 	protected float cameraX;
@@ -51,7 +52,7 @@ public class Camera {
 	 * @param gc the GameContainer, used for getting the size of the GameCanvas
 	 * @param map the TiledMap used for the current scene
 	 */
-	public Camera(GameContainer gc, TiledMap map, Person person) {
+	public Camera(TiledMap map, Person person) {
 		this.map = map;
 
 		this.numTilesX = map.getWidth();
@@ -65,9 +66,7 @@ public class Camera {
 
 		this.person = person; 
 
-		this.gc = gc;
-
-		this.playerLog = new PlayerLog(gc.getGraphics(), person, Globals.APP_WIDTH-150, 0);
+		this.playerLog = new PlayerLog(person, Globals.APP_WIDTH-150, 0);
 	}
 
 	/**

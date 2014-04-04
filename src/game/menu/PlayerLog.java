@@ -29,12 +29,11 @@ public class PlayerLog {
 	private String logText = ""; 
 	private int xPos, yPos; 
 
-	private Graphics g; 
+	private Graphics g = Game.getInstance().getContainer().getGraphics(); 
 	private Person person; 
 	private Image background;
 
-	public PlayerLog(Graphics g, Person person, int xPos,int yPos) {
-		this.g = g; 
+	public PlayerLog(Person person, int xPos,int yPos) {
 		this.xPos = xPos; 
 		this.yPos = yPos; 
 

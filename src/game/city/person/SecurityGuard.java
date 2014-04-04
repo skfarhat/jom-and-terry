@@ -1,5 +1,6 @@
 package game.city.person;
 
+import game.Globals;
 import game.city.building.Bank;
 import game.city.building.PoliceOffice;
 import game.states.Play;
@@ -39,8 +40,6 @@ public class SecurityGuard extends Person {
 	public Vector2f direction; // direction in which the Security is moving
 
 	private Robber robber; 
-	private PoliceOffice policeOffice; 
-	
 	// Vision Attribute
 	private float visionDistance = 130.0f;
 	private float chaseDistance = 70.0f;
@@ -114,7 +113,7 @@ public class SecurityGuard extends Person {
 
 		// FIXME: Careful this might work now, but if the position given to the
 		// SG by the Bank is changed (right edge aw shi)
-		//
+		// because the SG patrols around the bank, so would need to change the order 
 		this.currentEdge = new Point(this.xPos, this.yPos);
 
 		topLeftEdge = new Point(guardedBank.rect.getMinX(),
@@ -158,7 +157,6 @@ public class SecurityGuard extends Person {
 	}
 
 	public void setPoliceOffice(PoliceOffice policeOffice) {
-		this.policeOffice = policeOffice;
 	}
 	
 	public void move(Point destPnt) {
@@ -174,7 +172,7 @@ public class SecurityGuard extends Person {
 		// if SG is moving, change xPos and yPos
 		if (isMoving) {
 
-			float speed = (float) (0.04f * velocity);
+			float speed = (float) (Globals.VELOCITY_MULTIPLIER * velocity);
 
 			float deltaX = this.xPos - this.destinationPoint.getX();
 			float deltaY = this.yPos - this.destinationPoint.getY();
@@ -314,7 +312,7 @@ public class SecurityGuard extends Person {
 	 */
 	public boolean callPolice(Point center, float error) {
 		
-		policeOffice.callPolice(center, error);
+		PoliceOffice.callPolice(center, error);
 		// TODO implement
 		return false;
 	}

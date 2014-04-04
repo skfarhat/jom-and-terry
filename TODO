@@ -1,14 +1,25 @@
+Jom & Terry
+
 TODO LIST
 
 
-save and resume play
+_Robber is not visible when the main character is police, unless he is some distance away.
+
+_Add House Occupants, they can 'call' the police. If the main character is police, then we get a log message and inspect it ourselves. If the main character is the robber, the police office automatically sends forces to check it out. 
+
+_Display building information when a building is selected: Money, occupants
+
+
+Change avatar of in Logpanel for Police
+
 Robber passing in highway extensively
+
 Count Score
+
 Abort Robbing when move away
-Time in the LogPanel
+
 Collision for Police
-Police Moving SpriteSheet	
-Guard Moving SpriteSheet
+
 Be alerted of Robber position
 House occupant related functionalities
 Flag utility to be used by robber or police 
@@ -17,10 +28,15 @@ Add Sounds
 As Robber is fleeing Police he gains points
 
 
+_Make the "Resume Game" button functional. Must be able to save game before. 
+
+_Add Spritesheets for Policeman, Security Guard and Robber. (using Photoshop)
 
 ====================================
 			D O N E
 ====================================
+make the menu buttons smaller 
+Time in the LogPanel
 Create Account
 Move the Avatar in Logpanel to top right
 SG arrest Robber				

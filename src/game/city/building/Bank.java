@@ -1,7 +1,10 @@
 package game.city.building;
 
+import game.Globals;
 import game.city.person.SecurityGuard;
+
 import java.util.ArrayList;
+
 import org.newdawn.slick.SlickException;
 
 /**
@@ -17,7 +20,9 @@ public class Bank extends Building {
 	 */
 	public static ArrayList<Bank> banks = new ArrayList<>(10);
 	
-	// Each bank has one security guard (for now...)
+	/**
+	 * The number of security guards this bank has
+	 */
 	int numberOfSecurityGuards = 1;
 
 	/**
@@ -50,7 +55,7 @@ public class Bank extends Building {
 		for (int i = 0; i < numberOfSecurityGuards; i++) {
 			// create a new security guard
 			SecurityGuard sg = new SecurityGuard(this.xPos, this.yPos, "SG",
-					30.0f, this);
+					Globals.SECURITY_GUARD_VELOCITY, this);
 
 			// add the security guard to the array
 			this.securityGuards.add(sg);

@@ -1,4 +1,5 @@
 package game.city.person;
+import game.Globals;
 import game.city.building.Building;
 import game.city.building.PoliceOffice;
 
@@ -28,7 +29,7 @@ public class Robber extends Person implements Movable{
 
 	// Movement attributes
 	private float destX, destY;
-	private float velocity = 130.0f; 
+//	private static float velocity = 130.0f; 
 	public boolean isMoving = false; 
 	public Vector2f vectorDirection;
 
@@ -55,7 +56,7 @@ public class Robber extends Person implements Movable{
 	public Robber(boolean isUser) throws SlickException {
 
 		// TODO: set name and velocity somewhere else
-		super("Robber", 50.0f);
+		super("Robber", Globals.ROBBER_VELOCITY);
 
 		this.isUser = isUser; 
 
@@ -200,7 +201,7 @@ public class Robber extends Person implements Movable{
 
 	public void moveRight() {
 		this.currentAnimation.start();
-		this.xPos+=0.02*velocity;
+		this.xPos+=Globals.VELOCITY_MULTIPLIER*velocity;
 		this.rect.setX(this.xPos);
 		this.currentAnimation = Robber.rightWalkAnimation;
 
@@ -211,7 +212,7 @@ public class Robber extends Person implements Movable{
 
 	public void moveLeft() {
 		this.currentAnimation.start();
-		this.xPos-=velocity * 0.02f;
+		this.xPos-=velocity * Globals.VELOCITY_MULTIPLIER;
 		this.rect.setX(this.xPos);
 		this.currentAnimation = Robber.leftWalkAnimation;
 		if (collides()){
@@ -220,7 +221,7 @@ public class Robber extends Person implements Movable{
 	}
 
 	public void moveUp() {
-		this.yPos-=velocity *0.02f;
+		this.yPos-=velocity *Globals.VELOCITY_MULTIPLIER;
 		this.rect.setY(this.yPos);
 		this.currentAnimation = Robber.upWalkAnimation;
 		if (collides()){
@@ -229,7 +230,7 @@ public class Robber extends Person implements Movable{
 	}
 
 	public void moveDown() {
-		this.yPos+=0.02f*velocity;
+		this.yPos+=Globals.VELOCITY_MULTIPLIER*velocity;
 		this.rect.setY(this.yPos);
 		this.currentAnimation = Robber.downWalkAnimation;
 		if (collides()){
@@ -238,22 +239,22 @@ public class Robber extends Person implements Movable{
 	}
 
 	public void normalForceRight() {
-		this.xPos+=0.02*velocity;
+		this.xPos+=Globals.VELOCITY_MULTIPLIER*velocity;
 		this.rect.setX(this.xPos);
 	}
 
 	public void normalForceLeft() {
-		this.xPos-=velocity * 0.02f;
+		this.xPos-=velocity * Globals.VELOCITY_MULTIPLIER;
 		this.rect.setX(this.xPos);
 	}
 
 	public void normalForceUp() {
-		this.yPos-=velocity *0.02f;
+		this.yPos-=velocity *Globals.VELOCITY_MULTIPLIER;
 		this.rect.setY(this.yPos);
 	}
 
 	public void normalForceDown() {
-		this.yPos+=0.02f*velocity;
+		this.yPos+= velocity *Globals.VELOCITY_MULTIPLIER;
 		this.rect.setY(this.yPos);
 	}
 

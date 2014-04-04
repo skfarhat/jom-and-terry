@@ -33,4 +33,5 @@ public class Shop extends Building {
 	public Shop(int ID, int positionX, int positionY, float width, float height, Integer money) {
 		super(ID, positionX, positionY, width, height, money);
 	}
+
 }

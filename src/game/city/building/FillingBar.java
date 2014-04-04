@@ -14,14 +14,14 @@ import org.newdawn.slick.util.ResourceLoader;
 
 public class FillingBar implements Renderable {
 	
+	private Font font; 
 	private final static String FONT_PATH = "res/Font/Petitinho.ttf";
 	private final static float FILLING_BAR_HEIGHT = 12.0f; 
 	private Rectangle filledPart; 
 	private Rectangle mainRect; 
 	private String filledPercentString = ""; 
-	private Font font; 
 	
-	public FillingBar(int x, int y, float width){
+	public FillingBar(float x, float y, float width){
 		mainRect = new Rectangle(x, y, width, FILLING_BAR_HEIGHT);
 		
 		// initially the width for the filled part is 0 
@@ -39,6 +39,7 @@ public class FillingBar implements Renderable {
 			this.font = null; 
 		}
 	}
+	
 	public void update(float percent){
 		filledPart.setWidth(percent*mainRect.getWidth());
 		filledPercentString = String.format("%d%%", (int) (percent*100));
