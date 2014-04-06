@@ -18,9 +18,12 @@ public class RobberComputer extends Robber {
 	private Point destPoint; 
 
 	private Building buildingToRob = null;
-	
+
 	public RobberComputer() throws SlickException {
 		super();
+
+		// Start the robbing
+		automaticallyRob();
 	}
 
 	public void automaticallyRob() {
@@ -41,13 +44,8 @@ public class RobberComputer extends Robber {
 					// if the bldg is not completely robbed 
 					if (!bldg.getIsCompletelyRobbed()){
 						// go to the building 
-						System.out.println(String.format("%d, %d", bldg.position.getX(), bldg.position.getY()));
+						moveAndRob(bldg);
 						
-						
-						move(bldg.position);
-
-						// rob the building
-						rob(bldg);
 					}
 				}
 			}
@@ -59,36 +57,34 @@ public class RobberComputer extends Robber {
 
 	public boolean moveAndRob(Building bldg){
 
-		// set the building to rob
-		this.buildingToRob =bldg; 
-		
 		// If null return false
 		if (bldg == null)
 			return false; 
-		
+
 		// If is in robbing distance directly rob
 		if (bldg.isInRobbingDistance(this.position))
-			return rob(bldg);
-		
+			return  rob(bldg); 
+
+		// set the building to rob
+		this.buildingToRob =bldg;
+
 		// move
-		moveTo(bldg);
-		
+		move(bldg.position);
+
 		return true; 
-		
+
 	}
 
 	public void draw() {
 		super.draw();
-		
-		this.currentAnimation.draw(this.position.getX(), this.position.getY());
 
-		Policeman policeman;
+		this.currentAnimation.draw(this.position.getX(), this.position.getY());
 
 		if (isMoving) {
 
 			float deltaX = this.position.getX() - this.destPoint.getX(); 
 			float deltaY = this.position.getY() - this.destPoint.getY();
-			
+
 			// we want the robber to go all the way horizontally then after arrivign to the correct xpos
 			// go all the way vertically, so we declare a variable movingHorizontally and we set it to true whenever the policeman is going horizontally
 			// if true, the second if statement is not satisfied and the yPos has to wait for the xPos to finish
@@ -113,18 +109,32 @@ public class RobberComputer extends Robber {
 			}
 
 			// 2.0f margin of error
-	
-			Vector2f differenceVector = new Vector2f(this.position.getX() -this.destPoint.getX(), this.position.getY()  - this.destPoint.getY()); 
+
+			Vector2f differenceVector = new Vector2f(
+					this.position.getX() - this.destPoint.getX(),
+					this.position.getY() - this.destPoint.getY()
+					); 
+
+			System.out.println(String.format("differenceVector: %f,%f", differenceVector.getX(), differenceVector.getY()));
 			if (differenceVector.length() < 2.0f) {
-				this.isMoving = false;	
-				if (buildingToRob.position.getX() ==  this.destPoint.getX() && 
-						buildingToRob.position.getY() == this.destPoint.getY())
+
+				System.out.println(" < 2.0f");
+				this.isMoving = false;
+				if (buildingToRob !=null)
+				{
+					System.out.println("buildingToRob != null");
 					rob(buildingToRob);
-				
+					buildingToRob = null;
+				}
+
+				//				if (buildingToRob.position.getX() ==  this.destPoint.getX() && 
+				//						buildingToRob.position.getY() == this.destPoint.getY())
+				//					rob(buildingToRob);
+
 			}
 		}
 	}
-	
+
 	public void move(Point destPoint)
 	{
 		// set the Destination Point
@@ -136,8 +146,8 @@ public class RobberComputer extends Robber {
 		// set the boolean is moving to true
 		this.isMoving = true; 
 
-	}
-	
+	}	
+
 	public void moveTo(Building bldg){
 		//ASSUMPTION: move horizontal then vertical
 
@@ -159,7 +169,7 @@ public class RobberComputer extends Robber {
 					moveDown();
 				else 
 					moveUp();
-				
+
 				collides = (directionVector.x>0)? !moveRight() : !moveLeft();
 			}
 
@@ -167,7 +177,7 @@ public class RobberComputer extends Robber {
 			directionVector.set(this.position.getX() - bldg.position.getX(), this.position.getY() - bldg.position.getY());
 		}
 	}
-	
+
 	public void fleePoliceman(Vector2f direction)
 	{
 		float deltaX = 0 ,  deltaY = 0;
@@ -181,7 +191,7 @@ public class RobberComputer extends Robber {
 
 		// point to go to 
 		Point toPoint = new Point(deltaX+ this.position.getX(), this.position.getY()+ deltaY);
-		
+
 		// move there
 		this.move(toPoint);
 
@@ -195,7 +205,7 @@ public class RobberComputer extends Robber {
 		{
 			float distance = (float)  Math.sqrt(Math.pow(policeman.position.getX()-this.position.getX(), 2.0) 
 					+ Math.pow(policeman.position.getY()-this.position.getY(), 2.0));
-			
+
 			if (distance < Globals.ROBBER_VISION_DISTANCE)
 				return policeman;
 		}
@@ -203,4 +213,39 @@ public class RobberComputer extends Robber {
 		return null ;  	
 	}
 
+	
+	
+	public boolean moveRight() {
+		this.currentAnimation.start();
+		this.position.setX((float) (this.position.getX()+Globals.VELOCITY_MULTIPLIER*velocity));		
+		this.rect.setX(this.position.getX());
+		this.currentAnimation = Robber.rightWalkAnimation;
+
+
+		return true; 
+	}
+
+	public boolean moveLeft() {
+		this.currentAnimation.start();
+		this.position.setX((float) (this.position.getX()-Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setX(this.position.getX());
+		this.currentAnimation = Robber.leftWalkAnimation;
+		return true; 
+	}
+
+	public boolean moveUp() {
+		this.position.setY((float) (this.position.getY()-Globals.VELOCITY_MULTIPLIER*velocity));
+
+		this.rect.setY(this.position.getY());
+		this.currentAnimation = Robber.upWalkAnimation;
+		return true; 
+	}
+
+	public boolean moveDown() {
+		this.position.setY((float) (this.position.getY()+Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setY(this.position.getY());
+		this.currentAnimation = Robber.downWalkAnimation;
+
+		return true; 
+	}
 }

@@ -50,7 +50,7 @@ public class Play extends BasicGameState {
 	public boolean userIsRobber;
 	boolean isGameOver = false;
 	public Rectangle toDraw;  
-	private Integer TILE_SIZE = 16;
+	
 	// Characters
 	private Robber robber;
 	public PoliceOffice policeOffice;
@@ -115,8 +115,8 @@ public class Play extends BasicGameState {
 					// then there is a tile at that position
 					blocked[i][j] = true;
 
-					blocks.add(new Rectangle((float) i * TILE_SIZE, (float) j
-							* TILE_SIZE, TILE_SIZE, TILE_SIZE));
+					blocks.add(new Rectangle((float) i * Globals.TILE_SIZE, (float) j
+							* Globals.TILE_SIZE, Globals.TILE_SIZE, Globals.TILE_SIZE));
 				}
 			}
 		}

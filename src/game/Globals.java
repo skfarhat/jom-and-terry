@@ -13,9 +13,12 @@ public final class Globals {
 	public static final int NEW_ACCOUNT_PICK= 9;
 	public static final int STATS_VIEW = 10; 
 	
-	static public int APP_WIDTH = 1400;
-	static public int APP_HEIGHT = 800;
+	public static final int APP_WIDTH = 1400;
+	public static final int APP_HEIGHT = 800;
+	public static final int TILE_SIZE = 16;
+
 	
+	// Directories
 	public static final String SAVE_DIRECTORY_PATH		= "Save/";
 	
 	// For policeman

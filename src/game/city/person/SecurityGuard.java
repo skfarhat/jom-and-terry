@@ -68,9 +68,6 @@ public class SecurityGuard extends Person {
 	// ====================================================================================================
 	SpriteSheet spriteSheet;
 
-	// Path to the Sprite Sheet
-	//private String sgSpriteSheet = "res/SpriteSheets/security-guard.png";
-
 	// Dimensions a single sprite
 	int spriteWidth;
 	int spriteHeight;

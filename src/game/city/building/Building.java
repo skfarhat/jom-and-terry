@@ -35,16 +35,16 @@ public abstract class Building extends Observable{
 
 	// Observers
 	public ArrayList<Observer> observers = new ArrayList<>(3);
-	
+
 	// Occupants
 	protected ArrayList<Occupant> occupants = new ArrayList<>(3);
 	public int occupantsOnVacation = 0; 
-	
+
 	// Building Information
 	private BuildingInfo bldgInfo; 
 	protected boolean showBuildingInfo = false;
 	private Timer displayBuildingInfoTimer;
-	
+
 	//==============================================================================================================================
 	// ROBBING
 	// FIXME: ROBBING DURATION modify for each building
@@ -61,12 +61,12 @@ public abstract class Building extends Observable{
 	public Integer ID; 
 	public Integer money;
 	public Integer score; 
-//	public int xPos, yPos;
+	//	public int xPos, yPos;
 	public Point position; 
 	public float width, height;
 	public boolean isHighlighted;
 	public Rectangle rect;
-	
+
 
 	/**
 	 * Abstract constructor only called by subclasses.
@@ -80,12 +80,12 @@ public abstract class Building extends Observable{
 		this.rect = new Rectangle(position.getX(), position.getY(), width, height);
 
 		this.position = position; 
-		
+
 		this.width = width; 
 		this.height = height; 
 		this.money = money;
 		this.score = money/1000; 
-		
+
 		// Initially the building is not highlighted
 		this.isHighlighted = false;
 
@@ -110,17 +110,7 @@ public abstract class Building extends Observable{
 		if (isBeingRobbed)
 			return; 
 
-		robber.setRobbing(true);
-		AudioGame.play("Glass-Smash.ogg");
-		try {
-			Audio oggStream = AudioLoader.getStreamingAudio("OGG", ResourceLoader.getResource("res/Sounds/Glass-Smash.ogg"));
-			oggStream.playAsMusic(1.0f, 1.0f, true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 		final Building thisBuilding = this; 
-		final Building nearByBldg = robber.nearByBldg; 
 
 		robbingTimer = new Timer(ROBBING_DURATION/ROBBING_UPDATE, new ActionListener() {
 			@Override
@@ -130,39 +120,41 @@ public abstract class Building extends Observable{
 					return;  
 
 				// the robber is in fact robbing this building
-				if (nearByBldg == thisBuilding){
+				
+				robber.setRobbing(true);
+				
+				AudioGame.play("Glass-Smash.ogg");
 
-					// add 1% (or some other percent) to the robbed percent of the building
-					robbedPercent+= (1.0f/ROBBING_UPDATE);
+				// add 1% (or some other percent) to the robbed percent of the building
+				robbedPercent+= (1.0f/ROBBING_UPDATE);
 
-					// keep showing the building information when the robber is robbing the building
-					setShowBuildingInfo(true);
-					
-					// update the filling bar of the building
-					if (robbedPercent >= 1.0f){
+				// keep showing the building information when the robber is robbing the building
+				setShowBuildingInfo(true);
 
-						// robber finished robbing this bank
-						robber.addMoney(thisBuilding.money);
+				// update the filling bar of the building
+				if (robbedPercent >= 1.0f){
 
-						//
-						robber.addScore(thisBuilding.score);
-						
-						// set the money of the bank to zero
-						thisBuilding.money = 0; 
+					// robber finished robbing this bank
+					robber.addMoney(thisBuilding.money);
 
-						// set the boolean is completely robbed to avoid robber re-robbing
-						isCompletelyRobbed = true; 
+					//
+					robber.addScore(thisBuilding.score);
 
-						// set the boolean is robbing to false
-						robber.setRobbing(false);
-						
-						// stop the robbing timer
-						robbingTimer.stop();
-					}
-					// update the robbed percent
-					bldgInfo.getFillingBar().update(robbedPercent);
+					// set the money of the bank to zero
+					thisBuilding.money = 0; 
+
+					// set the boolean is completely robbed to avoid robber re-robbing
+					isCompletelyRobbed = true; 
+
+					// set the boolean is robbing to false
+					robber.setRobbing(false);
+
+					// stop the robbing timer
+					robbingTimer.stop();
 				}
-				else return; 
+				// update the robbed percent
+				bldgInfo.getFillingBar().update(robbedPercent);
+
 			}
 		});
 
@@ -177,7 +169,7 @@ public abstract class Building extends Observable{
 			bldgInfo.draw(position.getX(), position.getY()- BuildingInfo.BUILDING_INFO_HEIGHT);
 	}
 
-	
+
 	/**
 	 * Displays the building related information using the BuildingInfo class. 
 	 * Starts timer that hides BuildingInfo after a certain time interval (3sec)
@@ -225,12 +217,13 @@ public abstract class Building extends Observable{
 	}
 
 	public boolean isInRobbingDistance(Point point){
+		System.out.println("is In Robbing Distance");
 		Rectangle rect = new Rectangle(
-				this.position.getX()-Globals.BUILDING_ROBBING_DISTANCE,
+				this.position.getX() - Globals.BUILDING_ROBBING_DISTANCE,
 				this.position.getY() - Globals.BUILDING_ROBBING_DISTANCE, 
 				this.rect.getWidth() + Globals.BUILDING_ROBBING_DISTANCE, 
 				this.rect.getHeight()+ Globals.BUILDING_ROBBING_DISTANCE);
-		
+
 		return (rect.intersects(point));
 	}
 
