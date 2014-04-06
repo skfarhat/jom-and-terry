@@ -4,6 +4,8 @@ import game.city.person.SecurityGuard;
 
 import java.util.ArrayList;
 
+import org.newdawn.slick.geom.Point;
+
 /**
  * A shop.
  * 
@@ -30,8 +32,8 @@ public class Shop extends Building {
 	 * @param money
 	 * @param securityGuards
 	 */
-	public Shop(int ID, int positionX, int positionY, float width, float height, Integer money) {
-		super(ID, positionX, positionY, width, height, money);
+	public Shop(int ID, Point position, float width, float height, Integer money) {
+		super(ID, position, width, height, money);
 	}
 
 }

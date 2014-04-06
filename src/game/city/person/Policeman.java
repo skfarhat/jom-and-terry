@@ -36,12 +36,15 @@ public class Policeman extends Person implements Movable{
 	private Image image;
 
 	private Integer score = 0; 
+
+//	private float destX, destY;
+	private Point destPoint; 
 	
-	private float destX, destY; 
 	public Vector2f direction; 
 	private float visionDistance = 130.0f;	// Vision Attribute
 	//=================================================================
 	// Behavior
+	private boolean userIsPolice; 
 	public boolean isSelected = false; 
 	public boolean isMoving = false;
 	private boolean isPatrolling = false;
@@ -61,7 +64,7 @@ public class Policeman extends Person implements Movable{
 	static Animation rightWalkAnimation = null;
 	static Animation leftWalkAnimation = null;
 	//=================================================================
-	
+
 	/**
 	 * CONSTRUCTOR
 	 * Creates a policeman.
@@ -72,11 +75,13 @@ public class Policeman extends Person implements Movable{
 	 * @param velocity
 	 * @throws SlickException
 	 */
-	public Policeman(Play play,  Robber robber,  float positionX, float positionY, String name,
-			double velocity) throws SlickException {
+	public Policeman(Play play,  Robber robber,  Point position, String name,
+			double velocity, boolean userIsPolice) throws SlickException {
 
 		// call superclass constructor (Person)
 		super(name, velocity);
+
+		this.userIsPolice = userIsPolice; 
 
 		this.play = play;
 
@@ -84,11 +89,10 @@ public class Policeman extends Person implements Movable{
 		this.initSpriteSheet();
 
 		// Set the position of the policeman
-		this.xPos = positionX;
-		this.yPos = positionY;
-		
+		this.position= position; 
+
 		// set the rectangle of the player 
-		this.rect = new Rectangle(this.xPos, this.yPos, spriteWidth, spriteHeight);
+		this.rect = new Rectangle(position.getX(), position.getY(), spriteWidth, spriteHeight);
 
 		// Set the image of the policeman
 		this.image = new Image(policemanImgPath);
@@ -161,15 +165,6 @@ public class Policeman extends Person implements Movable{
 		this.suspectRegion = suspectRegionCircle;
 	}
 
-	public void move(float destX, float destY)
-	{
-		this.destX = destX; 
-		this.destY = destY;
-		this.direction = new Vector2f(destX  - this.xPos, destY - this.yPos);
-
-		this.isMoving = true;
-	}
-
 	private Point randomPointInCircle(Circle circle){
 		Random rand = new Random(); 
 
@@ -188,31 +183,37 @@ public class Policeman extends Person implements Movable{
 		if (isMoving) {
 			float speed = (float) (Globals.VELOCITY_MULTIPLIER * velocity);
 
-			float deltaX = this.xPos - this.destX; 
-			float deltaY = this.yPos - this.destY;
+			float deltaX = this.position.getX() - this.destPoint.getX(); 
+			float deltaY = this.position.getY() - this.destPoint.getY();
 
 
 			// we want the policeman to go all the way horizontally then after arrivign to the correct xpos
-			// go all the way vertically, so we declare a variale movingHorizontally and we set it to true whenever the policeman is going horizontally
+			// go all the way vertically, so we declare a variable movingHorizontally and we set it to true whenever the policeman is going horizontally
 			// if true, the second if statement is not satisfied and the yPos has to wait for the xPos to finish
 			boolean movingHorizontally = false;
 			if (Math.abs(deltaX) > 2.0f)
 			{
-				this.xPos += (deltaX<0)?speed: (-1)*speed; 	
-				this.rect.setX(this.xPos);
+				
+				float newX = (deltaX<0)? this.position.getX() + speed: this.position.getX() + (-1)*speed; 
+				this.position.setX(newX);
+				
+				this.rect.setX(this.position.getX());
 				movingHorizontally = true;
 			}
 
 			// check on movingHorizontally done here
 			if (Math.abs(deltaY) > 2.0f && !movingHorizontally)
 			{	
-				this.yPos += (deltaY<0)?speed: (-1)*speed;
-				this.rect.setY(this.yPos);
+				float newY = (deltaY<0)? this.position.getY() + speed: this.position.getY() + (-1)*speed;
+				
+				this.position.setY(newY);
+				
+				this.rect.setY(this.position.getY());
 			}
 
 			// 2.0f margin of error
-			if (Math.abs(this.xPos - this.destX) < 2.0f
-					&& Math.abs(this.yPos - this.destY) < 2.0f) {
+			if (Math.abs(this.position.getX() - this.destPoint.getX()) < 2.0f
+					&& Math.abs(this.position.getY() - this.destPoint.getY()) < 2.0f) {
 
 				this.isMoving = false;	
 				if (isCheckingSuspectRegion)
@@ -224,17 +225,18 @@ public class Policeman extends Person implements Movable{
 		}
 
 		// if the Policeman is neither patrolling nor following the robber then he should patrol
-//		if (!this.isPatrolling && !this.isFollowingRobber)
-//			startPatrol();
+		if (!this.isPatrolling && !this.isFollowingRobber && !userIsPolice)
+			startPatrol();
 
-		// see if the Robber is visible
-		lookForRobber();
+		if (!userIsPolice)
+			// see if the Robber is visible
+			lookForRobber();
 
 		// draw the image at the positon of the policeman
-		this.image.draw(this.xPos, this.yPos);
-		
+		this.image.draw(this.position.getX(), this.position.getY());
+
 		if (isSelected){
-			selectedImage.draw(this.xPos, this.yPos-selectedImage.getHeight());
+			selectedImage.draw(this.position.getX(), this.position.getY()-selectedImage.getHeight());
 		}
 
 	}
@@ -248,7 +250,7 @@ public class Policeman extends Person implements Movable{
 				Integer index = (new Random()).nextInt(House.getHouses().size());
 				Building bldg = Building.buildings.get(index);
 
-				move(bldg.xPos, bldg.yPos);
+				move(bldg.position);
 			}
 		});
 		patrolTimer.start();
@@ -272,7 +274,7 @@ public class Policeman extends Person implements Movable{
 		// get a random point inside the region
 		Point randPoint = randomPointInCircle(suspectRegion);
 
-		move(randPoint.getX(), randPoint.getY());
+		move(randPoint);
 
 		// set flag for isCheckingRegion
 		this.isCheckingSuspectRegion = true;
@@ -280,7 +282,10 @@ public class Policeman extends Person implements Movable{
 
 	public boolean lookForRobber()
 	{
-		float distance = (float)  Math.sqrt(Math.pow(this.xPos-this.robber.xPos, 2.0) + Math.pow(this.yPos-this.robber.yPos, 2.0));
+		float distance = (float)  Math.sqrt(Math.pow(
+				this.position.getX()-this.robber.position.getX(), 2.0) 
+				+ Math.pow(this.position.getY()-this.robber.position.getY(), 2.0)
+				);
 		if (distance < 2.0f && !robber.isCaught)
 		{
 			// the Robber has been caught
@@ -302,7 +307,7 @@ public class Policeman extends Person implements Movable{
 	private void followRobber()
 	{
 		this.isFollowingRobber = true;
-		this.move(robber.xPos, robber.yPos);
+		this.move(robber.position);
 	}
 	/**
 	 * Attempt to arrest a robber.
@@ -332,61 +337,83 @@ public class Policeman extends Person implements Movable{
 			stop();
 		}		
 	}
-	
 
-	public void moveRight() {
+	public void move(Point destPoint)
+	{
+		this.destPoint = destPoint;
+		
+		this.direction = new Vector2f(
+				destPoint.getX()  - this.position.getX(), 
+				destPoint.getY() - this.position.getY()
+				);
+
+		this.isMoving = true;
+	}
+
+	public boolean moveRight() {
 		this.currentAnimation.start();
-		this.xPos+=Globals.VELOCITY_MULTIPLIER*velocity;
-		this.rect.setX(this.xPos);
+		
+		this.position.setX((float) (this.position.getX()+Globals.VELOCITY_MULTIPLIER*velocity));
+		
+		this.rect.setX(this.position.getX());
 
 		if (collides()){
 			normalForceLeft();
+			return false;
 		}
+		return true;
 	}
 
-	public void moveLeft() {
+	public boolean moveLeft() {
 		this.currentAnimation.start();
-		this.xPos-=velocity * Globals.VELOCITY_MULTIPLIER;
-		this.rect.setX(this.xPos);
+		this.position.setX((float) (this.position.getX()-Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setX(this.position.getX());
 		if (collides()){
 			normalForceRight();
+			return false; 
 		}
+		return true; 
 	}
 
-	public void moveUp() {
-		this.yPos-=velocity *Globals.VELOCITY_MULTIPLIER;
-		this.rect.setY(this.yPos);
+	public boolean moveUp() {
+		this.position.setY((float) (this.position.getY()-Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setY(this.position.getY());
 		if (collides()){
 			normalForceDown();
+			return false; 
 		}
+		return true;
 	}
 
-	public void moveDown() {
-		this.yPos+=Globals.VELOCITY_MULTIPLIER*velocity;
-		this.rect.setY(this.yPos);
+	public boolean moveDown() {
+		this.position.setY((float) (this.position.getY()+Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setY(this.position.getY());
 		if (collides()){
 			normalForceUp();
+			return false; 
 		}
+		return true; 
 	}
 
 	public void normalForceRight() {
-		this.xPos+=Globals.VELOCITY_MULTIPLIER*velocity;
-		this.rect.setX(this.xPos);
+		this.position.setX((float) (this.position.getX()+Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setX(this.position.getX());
 	}
 
 	public void normalForceLeft() {
-		this.xPos-=velocity * Globals.VELOCITY_MULTIPLIER;
-		this.rect.setX(this.xPos);
+		this.position.setX((float) (this.position.getX()-Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setX(this.position.getX());
 	}
 
 	public void normalForceUp() {
-		this.yPos-=velocity *Globals.VELOCITY_MULTIPLIER;
-		this.rect.setY(this.yPos);
+		this.position.setY((float) (this.position.getY()-Globals.VELOCITY_MULTIPLIER*velocity));
+
+		this.rect.setY(this.position.getY());
 	}
 
 	public void normalForceDown() {
-		this.yPos+=Globals.VELOCITY_MULTIPLIER*velocity;
-		this.rect.setY(this.yPos);
+		this.position.setY((float) (this.position.getY()+Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setY(this.position.getY());
 	}
 
 	@Override
@@ -396,7 +423,7 @@ public class Policeman extends Person implements Movable{
 
 	@Override
 	public void stop() {
-		
+
 	}
 
 }

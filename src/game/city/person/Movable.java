@@ -7,10 +7,10 @@ public interface Movable {
 	
 	public void processInput(Input input); 
 	
-	public void moveRight();
-	public void moveLeft();
-	public void moveUp() ;
-	public void moveDown();
+	public boolean moveRight();
+	public boolean moveLeft();
+	public boolean moveUp() ;
+	public boolean moveDown();
 	
 	
 	// Normal Forces for collision

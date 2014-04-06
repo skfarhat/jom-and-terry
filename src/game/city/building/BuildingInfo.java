@@ -1,8 +1,6 @@
 package game.city.building;
 
 import game.Game;
-
-import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Renderable;
 import org.newdawn.slick.geom.Rectangle;
@@ -11,10 +9,7 @@ public class BuildingInfo implements Renderable{
 
 	public static int BUILDING_INFO_HEIGHT = 50; 
 	
-	private Rectangle frame; 
-	private Font font;
-	private final static String FONT_PATH = "res/Font/Petitinho.ttf"; 
-
+	private Rectangle frame;  
 
 	/**
 	 * Graphics instance of the container 
@@ -44,7 +39,7 @@ public class BuildingInfo implements Renderable{
 	 */
 	public BuildingInfo(Building bldg) {
 
-		this.frame = new Rectangle(bldg.xPos, bldg.yPos, bldg.width, BUILDING_INFO_HEIGHT);
+		this.frame = new Rectangle(bldg.position.getX(), bldg.position.getY(), bldg.width, BUILDING_INFO_HEIGHT);
 		
 		// set the building field
 		this.bldg = bldg; 
@@ -67,12 +62,14 @@ public class BuildingInfo implements Renderable{
 	@Override
 	public void draw(float x, float y) {
 		// draw the filling bar
-		fillingBar.draw(frame.getX(), frame.getY() - 40);
+		fillingBar.draw(frame.getX(), frame.getY() - 50);
 		
 		// the type of the building
-		g.drawString(buildingType, frame.getX(), frame.getY()-20);
-
-		g.drawString(String.format("$%d", bldg.money), frame.getX(), frame.getY() -10);
+		g.drawString(buildingType, frame.getX(), frame.getY()-35);
+		
+		g.drawString(String.format("Occupants:%d/%d",bldg.occupants.size()-bldg.occupantsOnVacation, bldg.occupants.size()), frame.getX(), frame.getY()-25);
+		
+		g.drawString(String.format("$%d", bldg.money), frame.getX(), frame.getY() -12);
 	}
 
 	public FillingBar getFillingBar() {

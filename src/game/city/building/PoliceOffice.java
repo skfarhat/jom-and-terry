@@ -3,6 +3,7 @@ package game.city.building;
 import game.Globals;
 import game.city.person.Policeman;
 import game.city.person.Robber;
+import game.menu.PlayerLog;
 import game.states.Play;
 
 import java.awt.event.ActionEvent;
@@ -26,22 +27,28 @@ public class PoliceOffice {
 	public static ArrayList<Policeman> policeForceArray = new ArrayList<>(numberOfPolicemen);
 	private static Audio sound;
 	private static boolean isPlayingSound = false; 
+	private static boolean userIsPolice; 
 
-
-	public PoliceOffice(Play play, Robber robber) throws SlickException {
+	public PoliceOffice(Play play, Robber robber, boolean userIsPolice) throws SlickException {
 
 		// set robber
 		this.robber = robber;
 
-		// init the Police Force Array
+		// Initialize the Police Force Array
 		policeForceArray = new ArrayList<>(numberOfPolicemen);
 
+		// set the boolean user is police
+		PoliceOffice.userIsPolice = userIsPolice; 
+		
 		// Create Policemen 
 		for (int i=0; i< numberOfPolicemen; i++) {
+			
+			// initial position of policemen
 			int x = 400, y = 500;
 
 			// Create Policeman 
-			Policeman police = new Policeman(play, this.robber, x, y, "Police-1", Globals.POLICEMAN_VELOCITY);
+			Policeman police = new Policeman(play, this.robber, new Point(x,y) , "Police-1", Globals.POLICEMAN_VELOCITY,userIsPolice);
+			
 			// Add Policeman to the Policeman
 			policeForceArray.add(police);
 		}
@@ -54,22 +61,6 @@ public class PoliceOffice {
 		}
 	}
 
-	/**
-	 * 
-	 * @param center
-	 * @param error
-	 */
-	public static void callPolice(Point center, float error){
-
-		Circle region;
-		for (Policeman police: policeForceArray){	
-			// set the suspected region for the robber 
-			// it is a circle
-			region= new Circle(center.getCenterX(), center.getCenterY(), error);
-			police.checkoutRegion(region);
-		}
-		playSound();
-	}
 	/**
 	 * Draw all the policemen
 	 */
@@ -100,9 +91,32 @@ public class PoliceOffice {
 		isPlayingSound = true; 
 	}
 
-
 	public static void callPolice(Building bldg){
-		Point center = new Point(bldg.xPos, bldg.yPos);
-		callPolice(center, 10.0f);
+		Point center = bldg.position; 		
+		float error = 10.0f; 
+		
+
+		Circle region;
+		for (Policeman police: policeForceArray){	
+			// set the suspected region for the robber 
+			// it is a circle
+			region= new Circle(center.getCenterX(), center.getCenterY(), error);
+			
+			
+			// if user is robber then get the police to check the region
+			if (!userIsPolice)
+				police.checkoutRegion(region);
+			else
+			{
+				// notify on the log
+				String message = String.format("%s being robbed!", bldg.getType());
+				PlayerLog.setLogText(message);
+				
+			}
+			
+		}
+		playSound();
+		
+		
 	}
 }

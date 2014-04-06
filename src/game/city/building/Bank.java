@@ -6,6 +6,7 @@ import game.city.person.SecurityGuard;
 import java.util.ArrayList;
 
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Point;
 
 /**
  * A bank.
@@ -30,7 +31,6 @@ public class Bank extends Building {
 	 */
 	private ArrayList<SecurityGuard> securityGuards;
 
-
 	/**
 	 * Getter function for Security Guards
 	 * @return
@@ -47,14 +47,16 @@ public class Bank extends Building {
 	 * @param money
 	 * @throws SlickException
 	 */
-	public Bank(int ID, int positionX, int positionY, float width, float height, Integer money) throws SlickException {
-		super(ID, positionX, positionY, width, height, money);
+	public Bank(int ID, Point position, float width, float height, Integer money) throws SlickException {
+		super(ID, position, width, height, money);
 
 		this.securityGuards = new ArrayList<>();
+		this.position = position; 
+		
 		// Create the Security Guards
 		for (int i = 0; i < numberOfSecurityGuards; i++) {
 			// create a new security guard
-			SecurityGuard sg = new SecurityGuard(this.xPos, this.yPos, "SG",
+			SecurityGuard sg = new SecurityGuard(position, "SG",
 					Globals.SECURITY_GUARD_VELOCITY, this);
 
 			// add the security guard to the array

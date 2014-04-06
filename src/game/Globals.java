@@ -17,12 +17,12 @@ public final class Globals {
 	static public int APP_HEIGHT = 800;
 	
 	public static final String SAVE_DIRECTORY_PATH		= "Save/";
-
-
 	
 	// For policeman
 	public static final float SELECTION_ERROR = 50.0f; 
 	
+	// Robber
+	public static final float ROBBER_VISION_DISTANCE = 100.0f; 
 	
 	// Velocity
 	
@@ -30,4 +30,8 @@ public final class Globals {
 	public static final float ROBBER_VELOCITY = 130.0f;
 	public static final float POLICEMAN_VELOCITY = 80.0f;
 	public static final float SECURITY_GUARD_VELOCITY = 60.0f; 
+	
+	// Building
+	public static final int BUILDING_INFO_DISPLAY_TIMER = 3000;
+	public static final float BUILDING_ROBBING_DISTANCE = 5.0f;
 }

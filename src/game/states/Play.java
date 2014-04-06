@@ -12,6 +12,8 @@ import game.city.person.Movable;
 import game.city.person.Person;
 import game.city.person.Policeman;
 import game.city.person.Robber;
+import game.city.person.RobberComputer;
+import game.city.person.RobberUser;
 import game.city.person.SecurityGuard;
 
 import java.awt.event.ActionEvent;
@@ -25,6 +27,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -128,13 +131,15 @@ public class Play extends BasicGameState {
 		for (int objectIndex = 0; objectIndex < housesObjectCount; objectIndex++) {
 			int x = cityTileMap.getObjectX(0, objectIndex);
 			int y = cityTileMap.getObjectY(0, objectIndex);
+			
+			Point position = new Point(x,y);
 			float width = cityTileMap.getObjectWidth(0, objectIndex);
 			float height = cityTileMap.getObjectHeight(0, objectIndex);
 
 			// some random number (1000 ? 3000 ? ...) and need it to be positive
 			// thus the Math.absolute
 			int money = Math.abs(((new Random()).nextInt() % 10) * 1000);
-			House house = new House(objectIndex, x, y, width, height, money);
+			House house = new House(objectIndex, position, width, height, money);
 
 			// add the house to the houses Array
 		}
@@ -149,6 +154,8 @@ public class Play extends BasicGameState {
 		for (int objectIndex = 0; objectIndex < banksObjectCount; objectIndex++) {
 			int x = cityTileMap.getObjectX(1, objectIndex);
 			int y = cityTileMap.getObjectY(1, objectIndex);
+			Point position = new Point (x,y);
+			
 			float width = cityTileMap.getObjectWidth(1, objectIndex);
 			float height = cityTileMap.getObjectHeight(1, objectIndex);
 
@@ -157,7 +164,7 @@ public class Play extends BasicGameState {
 			// thus the Math.absolute
 			int money = Math.abs(((new Random()).nextInt() % 10) * 1000000);
 
-			Bank bank = new Bank(objectIndex, x, y, width, height, money);
+			Bank bank = new Bank(objectIndex, position, width, height, money);
 
 			// add the bank to the banks Array
 		}
@@ -169,6 +176,8 @@ public class Play extends BasicGameState {
 		for (int objectIndex = 0; objectIndex < shopsObjectCount; objectIndex++) {
 			int x = cityTileMap.getObjectX(2, objectIndex);
 			int y = cityTileMap.getObjectY(2, objectIndex);
+			Point position = new Point(x, y); 
+			
 			float width = cityTileMap.getObjectWidth(2, objectIndex);
 			float height = cityTileMap.getObjectHeight(2, objectIndex);
 
@@ -176,20 +185,25 @@ public class Play extends BasicGameState {
 			// thus the Math.absolute
 			int money = Math.abs(((new Random()).nextInt() % 10) * 10000);
 
-			Shop shop = new Shop(objectIndex, x, y, width, height, money);
+			Shop shop = new Shop(objectIndex, position, width, height, money);
 
 			// the shop is added to the shops static ArrayList in the constructor
 		}
 	}
 
 	private final void initRobber() throws SlickException {
-		robber = new Robber(userIsRobber);
-
+		if (userIsRobber)
+			robber = new RobberUser();
+		else
+			robber = new RobberComputer();
+		
 	}
 
 	private final void initPoliceOffice() throws SlickException {
-
-		this.policeOffice = new PoliceOffice(this, this.robber);
+		
+		boolean userIsPolice = !userIsRobber; 
+		
+		this.policeOffice = new PoliceOffice(this, this.robber, userIsPolice);
 	}
 
 	/**
@@ -233,6 +247,7 @@ public class Play extends BasicGameState {
 			throws SlickException {
 		super.enter(container, game);
 		userIsRobber = Game.getInstance().getAccount().getIsRobber();
+		initRobber();
 		setMainCharacter();
 		start();
 	}
@@ -281,24 +296,31 @@ public class Play extends BasicGameState {
 	 * @return
 	 */
 	private void processInput(Input input) {
+		
+		//TODO: Move to Robber and Policeman 
 		// MOUSE: Control for Police
 		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
 
 			int destX = input.getMouseX();
 			int destY = input.getMouseY();
 
+			
+			// get the building
+			Building bldg = selectBuilding(destX, destY);
+
+			if (bldg==null)
+				return; 
+			
+			// display info for this building
+			bldg.setShowBuildingInfo(true);
+			
+			
+			
 			// if robber 
 			// can select a house to get information about it
 			if (userIsRobber){
 
-				// get the building
-				Building bldg = selectBuilding(destX, destY);
 
-				if (bldg==null)
-					return; 
-				
-				// display info for this building
-				bldg.setShowBuildingInfo(true);
 			}
 			// if Policeman 
 			// can select different policemen to control

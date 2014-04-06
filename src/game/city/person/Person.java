@@ -3,18 +3,19 @@ package game.city.person;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 
 /**
  * An abstract class for the Person/Player in the game.
- * 
+ *
  * @author sami
  * 
  */
 public abstract class Person {
 	public String name;
 	public double velocity;	
-	public float xPos, yPos;
+	public Point position; 
 	
 	public Rectangle rect;
 

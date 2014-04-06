@@ -4,6 +4,7 @@ import game.city.person.Occupant;
 
 import java.util.ArrayList;
 
+import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 
 /**
@@ -19,7 +20,6 @@ public class House extends Building {
 	 */
 	private static ArrayList<House> houses = new ArrayList<>(10);
 	
-	private ArrayList<Occupant> houseOccupants = new ArrayList<>(3);
 	public Rectangle frame;
 	
 	/**
@@ -29,10 +29,10 @@ public class House extends Building {
 	 * @param positionY
 	 * @param money
 	 */
-	public House(int ID, int positionX, int positionY, float width, float height, Integer money) {
-		super(ID, positionX, positionY, width, height, money);
+	public House(int ID, Point position, float width, float height, Integer money) {
+		super(ID, position, width, height, money);
 		
-		this.frame = new Rectangle(positionX, positionY, width, height);
+		this.frame = new Rectangle(position.getX(), position.getY(), width, height);
 		
 		// create HouseOccupant and pass reference to the building they are occupying (this) 
 		Occupant occupant = new Occupant(this);
@@ -42,7 +42,7 @@ public class House extends Building {
 		addObserver(occupant);
 		
 		// add the occupant to the house occupants array 
-		houseOccupants.add(occupant);
+		occupants.add(occupant);
 		
 		// add this house to the static array list containing all the houses
 		houses.add(this);

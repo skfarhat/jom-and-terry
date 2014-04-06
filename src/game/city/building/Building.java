@@ -1,6 +1,8 @@
 package game.city.building;
 
 import game.AudioGame;
+import game.Globals;
+import game.city.person.Occupant;
 import game.city.person.Robber;
 
 import java.awt.event.ActionEvent;
@@ -11,6 +13,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.Timer;
+
+import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.openal.Audio;
 import org.newdawn.slick.openal.AudioLoader;
@@ -29,11 +33,18 @@ public abstract class Building extends Observable{
 	 */
 	public static ArrayList<Building> buildings = new ArrayList<>(20); 
 
-	public ArrayList<Observer> observers = new ArrayList<>(3); 
-
+	// Observers
+	public ArrayList<Observer> observers = new ArrayList<>(3);
+	
+	// Occupants
+	protected ArrayList<Occupant> occupants = new ArrayList<>(3);
+	public int occupantsOnVacation = 0; 
+	
+	// Building Information
 	private BuildingInfo bldgInfo; 
-
-	protected boolean showBuildingInfo = false; 
+	protected boolean showBuildingInfo = false;
+	private Timer displayBuildingInfoTimer;
+	
 	//==============================================================================================================================
 	// ROBBING
 	// FIXME: ROBBING DURATION modify for each building
@@ -49,10 +60,13 @@ public abstract class Building extends Observable{
 
 	public Integer ID; 
 	public Integer money;
-	public int xPos, yPos; 
+	public Integer score; 
+//	public int xPos, yPos;
+	public Point position; 
 	public float width, height;
 	public boolean isHighlighted;
 	public Rectangle rect;
+	
 
 	/**
 	 * Abstract constructor only called by subclasses.
@@ -61,21 +75,30 @@ public abstract class Building extends Observable{
 	 * @param positionY
 	 * @param money
 	 */
-	public Building(int ID, int positionX,  int positionY, float width, float height, Integer money) {
+	public Building(int ID, Point position, float width, float height, Integer money) {
 
-		this.rect = new Rectangle(positionX, positionY, width, height);
+		this.rect = new Rectangle(position.getX(), position.getY(), width, height);
 
-		this.xPos = positionX; 
-		this.yPos = positionY;
+		this.position = position; 
+		
 		this.width = width; 
 		this.height = height; 
 		this.money = money;
-
-		// initially the building is not highlighted
+		this.score = money/1000; 
+		
+		// Initially the building is not highlighted
 		this.isHighlighted = false;
 
+		// Initialize the timer for showing the building information 
+		displayBuildingInfoTimer = new Timer(Globals.BUILDING_INFO_DISPLAY_TIMER, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setShowBuildingInfo(false);
+			}
+		});
+		displayBuildingInfoTimer.setRepeats(false);
 
-		// Init the building info
+		// Initialize the building info
 		this.bldgInfo = new BuildingInfo(this);
 
 		buildings.add(this);
@@ -87,6 +110,7 @@ public abstract class Building extends Observable{
 		if (isBeingRobbed)
 			return; 
 
+		robber.setRobbing(true);
 		AudioGame.play("Glass-Smash.ogg");
 		try {
 			Audio oggStream = AudioLoader.getStreamingAudio("OGG", ResourceLoader.getResource("res/Sounds/Glass-Smash.ogg"));
@@ -111,18 +135,27 @@ public abstract class Building extends Observable{
 					// add 1% (or some other percent) to the robbed percent of the building
 					robbedPercent+= (1.0f/ROBBING_UPDATE);
 
+					// keep showing the building information when the robber is robbing the building
+					setShowBuildingInfo(true);
+					
 					// update the filling bar of the building
 					if (robbedPercent >= 1.0f){
 
 						// robber finished robbing this bank
 						robber.addMoney(thisBuilding.money);
 
+						//
+						robber.addScore(thisBuilding.score);
+						
 						// set the money of the bank to zero
 						thisBuilding.money = 0; 
 
 						// set the boolean is completely robbed to avoid robber re-robbing
 						isCompletelyRobbed = true; 
 
+						// set the boolean is robbing to false
+						robber.setRobbing(false);
+						
 						// stop the robbing timer
 						robbingTimer.stop();
 					}
@@ -141,11 +174,27 @@ public abstract class Building extends Observable{
 	public void draw(){
 		// Draw the filling bar at the xPos of the building but a bit above
 		if (showBuildingInfo)
-			bldgInfo.draw(xPos, yPos- BuildingInfo.BUILDING_INFO_HEIGHT);
+			bldgInfo.draw(position.getX(), position.getY()- BuildingInfo.BUILDING_INFO_HEIGHT);
 	}
 
+	
+	/**
+	 * Displays the building related information using the BuildingInfo class. 
+	 * Starts timer that hides BuildingInfo after a certain time interval (3sec)
+	 * @param showBuildingInfo
+	 */
 	public void setShowBuildingInfo(boolean showBuildingInfo) {
 		this.showBuildingInfo = showBuildingInfo;
+
+		if (showBuildingInfo){
+			if (displayBuildingInfoTimer.isRunning())
+			{
+				displayBuildingInfoTimer.stop();
+			}
+
+			displayBuildingInfoTimer.start();
+		}
+
 	}
 
 	public void setBeingRobbed(boolean isBeingRobbed) {
@@ -153,4 +202,36 @@ public abstract class Building extends Observable{
 		setChanged();
 		notifyObservers();
 	}
+
+	public ArrayList<Occupant> getOccupants() {
+		return occupants;
+	}
+
+	public boolean getIsCompletelyRobbed(){
+		return isCompletelyRobbed; 
+	}
+
+	public String getType(){
+		if (this.getClass().equals(House.class)){
+			return "House"; 
+		}
+		else if (this.getClass().equals(Bank.class)){
+			return "Bank";
+		}
+		else if(this.getClass().equals(Shop.class)){
+			return "Shop";
+		}
+		else return ""; 
+	}
+
+	public boolean isInRobbingDistance(Point point){
+		Rectangle rect = new Rectangle(
+				this.position.getX()-Globals.BUILDING_ROBBING_DISTANCE,
+				this.position.getY() - Globals.BUILDING_ROBBING_DISTANCE, 
+				this.rect.getWidth() + Globals.BUILDING_ROBBING_DISTANCE, 
+				this.rect.getHeight()+ Globals.BUILDING_ROBBING_DISTANCE);
+		
+		return (rect.intersects(point));
+	}
+
 }

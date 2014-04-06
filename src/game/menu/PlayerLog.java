@@ -13,7 +13,8 @@ import org.newdawn.slick.SlickException;
 
 public class PlayerLog {
 
-	private final String BACKGROUND_PATH = "res/Log.png";
+	private final String BACKGROUND_PATH_ROBBER = "res/Log.png";
+	private final String BACKGROUND_PATH_COP= "res/Log2.png";
 	private final int SCORE_X = 0; 
 	private final int SCORE_Y = 0;
 
@@ -26,7 +27,7 @@ public class PlayerLog {
 	private final int LOG_X = 0;
 	private final int LOG_Y = 60;
 
-	private String logText = ""; 
+	private static String logText = ""; 
 	private int xPos, yPos; 
 
 	private Graphics g = Game.getInstance().getContainer().getGraphics(); 
@@ -40,15 +41,15 @@ public class PlayerLog {
 		this.person = person; 
 
 		try {
-			this.background = new Image(BACKGROUND_PATH);
+			this.background = new Image((person instanceof Robber)? BACKGROUND_PATH_ROBBER: BACKGROUND_PATH_COP);
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public void setLogText(String logText) {
-		this.logText = logText;
+	public static void setLogText(String logText) {
+		PlayerLog.logText = logText;
 	}
 
 	public void draw(int timer){ 

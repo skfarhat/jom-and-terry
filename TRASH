@@ -89,3 +89,87 @@
 			//				// police1.move(destX, destY);
 			//			} else
 			//				System.out.println("Is locked");
+			
+			
+				
+	public void draw1() {
+		this.currentAnimation.draw(this.xPos, this.yPos);
+
+		Policeman policeman;
+
+		// if user is police then the robber moves automatically
+		if (!isUser){
+
+			if ((policeman = canSeePolice()) !=null)
+			{
+				// move in opposite direction
+				// get vector to policeman 
+				Vector2f directionToPoliceman = new Vector2f(policeman.xPos-this.xPos, policeman.yPos-this.yPos);
+
+				// get the negative vector the one in the opposite direction
+				Vector2f negativeVector = directionToPoliceman.negate();
+
+
+				// flee the policeman only if the user has chosen to play as the police
+				this.fleePoliceman(negativeVector);
+			}
+		}
+
+		if (isMoving) {
+
+			float deltaX = this.xPos - this.destX; 
+			float deltaY = this.yPos - this.destY;
+
+
+			// we want the robber to go all the way horizontally then after arrivign to the correct xpos
+			// go all the way vertically, so we declare a variable movingHorizontally and we set it to true whenever the policeman is going horizontally
+			// if true, the second if statement is not satisfied and the yPos has to wait for the xPos to finish
+			boolean movingHorizontally = false;
+			if (Math.abs(deltaX) > 1.0f)
+			{
+				boolean collides = false; 
+				if (deltaX<0)
+					collides = !moveRight();
+				else
+					collides = !moveLeft();
+				
+				while (collides){
+					if(deltaY>0) 
+						moveUp();
+					else 
+						moveDown();
+					
+					collides = (deltaX>0)? !moveRight() : !moveLeft();
+				}
+
+				movingHorizontally = true;
+			}
+
+			// check on movingHorizontally done here
+			if (Math.abs(deltaY) > 1.0f && !movingHorizontally)
+			{	
+				boolean collides = false; 
+				if (deltaY<0)
+					collides = !moveDown();
+				else
+					collides = !moveUp();
+				
+				while (collides){
+					if(deltaX>0) 
+						moveLeft();
+					else 
+						moveRight();
+					
+					collides = (deltaY>0)? !moveUp() : !moveDown();
+				}
+			}
+
+			// 2.0f margin of error
+			if (Math.abs(this.xPos - this.destX) < 1.0f
+					&& Math.abs(this.yPos - this.destY) < 1.0f) {
+				this.isMoving = false;	
+			}
+		}
+
+
+	}

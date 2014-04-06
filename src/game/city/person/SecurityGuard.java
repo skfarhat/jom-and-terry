@@ -35,7 +35,7 @@ public class SecurityGuard extends Person {
 	private boolean isMoving = false;
 	private boolean isFollowingRobber = false;
 	private Play play; 
-	
+
 	public Rectangle rect; // frame of the security guard
 	public Vector2f direction; // direction in which the Security is moving
 
@@ -43,7 +43,7 @@ public class SecurityGuard extends Person {
 	// Vision Attribute
 	private float visionDistance = 130.0f;
 	private float chaseDistance = 70.0f;
-	
+
 	// =========================================================================================================
 	// PATROL
 	private Timer patrolTimer;
@@ -90,7 +90,7 @@ public class SecurityGuard extends Person {
 	 * @param name
 	 * @param velocity
 	 */
-	public SecurityGuard(float positionX, float positionY, String name,
+	public SecurityGuard(Point position, String name,
 			double velocity, Bank guardedBank) throws SlickException {
 		super(name, velocity);
 
@@ -101,12 +101,11 @@ public class SecurityGuard extends Person {
 		this.image = new Image(sgImgPath);
 
 		// set the rectangle of the player
-		this.rect = new Rectangle(this.xPos, this.yPos, spriteWidth,
+		this.rect = new Rectangle(position.getX(), position.getY(), spriteWidth,
 				spriteHeight);
 
 		// Set the position of the SG
-		this.xPos = positionX;
-		this.yPos = positionY;
+//		this.position = position; 
 
 		// Set the image of the SG
 		this.image = new Image(sgImgPath);
@@ -114,9 +113,9 @@ public class SecurityGuard extends Person {
 		// FIXME: Careful this might work now, but if the position given to the
 		// SG by the Bank is changed (right edge aw shi)
 		// because the SG patrols around the bank, so would need to change the order 
-		this.currentEdge = new Point(this.xPos, this.yPos);
+//		this.currentEdge = position;
 
-		topLeftEdge = new Point(guardedBank.rect.getMinX(),
+		this.currentEdge = this.position = topLeftEdge = new Point(guardedBank.rect.getMinX(),
 				guardedBank.rect.getMinY());
 		topRightEdge = new Point(guardedBank.rect.getMaxX(),
 				guardedBank.rect.getMinY());
@@ -125,8 +124,8 @@ public class SecurityGuard extends Person {
 		bottomLeftEdge = new Point(guardedBank.rect.getMinX(),
 				guardedBank.rect.getMaxY());
 
-		this.destinationPoint = new Point(this.xPos, this.yPos);
-		
+		this.destinationPoint = position;
+
 		this.startRoundPatrol();
 	}
 
@@ -146,47 +145,48 @@ public class SecurityGuard extends Person {
 		this.spriteSheet = new SpriteSheet(spriteSheetImage, spriteWidth,
 				spriteHeight);
 	}
-	*/
-	
+	 */
+
 	public void setRobber(Robber robber) {
 		this.robber = robber; 
 	}
-	
+
 	public void setPlay(Play play) {
 		this.play = play;
 	}
 
 	public void setPoliceOffice(PoliceOffice policeOffice) {
 	}
-	
+
 	public void move(Point destPnt) {
-		this.direction = new Vector2f(destPnt.getX() - this.xPos,
-				destPnt.getY() - this.yPos);
+		this.direction = new Vector2f(destPnt.getX() - this.position.getX(),
+				destPnt.getY() - this.position.getY());
 
 		this.destinationPoint = destPnt;
 		this.isMoving = true;
 	}
 
 	public void draw() {
-
 		// if SG is moving, change xPos and yPos
 		if (isMoving) {
 
 			float speed = (float) (Globals.VELOCITY_MULTIPLIER * velocity);
 
-			float deltaX = this.xPos - this.destinationPoint.getX();
-			float deltaY = this.yPos - this.destinationPoint.getY();
+			float deltaX = this.position.getX() - this.destinationPoint.getX();
+			float deltaY = this.position.getY() - this.destinationPoint.getY();
 
-			if (Math.abs(this.xPos - this.destinationPoint.getX()) > 2.0f) {
-				this.xPos += (deltaX < 0) ? speed : (-1) * speed;
+			if (Math.abs(deltaX) > 2.0f) {
+				float x = (deltaX < 0) ? this.position.getX() + speed : this.position.getX() + (-1) * speed;
+				this.position.setX(x);
 			}
-			if (Math.abs(this.yPos - this.destinationPoint.getY()) > 2.0f) {
-				this.yPos += (deltaY < 0) ? speed : (-1) * speed;
+			if (Math.abs(deltaY) > 2.0f) {
+				float y = (deltaY < 0) ? this.position.getY() + speed : this.position.getY() + (-1) * speed;
+				this.position.setY(y);
 			}
 
 			// 2.0f margin of error
-			if (Math.abs(this.xPos - this.destinationPoint.getX()) < 2.0f
-					&& Math.abs(this.yPos - this.destinationPoint.getY()) < 2.0f) {
+			if (Math.abs(this.position.getX() - this.destinationPoint.getX()) < 2.0f
+					&& Math.abs(this.position.getY() - this.destinationPoint.getY()) < 2.0f) {
 				if (isPatrolling)
 					currentEdge = destinationPoint;
 				this.isMoving = false;
@@ -195,17 +195,17 @@ public class SecurityGuard extends Person {
 		// if the Policeman is neither patrolling nor following the robber then he should patrol
 		if (!this.isPatrolling && !this.isFollowingRobber)
 			startRoundPatrol();
-		
+
 		lookForRobber();
 
 		// draw the image at the Position of the SG
-		this.image.draw(this.xPos, this.yPos);
+		this.image.draw(this.position.getX(), this.position.getY());
 	}
 
 	//====================================================================================================
 	// PATROL
 	public void startRoundPatrol() {
-		
+
 		patrolTimer = new Timer(2000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -268,18 +268,18 @@ public class SecurityGuard extends Person {
 		this.isPatrolling = true;
 	}
 	//====================================================================================================
-	
-	public void lookForRobber(){
-		float distance = (float)  Math.sqrt(Math.pow(this.xPos-robber.xPos, 2.0) + Math.pow(this.yPos-robber.yPos, 2.0));
 
-		float distanceToBank = (float) Math.sqrt(Math.pow(this.xPos-guardedBank.rect.getCenterX(), 2.0) + Math.pow(this.yPos-guardedBank.rect.getCenterY(), 2.0));
+	public void lookForRobber(){
+		float distance = (float)  Math.sqrt(Math.pow(this.position.getX()-robber.position.getX(), 2.0) + Math.pow(this.position.getY()-robber.position.getY(), 2.0));
+
+		float distanceToBank = (float) Math.sqrt(Math.pow(this.position.getX()-guardedBank.rect.getCenterX(), 2.0) + Math.pow(this.position.getY()-guardedBank.rect.getCenterY(), 2.0));
 		if (distance < 2.0f && !robber.isCaught)
 		{
 			// the Robber has been caught
 			// send a message to signal game over
 			arrestRobber(robber);
 		}
-		
+
 		// TODO: recheck the boolean
 		if (distance < chaseDistance && distanceToBank < 200.0f )
 		{
@@ -289,7 +289,7 @@ public class SecurityGuard extends Person {
 		if (distance < visionDistance)
 		{
 			// TODO: implement
-			Point center = new Point(this.xPos, this.yPos); 
+			Point center = new Point(this.position.getX(), this.position.getY()); 
 			callPolice(center, 800.0f);
 		}
 		else
@@ -297,26 +297,24 @@ public class SecurityGuard extends Person {
 			this.isFollowingRobber  = false; 
 		}
 	}
-	
+
 	public void followRobber(){
 		patrolTimer.stop();
 		this.isPatrolling = false;
 		this.isFollowingRobber = true;
-		move(new Point(robber.xPos, robber.yPos));
+		move(new Point(robber.position.getX(), robber.position.getY()));
 	}
-	
+
 	/**
 	 * Call police if a nearby robber is detected.
 	 * 
 	 * @return
 	 */
-	public boolean callPolice(Point center, float error) {
-		
-		PoliceOffice.callPolice(center, error);
-		// TODO implement
-		return false;
+	public void callPolice(Point center, float error) {
+
+		PoliceOffice.callPolice(this.guardedBank);
 	}
-	
+
 	public boolean arrestRobber(Robber robber) {
 		robber.isCaught = true; 
 		this.play.gameOver();

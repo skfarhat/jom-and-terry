@@ -1,41 +1,36 @@
 package game.city.person;
 import game.Globals;
 import game.city.building.Building;
-import game.city.building.PoliceOffice;
 
-import java.util.ArrayList;
+import java.util.Random;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
 
-public class Robber extends Person implements Movable{
+public class Robber extends Person{
+
+	Random rand = new Random(); 
 
 	private String playerSpriteSheet = "res/SpriteSheets/robber-2.png";
-	public boolean isCaught = false; 
-	private boolean isUser; 
+	public boolean isCaught = false;
+		
+	protected boolean isRobbing = false; 
 
-
-	private Integer score; 
-	private Integer money; 
-
-	// Vision Attribute
-	private float visionDistance = 100.0f; 
+	protected Integer score; 
+	protected Integer money; 
 
 	// Movement attributes
-	private float destX, destY;
-//	private static float velocity = 130.0f; 
 	public boolean isMoving = false; 
 	public Vector2f vectorDirection;
 
 	// =================================================================================================== 
 	// ENVIRONMENT AROUND 
-	private ArrayList<Policeman> policeForceArray = PoliceOffice.policeForceArray;		// Police Related
 	public Building nearByBldg;															// Building
 
 	// ===================================================================================================
@@ -53,30 +48,27 @@ public class Robber extends Person implements Movable{
 	 * @param isUser used to indicate if the user has chosen to play with the robber or the police.
 	 * @throws SlickException
 	 */
-	public Robber(boolean isUser) throws SlickException {
+	public Robber() throws SlickException {
 
 		// TODO: set name and velocity somewhere else
 		super("Robber", Globals.ROBBER_VELOCITY);
-
-		this.isUser = isUser; 
 
 		// set the Sprite Sheet
 		this.initSpriteSheet();
 
 		// set initial position
-		this.xPos = 0;
-		this.yPos = 0;
-
+		this.position = new Point(0,0);
+		
 		// The robber is initially broke
 		this.money = 0; 
 		this.score = 0;
-		
+
 		// set the rectangle of the player 
-		this.rect = new Rectangle(this.xPos, this.yPos, spriteWidth, spriteHeight);
+		this.rect = new Rectangle(this.position.getX(), this.position.getY(), spriteWidth, spriteHeight);
 
-
+		
 		// initially the player is moving to the right
-		//Create a new animation based on a selection of
+		// Create a new animation based on a selection of
 		// sprites from the sprite sheet.
 		int lastColumn = 3;
 		int rightWalkRow = 2; 
@@ -146,35 +138,10 @@ public class Robber extends Person implements Movable{
 
 	}
 
-	public void fleePoliceman(Vector2f direction)
-	{
-		float deltaX = 0 ,  deltaY = 0;
-
-		// he is closer horizontally to the policeman
-		// move away horizontally
-		if (Math.abs(direction.x) < Math.abs(direction.y))
-			deltaX = direction.x/2; 
-		else
-			deltaY = direction.y/2;
-
-		this.move(deltaX+ this.xPos, this.yPos + deltaY);
-
-	}
-
-	public void move(float destX, float destY)
-	{
-		// set the Destination coordinates
-		this.destX = destX; 
-		this.destY = destY; 
-
-		// set the direction of the policeman 
-		this.vectorDirection = new Vector2f(destX  - this.xPos, destY - this.yPos);
-
-		// set the boolean is moving to true
-		this.isMoving = true; 
-
-	}
-
+	
+	// ====================================================================================================
+	// GETTERS/SETTERS
+	
 	public Integer getMoney() {
 		return money;
 	}
@@ -182,7 +149,7 @@ public class Robber extends Person implements Movable{
 	public Integer getScore() {
 		return score;
 	}
-	
+
 	/**
 	 * Money is set to private for encapsulation
 	 * Other classes can only add to the amount the robber has
@@ -192,6 +159,19 @@ public class Robber extends Person implements Movable{
 		// 
 		this.money+=addedAmount;
 	}
+
+	/**
+	 * Increase the score by some amount
+	 * @param addedScore amount to add to the score of the robber
+	 */
+	public void addScore(Integer addedScore){
+		this.score+=addedScore; 
+	}
+
+	public void setRobbing(boolean isRobbing) {
+		this.isRobbing = isRobbing;
+	}
+	
 	
 	// MOVEMENT
 	//=====================================================================================================
@@ -199,63 +179,75 @@ public class Robber extends Person implements Movable{
 		this.currentAnimation.stop();
 	}
 
-	public void moveRight() {
+	public boolean moveRight() {
 		this.currentAnimation.start();
-		this.xPos+=Globals.VELOCITY_MULTIPLIER*velocity;
-		this.rect.setX(this.xPos);
+		
+		this.position.setX((float) (this.position.getX()+Globals.VELOCITY_MULTIPLIER*velocity));
+		
+		this.rect.setX(this.position.getX());
 		this.currentAnimation = Robber.rightWalkAnimation;
 
 		if (collides()){
 			normalForceLeft();
+			return false; 
 		}
+
+		return true; 
 	}
 
-	public void moveLeft() {
+	public boolean moveLeft() {
 		this.currentAnimation.start();
-		this.xPos-=velocity * Globals.VELOCITY_MULTIPLIER;
-		this.rect.setX(this.xPos);
+		this.position.setX((float) (this.position.getX()-Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setX(this.position.getX());
 		this.currentAnimation = Robber.leftWalkAnimation;
 		if (collides()){
 			normalForceRight();
+			return false;
 		}
+		return true; 
 	}
 
-	public void moveUp() {
-		this.yPos-=velocity *Globals.VELOCITY_MULTIPLIER;
-		this.rect.setY(this.yPos);
+	public boolean moveUp() {
+		this.position.setY((float) (this.position.getY()-Globals.VELOCITY_MULTIPLIER*velocity));
+
+		this.rect.setY(this.position.getY());
 		this.currentAnimation = Robber.upWalkAnimation;
 		if (collides()){
 			normalForceDown();
+			return false; 
 		}
+		return true; 
 	}
 
-	public void moveDown() {
-		this.yPos+=Globals.VELOCITY_MULTIPLIER*velocity;
-		this.rect.setY(this.yPos);
+	public boolean moveDown() {
+		this.position.setY((float) (this.position.getY()+Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setY(this.position.getY());
 		this.currentAnimation = Robber.downWalkAnimation;
 		if (collides()){
 			normalForceUp();
+			return false; 
 		}
+		return true; 
 	}
 
 	public void normalForceRight() {
-		this.xPos+=Globals.VELOCITY_MULTIPLIER*velocity;
-		this.rect.setX(this.xPos);
+		this.position.setX((float) (this.position.getX()+Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setX(this.position.getX());
 	}
 
 	public void normalForceLeft() {
-		this.xPos-=velocity * Globals.VELOCITY_MULTIPLIER;
-		this.rect.setX(this.xPos);
+		this.position.setX((float) (this.position.getX()-Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setX(this.position.getX());
 	}
 
 	public void normalForceUp() {
-		this.yPos-=velocity *Globals.VELOCITY_MULTIPLIER;
-		this.rect.setY(this.yPos);
+		this.position.setY((float) (this.position.getY()-Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setY(this.position.getY());
 	}
 
 	public void normalForceDown() {
-		this.yPos+= velocity *Globals.VELOCITY_MULTIPLIER;
-		this.rect.setY(this.yPos);
+		this.position.setY((float) (this.position.getY()+Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setY(this.position.getY());
 	}
 
 	public boolean collides() {
@@ -264,102 +256,61 @@ public class Robber extends Person implements Movable{
 
 		boolean isInCollision = false;
 		this.nearByBldg = null;
-		
+
 		for (Building bldg: Building.buildings) {
 			if (this.rect.intersects(bldg.rect)) {
 				this.nearByBldg = bldg;
 				isInCollision = true;
+				bldg.setShowBuildingInfo(true);
 				break;
 			}
 		}
 		return isInCollision;
 	}
-	
+
 	public void setCurrentAnimation(Animation animation)
 	{
 		this.currentAnimation = animation;
 	}
 
 	public void draw() {
-		this.currentAnimation.draw(this.xPos, this.yPos);
-
-		Policeman policeman; 
-		if (!isUser){
-			if ((policeman = canSeePolice()) !=null)
-			{
-				// move in opposite direction
-				// get vector to policeman 
-				Vector2f directionToPoliceman = new Vector2f(policeman.xPos-this.xPos, policeman.yPos-this.yPos);
-
-				// get the negative vector the one in the opposite direction
-				Vector2f negativeVector = directionToPoliceman.negate();
-
-
-				// flee the policeman only if the user has chosen to play as the police
-				this.fleePoliceman(negativeVector);
-			}
-		}
-
-		// if Robber is moving, change xPos and yPos 
-		if (isMoving)
-		{
-			float speed = (float) (0.04f * velocity);
-			this.xPos += speed ;///* Math.cos(Math.toRadians(this.vectorDirection.getTheta()));
-			this.yPos += speed ;//* Math.sin(Math.toRadians(this.vectorDirection.getTheta()));
-
-			// 1.0f margin of error
-			if (Math.abs(this.xPos-this.destX) <2.0f && Math.abs(this.yPos-this.destY) <2.0f)
-			{
-				this.isMoving = false; 
-			}
-		}
-
+		this.currentAnimation.draw(this.position.getX(), this.position.getY());		
 	}
-
+	
 	public boolean rob()
 	{
-		// if there is no nearby buildg then the robber cannot rob anything
+
+		// if there is no nearby building then the robber cannot rob anything
 		if (this.nearByBldg == null)
+		{
+			System.out.println("Near building is null cannot rob!");
 			return false; 
-		
+		}
+
+		// TODO: Remove
+		// Might be redundant 
+		this.setRobbing(true);
+
 		// Rob the building and pass parameter to self
 		this.nearByBldg.rob(this); 
 
 		return true;
 	}
 
-	// VISION - ONLY WHEN USER IS POLICE
-	// ====================================================================================================
-	public Policeman canSeePolice()
-	{
-		// check that the distance between the robber and all the police force is less than 50.0 
-		// If less than 50.0f for some police return true
-		for (Policeman policeman : this.policeForceArray)
-		{
-			float distance = (float)  Math.sqrt(Math.pow(policeman.xPos-this.xPos, 2.0) + Math.pow(policeman.yPos-this.yPos, 2.0)); 
-			if (distance < visionDistance)
-				return policeman;
-		}
+	public boolean rob(Building bldg){
+		if (bldg == null)
+			return false;
 
-		return null ;  	
-	}
+		if (bldg.isInRobbingDistance(this.position))
+			return false;
 
-	@Override
-	public void processInput(Input input) {
-		// ARROWS: UP DOWN LEFT RIGHT
-		if (input.isKeyDown(Input.KEY_RIGHT)) {
-			moveRight();
-		} else if (input.isKeyDown(Input.KEY_LEFT)) {
-			moveLeft();
-		} else if (input.isKeyDown(Input.KEY_UP)) {
-			moveUp();
-		} else if (input.isKeyDown(Input.KEY_DOWN)) {
-			moveDown();
-		} else if (input.isKeyDown(Input.KEY_SPACE)) {
-			rob();
-		}
-		else {
-			stop();
-		}
+		this.setRobbing(true);
+
+		// Rob the building and pass parameter to self
+		bldg.rob(this);
+
+		return true;
+
 	}
+	
 }
