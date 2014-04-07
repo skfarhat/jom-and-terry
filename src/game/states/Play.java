@@ -36,7 +36,15 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 import org.newdawn.slick.tiled.TiledMap;
 
 public class Play extends BasicGameState {
-	private String cityTileMapPath = "res/city/city.tmx";
+	
+	// Singleton 
+	public static final Play play = new Play();
+	public static Play getInstance(){
+		return play;
+	}
+	
+	// TODO: move to Globals
+	private final String cityTileMapPath = "res/city/city.tmx";
 
 	private Camera camera;
 	private Integer gameTime = 0; 
@@ -269,6 +277,7 @@ public class Play extends BasicGameState {
 		
 		policeOffice.stopPolicemenPatrols();
 	}
+	
 	// ===============================================================================================================================
 	
 	@Override
@@ -314,34 +323,35 @@ public class Play extends BasicGameState {
 	 */
 	private void processInput(Input input) {
 		
+	
+		// Move left, right, up, down		
+		Movable movable = (Movable) mainCharacter;
+		movable.processInput(input);
+
+		
 		//TODO: Move to Robber and Policeman 
 		// MOUSE: Control for Police
 		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
-
-			int destX = input.getMouseX();
-			int destY = input.getMouseY();
-
 			
-			// get the building
-			Building bldg = selectBuilding(destX, destY);
-
-			if (bldg==null)
-				return; 
-			
-			// display info for this building
-			bldg.setShowBuildingInfo(true);
-			
-			
-			
-			// if robber 
-			// can select a house to get information about it
-			if (userIsRobber){
-
-
-			}
+			// TODO: Move to PoliceOffice class
 			// if Policeman 
 			// can select different policemen to control
-			else {	
+			if (!userIsRobber) {
+				
+				int destX = input.getMouseX();
+				int destY = input.getMouseY();
+
+				
+				// get the building
+				Building bldg = selectBuilding(destX, destY);
+
+				if (bldg==null)
+					return; 
+				
+				// display info for this building
+				bldg.setShowBuildingInfo(true);
+				
+				
 				// save the previous policeman and deselect him later
 				Policeman prevPoliceman = (Policeman) mainCharacter;
 
@@ -360,16 +370,8 @@ public class Play extends BasicGameState {
 
 				// set the main character
 				setMainCharacter(policeman);
-
-				// TODO or get the house ?	
 			}
 		}
-
-
-		// Move left, right, up, down		
-		Movable movable = (Movable) mainCharacter;
-		movable.processInput(input);
-
 
 		if (input.isKeyDown(Input.KEY_ESCAPE)) {
 			
@@ -399,6 +401,18 @@ public class Play extends BasicGameState {
 		return null;
 	}
 
+	
+	// GETTERS/SETTERS
+	// ================================================================================================================================
+	
+	/**
+	 * Getter method for the camera
+	 * @return camera
+	 */
+	public Camera getCamera() {
+		return camera;
+	}
+	
 	/**
 	 * @param destX x-position of the mouse input
 	 * @param destY y-position of the mouse input

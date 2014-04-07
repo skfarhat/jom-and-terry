@@ -37,7 +37,7 @@ public class Game extends StateBasedGame {
 		this.addState(accountView);
 		
 		// 1 PLAY
-		Play play = new Play();		
+		Play play = Play.getInstance();
 		this.addState(play);
 
 		// 3  PAUSE
