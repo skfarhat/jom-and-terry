@@ -31,8 +31,8 @@ public final class Globals {
 	
 	public static final float VELOCITY_MULTIPLIER = 0.02f; 
 	public static final float ROBBER_VELOCITY = 130.0f;
-	public static final float POLICEMAN_VELOCITY = 80.0f;
-	public static final float SECURITY_GUARD_VELOCITY = 60.0f; 
+	public static final float POLICEMAN_VELOCITY = 100.0f;
+	public static final float SECURITY_GUARD_VELOCITY = 80.0f; 
 	
 	// Building
 	public static final int BUILDING_INFO_DISPLAY_TIMER = 3000;

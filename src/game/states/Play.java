@@ -6,11 +6,11 @@ import game.city.Camera;
 import game.city.building.Bank;
 import game.city.building.Building;
 import game.city.building.House;
-import game.city.building.PoliceOffice;
 import game.city.building.Shop;
 import game.city.person.Movable;
 import game.city.person.Person;
-import game.city.person.Policeman;
+import game.city.person.PoliceOffice;
+import game.city.person.PolicemanUser;
 import game.city.person.Robber;
 import game.city.person.RobberComputer;
 import game.city.person.RobberUser;
@@ -215,7 +215,7 @@ public class Play extends BasicGameState {
 		
 		boolean userIsPolice = !userIsRobber; 
 		
-		this.policeOffice = new PoliceOffice(this, this.robber, userIsPolice);
+		this.policeOffice = new PoliceOffice(this.robber, userIsPolice);
 	}
 
 	/**
@@ -239,9 +239,9 @@ public class Play extends BasicGameState {
 
 	public void setMainCharacter(Person mainCharacter) {
 		this.mainCharacter = mainCharacter;
-		if (mainCharacter instanceof Policeman){
-			Policeman police = (Policeman) mainCharacter; 
-			police.isSelected = true; 
+		if (mainCharacter instanceof PolicemanUser){
+			PolicemanUser police = (PolicemanUser) mainCharacter; 
+			police.setSelected(true);
 		}
 		if (camera !=null)
 			camera.setPerson(mainCharacter);
@@ -329,50 +329,9 @@ public class Play extends BasicGameState {
 		movable.processInput(input);
 
 		
-		//TODO: Move to Robber and Policeman 
+		// TODO: Move to Robber and Policeman 
 		// MOUSE: Control for Police
-		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
-			
-			// TODO: Move to PoliceOffice class
-			// if Policeman 
-			// can select different policemen to control
-			if (!userIsRobber) {
-				
-				int destX = input.getMouseX();
-				int destY = input.getMouseY();
-
-				
-				// get the building
-				Building bldg = selectBuilding(destX, destY);
-
-				if (bldg==null)
-					return; 
-				
-				// display info for this building
-				bldg.setShowBuildingInfo(true);
-				
-				
-				// save the previous policeman and deselect him later
-				Policeman prevPoliceman = (Policeman) mainCharacter;
-
-				// get the policeman that is selected by the mouse
-				Policeman policeman = selectPoliceman(destX, destY);
-
-				// 
-				if (policeman == null)
-					return; 
-
-				// set the isSelected to true
-				policeman.isSelected = true; 
-
-				// unselect the previous policeman
-				prevPoliceman.isSelected = false; 
-
-				// set the main character
-				setMainCharacter(policeman);
-			}
-		}
-
+		
 		if (input.isKeyDown(Input.KEY_ESCAPE)) {
 			
 			// go to the pause menu
@@ -382,28 +341,13 @@ public class Play extends BasicGameState {
 			robber.stop();
 		}
 	}
-
-	private Building selectBuilding(int destX, int destY){
-		// create a rectangle and use the intersect method to check whether 
-		// the policeman rect intersects with the mouse click
-		Rectangle rect = new Rectangle(
-				camera.getCameraX() + destX - Globals.SELECTION_ERROR/2, 
-				camera.getCameraY() + destY - Globals.SELECTION_ERROR/2,
-				Globals.SELECTION_ERROR,
-				Globals.SELECTION_ERROR);
-		
-		for (Building bldg: Building.buildings){
-			if (bldg.rect.intersects(rect))
-			{
-				return bldg;  
-			}
-		}
-		return null;
-	}
-
 	
 	// GETTERS/SETTERS
 	// ================================================================================================================================
+
+	public Person getMainCharacter() {
+		return mainCharacter;
+	}
 	
 	/**
 	 * Getter method for the camera
@@ -413,29 +357,6 @@ public class Play extends BasicGameState {
 		return camera;
 	}
 	
-	/**
-	 * @param destX x-position of the mouse input
-	 * @param destY y-position of the mouse input
-	 * @return a policeman object if the destX and destY passed are close to a policeman in the map. Returns null otherwise
-	 */
-	private Policeman selectPoliceman(int destX, int destY){
-		// create a rectangle and use the intersect method to check whether 
-		// the policeman rect intersects with the mouse click
-		Rectangle rect = new Rectangle(
-				camera.getCameraX() + destX - Globals.SELECTION_ERROR/2, 
-				camera.getCameraY() + destY - Globals.SELECTION_ERROR/2,
-				Globals.SELECTION_ERROR,
-				Globals.SELECTION_ERROR);
-		
-		for (Policeman policeman: policeOffice.getPoliceForceArray()){
-			if (policeman.rect.intersects(rect))
-			{
-				return policeman;  
-			}
-		}
-		return null;
-	}
-
 	private void startGameTimer(){
 		Timer timer = new Timer(1000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

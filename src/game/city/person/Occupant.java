@@ -9,7 +9,6 @@ import java.util.Random;
 import javax.swing.Timer;
 
 import game.city.building.Building;
-import game.city.building.PoliceOffice;
 
 public class Occupant implements Observer{
 	

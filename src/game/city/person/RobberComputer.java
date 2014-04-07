@@ -2,7 +2,6 @@ package game.city.person;
 
 import game.Globals;
 import game.city.building.Building;
-import game.city.building.PoliceOffice;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
