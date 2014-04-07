@@ -36,10 +36,8 @@ public class Policeman extends Person implements Movable{
 	private Image image;
 
 	private Integer score = 0; 
-
-//	private float destX, destY;
 	private Point destPoint; 
-	
+
 	public Vector2f direction; 
 	private float visionDistance = 130.0f;	// Vision Attribute
 	//=================================================================
@@ -193,10 +191,10 @@ public class Policeman extends Person implements Movable{
 			boolean movingHorizontally = false;
 			if (Math.abs(deltaX) > 2.0f)
 			{
-				
+
 				float newX = (deltaX<0)? this.position.getX() + speed: this.position.getX() + (-1)*speed; 
 				this.position.setX(newX);
-				
+
 				this.rect.setX(this.position.getX());
 				movingHorizontally = true;
 			}
@@ -205,9 +203,9 @@ public class Policeman extends Person implements Movable{
 			if (Math.abs(deltaY) > 2.0f && !movingHorizontally)
 			{	
 				float newY = (deltaY<0)? this.position.getY() + speed: this.position.getY() + (-1)*speed;
-				
+
 				this.position.setY(newY);
-				
+
 				this.rect.setY(this.position.getY());
 			}
 
@@ -257,8 +255,10 @@ public class Policeman extends Person implements Movable{
 
 	}
 
-	private void stopPatrol(){
-		patrolTimer.stop();
+	public void stopPatrol(){
+		if (patrolTimer!=null)
+			patrolTimer.stop();
+		
 		this.isPatrolling = false;
 	}
 
@@ -341,7 +341,7 @@ public class Policeman extends Person implements Movable{
 	public void move(Point destPoint)
 	{
 		this.destPoint = destPoint;
-		
+
 		this.direction = new Vector2f(
 				destPoint.getX()  - this.position.getX(), 
 				destPoint.getY() - this.position.getY()
@@ -352,9 +352,9 @@ public class Policeman extends Person implements Movable{
 
 	public boolean moveRight() {
 		this.currentAnimation.start();
-		
+
 		this.position.setX((float) (this.position.getX()+Globals.VELOCITY_MULTIPLIER*velocity));
-		
+
 		this.rect.setX(this.position.getX());
 
 		if (collides()){

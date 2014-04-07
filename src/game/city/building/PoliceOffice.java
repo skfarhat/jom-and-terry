@@ -119,4 +119,11 @@ public class PoliceOffice {
 		
 		
 	}
+
+
+	public void stopPolicemenPatrols(){
+		for (Policeman police: policeForceArray){
+			police.stopPatrol();
+		}
+	}
 }

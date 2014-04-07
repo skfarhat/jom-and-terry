@@ -7,7 +7,6 @@ import game.city.person.Robber;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -16,9 +15,6 @@ import javax.swing.Timer;
 
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.openal.Audio;
-import org.newdawn.slick.openal.AudioLoader;
-import org.newdawn.slick.util.ResourceLoader;
 
 /**
  * Buildings abstract class.
@@ -43,6 +39,7 @@ public abstract class Building extends Observable{
 	// Building Information
 	private BuildingInfo bldgInfo; 
 	protected boolean showBuildingInfo = false;
+	public boolean isHighlighted;
 	private Timer displayBuildingInfoTimer;
 
 	//==============================================================================================================================
@@ -61,14 +58,15 @@ public abstract class Building extends Observable{
 	public Integer ID; 
 	public Integer money;
 	public Integer score; 
-	//	public int xPos, yPos;
+
 	public Point position; 
-	public float width, height;
-	public boolean isHighlighted;
 	public Rectangle rect;
+
+	public float width, height;
 
 
 	/**
+	 * CONSTRUCTOR
 	 * Abstract constructor only called by subclasses.
 	 * 
 	 * @param positionX
@@ -104,7 +102,6 @@ public abstract class Building extends Observable{
 		buildings.add(this);
 	}
 
-
 	public void rob(final Robber robber){
 
 		if (isBeingRobbed)
@@ -123,8 +120,6 @@ public abstract class Building extends Observable{
 				
 				robber.setRobbing(true);
 				
-				AudioGame.play("Glass-Smash.ogg");
-
 				// add 1% (or some other percent) to the robbed percent of the building
 				robbedPercent+= (1.0f/ROBBING_UPDATE);
 
@@ -160,6 +155,7 @@ public abstract class Building extends Observable{
 
 		// start the timer
 		robbingTimer.start();
+		AudioGame.play("Glass-Smash.ogg");
 		setBeingRobbed(true); 
 	}
 
@@ -169,7 +165,12 @@ public abstract class Building extends Observable{
 			bldgInfo.draw(position.getX(), position.getY()- BuildingInfo.BUILDING_INFO_HEIGHT);
 	}
 
-
+	
+	public void nextFlag(){
+		bldgInfo.nextFlag();
+	}
+	// GETTERS/SETTERS
+	//==============================================================================================================================
 	/**
 	 * Displays the building related information using the BuildingInfo class. 
 	 * Starts timer that hides BuildingInfo after a certain time interval (3sec)
@@ -217,7 +218,6 @@ public abstract class Building extends Observable{
 	}
 
 	public boolean isInRobbingDistance(Point point){
-		System.out.println("is In Robbing Distance");
 		Rectangle rect = new Rectangle(
 				this.position.getX() - Globals.BUILDING_ROBBING_DISTANCE,
 				this.position.getY() - Globals.BUILDING_ROBBING_DISTANCE, 

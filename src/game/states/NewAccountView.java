@@ -21,7 +21,6 @@ public class NewAccountView extends Menu {
 	private static String createAccountImagePath = "res/buttons/create-account-button.png";
 	private static String backgroundImagePath = "res/background.png";
 	private final  String BACK_BUTTON_PATH = "res/buttons/back-button.png";
-	private static String PETITINHO_FONT = "Petitinho.ttf";
 
 	private static Integer TEXT_FIELD_WIDTH = 200;
 	private static Integer TEXT_FIELD_HEIGHT = 30;
@@ -85,7 +84,7 @@ public class NewAccountView extends Menu {
 	public void initButtons() {
 		GameContainer container = Game.getInstance().getContainer();
 		Image createAccountImage = null, backbuttonImage = null ; 	
-		TrueTypeFont font = Font.getFont(PETITINHO_FONT,16.0f);
+		TrueTypeFont font = Font.getFont(Globals.PETITINHO_FONT,16.0f);
 
 		try {
 			createAccountImage = new Image(createAccountImagePath);

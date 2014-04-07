@@ -26,12 +26,16 @@ public class RobberUser extends Robber implements Movable {
 		} else if (input.isKeyDown(Input.KEY_SPACE)) {
 			rob();
 		}
+		else if (input.isKeyPressed(Input.KEY_F)){
+			if (nearByBldg !=null){
+				nearByBldg.nextFlag();
+			}
+		}
 		else {
 			stop();
 		}
 	}
 	
-
 	public boolean moveRight() {
 		this.currentAnimation.start();
 		

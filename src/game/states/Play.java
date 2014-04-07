@@ -139,7 +139,10 @@ public class Play extends BasicGameState {
 			// some random number (1000 ? 3000 ? ...) and need it to be positive
 			// thus the Math.absolute
 			int money = Math.abs(((new Random()).nextInt() % 10) * 1000);
-			House house = new House(objectIndex, position, width, height, money);
+			
+			
+			// create new house. The house is added to the static houses array
+			new House(objectIndex, position, width, height, money);
 
 			// add the house to the houses Array
 		}
@@ -164,7 +167,8 @@ public class Play extends BasicGameState {
 			// thus the Math.absolute
 			int money = Math.abs(((new Random()).nextInt() % 10) * 1000000);
 
-			Bank bank = new Bank(objectIndex, position, width, height, money);
+			// Create new bank that is added to the static bank array
+			new Bank(objectIndex, position, width, height, money);
 
 			// add the bank to the banks Array
 		}
@@ -185,7 +189,8 @@ public class Play extends BasicGameState {
 			// thus the Math.absolute
 			int money = Math.abs(((new Random()).nextInt() % 10) * 10000);
 
-			Shop shop = new Shop(objectIndex, position, width, height, money);
+			// Create new Shop that is added to the static shop array
+			new Shop(objectIndex, position, width, height, money);
 
 			// the shop is added to the shops static ArrayList in the constructor
 		}
@@ -196,7 +201,6 @@ public class Play extends BasicGameState {
 			robber = new RobberUser();
 		else
 			robber = new RobberComputer();
-		
 	}
 
 	private final void initPoliceOffice() throws SlickException {
@@ -252,6 +256,19 @@ public class Play extends BasicGameState {
 		start();
 	}
 	
+	@Override
+	public void leave(GameContainer container, StateBasedGame game)
+			throws SlickException {
+		super.leave(container, game);
+	
+		
+		if (robber instanceof RobberComputer){
+			RobberComputer temp = (RobberComputer) robber; 
+			temp.stopTimers();
+		}
+		
+		policeOffice.stopPolicemenPatrols();
+	}
 	// ===============================================================================================================================
 	
 	@Override

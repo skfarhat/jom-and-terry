@@ -10,8 +10,6 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Vector2f;
-
 
 public class Robber extends Person{
 
@@ -27,7 +25,7 @@ public class Robber extends Person{
 
 	// Movement attributes
 	public boolean isMoving = false; 
-	public Vector2f vectorDirection;
+//	public Vector2f vectorDirection;
 
 	// =================================================================================================== 
 	// ENVIRONMENT AROUND 
@@ -190,7 +188,6 @@ public class Robber extends Person{
 	
 	public boolean rob()
 	{
-
 		// if there is no nearby building then the robber cannot rob anything
 		if (this.nearByBldg == null)
 		{

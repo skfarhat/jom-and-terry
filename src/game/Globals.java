@@ -37,4 +37,7 @@ public final class Globals {
 	// Building
 	public static final int BUILDING_INFO_DISPLAY_TIMER = 3000;
 	public static final float BUILDING_ROBBING_DISTANCE = 5.0f;
+	
+	// Font
+	public static final String PETITINHO_FONT = "Petitinho.ttf";
 }

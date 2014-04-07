@@ -9,12 +9,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
-public class AreaPick extends Menu {
-
-	private final float AREA_WIDTH = 400.0f; 
-	private final float AREA_HEIGHT = 400.0f;
-	
-	
+public class AreaPick extends Menu {	
 	private final String BACK_BUTTON_PATH = "res/buttons/back-button.png";
 	private final String AREA_1_IMAGE_PATH = "res/city/area/area1.png"; 
 	private final String AREA_2_IMAGE_PATH = "res/city/area/area2.png";
@@ -71,8 +66,7 @@ public class AreaPick extends Menu {
 		{
 			se.printStackTrace();
 		}
-
-		float height = 50.0f; 
+ 
 		int verticalMargin = 220; 
 		int horizontalMargin = 450; 
 
