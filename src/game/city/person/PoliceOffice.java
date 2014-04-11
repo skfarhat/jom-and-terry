@@ -3,6 +3,7 @@ package game.city.person;
 import game.Globals;
 import game.city.Camera;
 import game.city.building.Building;
+import game.city.road.Highway;
 import game.menu.PlayerLog;
 import game.states.Play;
 
@@ -82,7 +83,6 @@ public class PoliceOffice {
 		Point center = bldg.position; 		
 		float error = 10.0f; 
 
-
 		Circle region;
 		if (!userIsPolice){
 			for (Policeman police: policeForceArray){	
@@ -97,6 +97,25 @@ public class PoliceOffice {
 		else {
 			// notify on the log
 			String message = String.format("%s being robbed!", bldg.getType());
+			PlayerLog.setLogText(message);
+		}
+
+		playSound();
+	}
+	
+
+	public static void callPolice(Highway highway){ 		
+		
+		if (!userIsPolice){
+			for (Policeman police: policeForceArray){	
+
+				((PolicemanComputer) police).checkoutHighway(highway);
+			}
+		}
+
+		else {
+			// notify on the log
+			String message = String.format("Passing by highway!");
 			PlayerLog.setLogText(message);
 		}
 

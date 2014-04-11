@@ -1,5 +1,8 @@
 package game.city.road;
 
+import org.newdawn.slick.geom.Point;
+import org.newdawn.slick.geom.Rectangle;
+
 /**
  * A road, which may or may not be lighted.
  * 
@@ -13,15 +16,25 @@ public class Road {
 	public boolean isLighted;
 
 	/**
+	 * The frame of the highway to delimit the road
+	 */
+	protected Rectangle rect; 
+	
+	protected Point position;  
+	
+	/**
 	 * Creates a road.
 	 * 
 	 * @param positionX
 	 * @param positionY
 	 * @param isLighted
 	 */
-	public Road(double positionX, double positionY, boolean isLighted) {
-//		super(positionX, positionY);
-		this.isLighted = isLighted;
+	public Road(Point position, Rectangle rect) {
+		// set the position
+		this.position = position; 
+		
+		// set the rectangle
+		this.rect = rect; 
 	}
 
 	/**
@@ -32,4 +45,12 @@ public class Road {
 //				positionX, positionY, (isLighted) ? "ON" : "OFF");
 //		System.out.println(info);
 	}
+
+	public Rectangle getRect() {
+		return rect;
+	}
+	public Point getPosition() {
+		return position;
+	}
+
 }

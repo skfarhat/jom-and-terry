@@ -20,10 +20,12 @@ import org.newdawn.slick.geom.Vector2f;
  */
 public class Policeman extends Person{
 
+	
+	// TODO: Put in globals
 	protected static float visionDistance = 130.0f;	// Vision Attribute
 
-	private String policemanImgPath 			= "res/police1.png";
-	private String policeSpriteSheet 			= "res/Spritesheets/police.png";
+	private static String policemanImgPath 			= "res/police1.png";
+	private static String policeSpriteSheet 			= "res/Spritesheets/police.png";
 	//=================================================================
 	private Image image;
 
@@ -35,10 +37,7 @@ public class Policeman extends Person{
 	// Behavior
 	protected boolean userIsPolice; 
 	protected boolean isMoving = false;
-	protected boolean isPatrolling = false;
-	protected boolean isFollowingRobber = false;
 	protected boolean robberIsVisible = false;
-	protected boolean isCheckingSuspectRegion= false;
 	//=================================================================
 	//  
 	public Robber robber; 
@@ -142,48 +141,12 @@ public class Policeman extends Person{
 		return score;
 	}
 
-	public void setSuspectRegion(Circle suspectRegionCircle) {
-		this.suspectRegion = suspectRegionCircle;
-	}
-
 	public void draw() {
 		// draw the image at the positon of the policeman
 		this.image.draw(this.position.getX(), this.position.getY());
 
 	}
 
-	public boolean lookForRobber()
-	{
-		float distance = (float)  Math.sqrt(Math.pow(
-				this.position.getX()-this.robber.position.getX(), 2.0) 
-				+ Math.pow(this.position.getY()-this.robber.position.getY(), 2.0)
-				);
-		if (distance < 2.0f && !robber.isCaught)
-		{
-			// the Robber has been caught
-			// send a message to signal game over
-			arrestRobber(robber);
-		}
-		if (distance < visionDistance)
-		{
-			followRobber(); 
-			return true;
-		}
-		else
-		{
-			this.isFollowingRobber  = false;
-		
-		}
-		return false;
-	}
-
-	private void followRobber()
-	{
-		this.isFollowingRobber = true;
-		
-		Play.getInstance().getRobber().addScore(0.1f);
-		this.move(robber.position);
-	}
 	/**
 	 * Attempt to arrest a robber.
 	 * 
@@ -206,39 +169,6 @@ public class Policeman extends Person{
 		}
 		else return false; 
 
-	}
-
-	public void move(Point destPoint)
-	{
-		this.destPoint = destPoint;
-
-		this.direction = new Vector2f(
-				destPoint.getX()  - this.position.getX(), 
-				destPoint.getY() - this.position.getY()
-				);
-
-		this.isMoving = true;
-	}
-
-	public void normalForceRight() {
-		this.position.setX((float) (this.position.getX()+Globals.VELOCITY_MULTIPLIER*velocity));
-		this.rect.setX(this.position.getX());
-	}
-
-	public void normalForceLeft() {
-		this.position.setX((float) (this.position.getX()-Globals.VELOCITY_MULTIPLIER*velocity));
-		this.rect.setX(this.position.getX());
-	}
-
-	public void normalForceUp() {
-		this.position.setY((float) (this.position.getY()-Globals.VELOCITY_MULTIPLIER*velocity));
-
-		this.rect.setY(this.position.getY());
-	}
-
-	public void normalForceDown() {
-		this.position.setY((float) (this.position.getY()+Globals.VELOCITY_MULTIPLIER*velocity));
-		this.rect.setY(this.position.getY());
 	}
 
 }

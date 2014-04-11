@@ -16,6 +16,7 @@ import game.city.person.Robber;
 import game.city.person.RobberComputer;
 import game.city.person.RobberUser;
 import game.city.person.SecurityGuard;
+import game.city.road.Highway;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -202,6 +203,27 @@ public class Play extends BasicGameState {
 
 			// the shop is added to the shops static ArrayList in the constructor
 		}
+		
+		
+		// HIGHWAY
+		// ========================================================================================
+		int highwayObjectCount = cityTileMap.getObjectCount(3);
+		
+		for (int objectIndex = 0; objectIndex < highwayObjectCount; objectIndex++) {
+			int x = cityTileMap.getObjectX(3, objectIndex);
+			int y = cityTileMap.getObjectY(3, objectIndex);
+			Point position = new Point(x, y); 
+
+			float width = cityTileMap.getObjectWidth(3, objectIndex);
+			float height = cityTileMap.getObjectHeight(3, objectIndex);
+			
+			// create the rectangle of the highway
+			Rectangle rect = new Rectangle(x,y,width,height);
+			
+			// Create new Shop that is added to the static shop array
+			new Highway(position, rect);
+		}
+		
 	}
 
 	private final void initRobber() throws SlickException {
@@ -298,6 +320,11 @@ public class Play extends BasicGameState {
 		for (Building bldg : Building.buildings) { 
 			bldg.draw((flagsShown[bldg.getFlag().flagID]));
 		}
+			
+		// Draw the Highways
+		for (Highway highway: Highway.highways){
+			highway.draw();
+		}
 
 	}
 
@@ -392,7 +419,6 @@ public class Play extends BasicGameState {
 			robber.stop();
 		}
 	}
-
 
 	private Building selectBuilding(Point pnt){
 		Camera camera = Play.getInstance().getCamera();

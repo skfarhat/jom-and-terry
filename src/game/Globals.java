@@ -23,7 +23,8 @@ public final class Globals {
 	
 	// For policeman
 	public static final float SELECTION_ERROR = 50.0f; 
-	
+	public static final float POLICEMAN_VISION_DISTANCE = 100.0f; 
+
 	// Robber
 	public static final float ROBBER_VISION_DISTANCE = 100.0f; 
 	public static final float ARREST_DISTANCE = 30.0f;  

@@ -137,6 +137,27 @@ public class PolicemanUser extends Policeman implements Movable{
 		}
 		return true; 
 	}
+	
+	public void normalForceRight() {
+		this.position.setX((float) (this.position.getX()+Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setX(this.position.getX());
+	}
+	
+	public void normalForceLeft() {
+		this.position.setX((float) (this.position.getX()-Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setX(this.position.getX());
+	}
+	
+	public void normalForceUp() {
+		this.position.setY((float) (this.position.getY()-Globals.VELOCITY_MULTIPLIER*velocity));
+		
+		this.rect.setY(this.position.getY());
+	}
+	
+	public void normalForceDown() {
+		this.position.setY((float) (this.position.getY()+Globals.VELOCITY_MULTIPLIER*velocity));
+		this.rect.setY(this.position.getY());
+	}
 
 	public boolean isSelected() {
 		return isSelected;
