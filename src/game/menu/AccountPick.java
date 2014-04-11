@@ -27,7 +27,7 @@ public class AccountPick extends Menu {
 	private static Integer TOP_MARGIN = 20; 
 	
 	public AccountPick(int state, StateBasedGame sbg) {
-		super(state, sbg);
+		super();
 		loadAccountNames();
 	}
 

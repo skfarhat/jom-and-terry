@@ -1,4 +1,5 @@
 package game.city.person;
+
 import game.Globals;
 import game.city.building.Building;
 
@@ -17,15 +18,14 @@ public class Robber extends Person{
 
 	private String playerSpriteSheet = "res/SpriteSheets/robber-2.png";
 	public boolean isCaught = false;
-		
+
 	protected boolean isRobbing = false; 
 
-	protected Integer score; 
+	protected float score; 
 	protected Integer money; 
 
 	// Movement attributes
 	public boolean isMoving = false; 
-//	public Vector2f vectorDirection;
 
 	// =================================================================================================== 
 	// ENVIRONMENT AROUND 
@@ -56,7 +56,7 @@ public class Robber extends Person{
 
 		// set initial position
 		this.position = new Point(0,0);
-		
+
 		// The robber is initially broke
 		this.money = 0; 
 		this.score = 0;
@@ -64,7 +64,7 @@ public class Robber extends Person{
 		// set the rectangle of the player 
 		this.rect = new Rectangle(this.position.getX(), this.position.getY(), spriteWidth, spriteHeight);
 
-		
+
 		// initially the player is moving to the right
 		// Create a new animation based on a selection of
 		// sprites from the sprite sheet.
@@ -136,15 +136,15 @@ public class Robber extends Person{
 
 	}
 
-	
+
 	// ====================================================================================================
 	// GETTERS/SETTERS
-	
+
 	public Integer getMoney() {
 		return money;
 	}
 
-	public Integer getScore() {
+	public float getScore() {
 		return score;
 	}
 
@@ -162,15 +162,15 @@ public class Robber extends Person{
 	 * Increase the score by some amount
 	 * @param addedScore amount to add to the score of the robber
 	 */
-	public void addScore(Integer addedScore){
+	public void addScore(float addedScore){
 		this.score+=addedScore; 
 	}
 
 	public void setRobbing(boolean isRobbing) {
 		this.isRobbing = isRobbing;
 	}
-	
-	
+
+
 	// MOVEMENT
 	//=====================================================================================================
 	public void stop() {
@@ -182,10 +182,12 @@ public class Robber extends Person{
 		this.currentAnimation = animation;
 	}
 
-	public void draw() {
-		this.currentAnimation.draw(this.position.getX(), this.position.getY());		
+	public void draw(boolean show) {
+		if (show)
+			this.currentAnimation.draw(this.position.getX(), this.position.getY());
+		
 	}
-	
+
 	public boolean rob()
 	{
 		// if there is no nearby building then the robber cannot rob anything
@@ -195,10 +197,6 @@ public class Robber extends Person{
 			return false; 
 		}
 
-		// TODO: Remove
-		// Might be redundant 
-		this.setRobbing(true);
-
 		// Rob the building and pass parameter to self
 		this.nearByBldg.rob(this); 
 
@@ -206,11 +204,11 @@ public class Robber extends Person{
 	}
 
 	public boolean rob(Building bldg){
-		
+
 		if (bldg == null)
 			return false;
-		
-		if (bldg.isInRobbingDistance(this.position))
+
+		if (!bldg.isInRobbingDistance(this.rect))
 			return false;
 
 		this.setRobbing(true);
@@ -221,5 +219,5 @@ public class Robber extends Person{
 		return true;
 
 	}
-	
+
 }

@@ -1,14 +1,9 @@
 package game.city.person;
 
 import game.Globals;
-import game.city.Camera;
 import game.city.building.Building;
-import game.states.Play;
-
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Point;
-import org.newdawn.slick.geom.Rectangle;
 
 public class RobberUser extends Robber implements Movable {
 
@@ -18,23 +13,22 @@ public class RobberUser extends Robber implements Movable {
 
 	@Override
 	public void processInput(Input input) {
-		
-		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
-			System.out.println("Process Input");
-			
-			// get the building
-			Point pnt = new Point (input.getMouseX(), input.getMouseY());
-			
-			Building bldg = selectBuilding(pnt);
-					
-			if (bldg==null)
-				return; 
-			
-			// display info for this building
-			bldg.setShowBuildingInfo(true);
-			
-		}
-		else if (input.isKeyDown(Input.KEY_RIGHT)) {
+//		
+//		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
+//		
+//			// get the building
+//			Point pnt = new Point (input.getMouseX(), input.getMouseY());
+//			
+//			Building bldg = selectBuilding(pnt);
+//					
+//			if (bldg==null)
+//				return; 
+//			
+//			// display info for this building
+//			bldg.setShowBuildingInfo(true);
+//			
+//		}
+		 if (input.isKeyDown(Input.KEY_RIGHT)) {
 			moveRight();
 		} else if (input.isKeyDown(Input.KEY_LEFT)) {
 			moveLeft();
@@ -140,27 +134,31 @@ public class RobberUser extends Robber implements Movable {
 				bldg.setShowBuildingInfo(true);
 				break;
 			}
+			if (this.rect.intersects(bldg.robbingRegion)){
+				this.nearByBldg = bldg;
+				bldg.setShowBuildingInfo(true);
+			}
 		}
 		return isInCollision;
 	}
 
 	
-	private Building selectBuilding(Point pnt){
-		Camera camera = Play.getInstance().getCamera();
-		// create a rectangle and use the intersect method to check whether 
-		// the policeman rect intersects with the mouse click
-		Rectangle rect = new Rectangle(
-				camera.getCameraX() + pnt.getX() - Globals.SELECTION_ERROR/2, 
-				camera.getCameraY() + pnt.getY() - Globals.SELECTION_ERROR/2,
-				Globals.SELECTION_ERROR,
-				Globals.SELECTION_ERROR);
-		
-		for (Building bldg: Building.buildings){
-			if (bldg.rect.intersects(rect))
-			{
-				return bldg;  
-			}
-		}
-		return null;
-	}
+//	private Building selectBuilding(Point pnt){
+//		Camera camera = Play.getInstance().getCamera();
+//		// create a rectangle and use the intersect method to check whether 
+//		// the policeman rect intersects with the mouse click
+//		Rectangle rect = new Rectangle(
+//				camera.getCameraX() + pnt.getX() - Globals.SELECTION_ERROR/2, 
+//				camera.getCameraY() + pnt.getY() - Globals.SELECTION_ERROR/2,
+//				Globals.SELECTION_ERROR,
+//				Globals.SELECTION_ERROR);
+//		
+//		for (Building bldg: Building.buildings){
+//			if (bldg.rect.intersects(rect))
+//			{
+//				return bldg;  
+//			}
+//		}
+//		return null;
+//	}
 }

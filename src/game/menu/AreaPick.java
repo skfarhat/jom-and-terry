@@ -20,7 +20,7 @@ public class AreaPick extends Menu {
 	private StateBasedGame sbg = null; 
 	
 	public AreaPick(int state, StateBasedGame sbg){
-		super(state,sbg);
+		super();
 	}
 	
 	@Override

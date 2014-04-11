@@ -23,18 +23,17 @@ import org.newdawn.slick.util.ResourceLoader;
 public class PoliceOffice {
 
 	private static final String EMERGENCY_SOUND = "res/Sounds/Emergency.ogg" ;
-
-	private Robber robber; 
+ 
 	private static final Integer numberOfPolicemen = 3; 
 	public static ArrayList<Policeman> policeForceArray = new ArrayList<>(numberOfPolicemen);
 	private static Audio sound;
 	private static boolean isPlayingSound = false; 
 	private static boolean userIsPolice; 
 
+//	public static Boolean robberIsVisible = false;
+	public static Integer robberVisibleCount = 0; 
+	
 	public PoliceOffice(Robber robber, boolean userIsPolice) throws SlickException {
-
-		// set robber
-		this.robber = robber;
 
 		// Initialize the Police Force Array
 		policeForceArray = new ArrayList<>(numberOfPolicemen);
@@ -57,7 +56,6 @@ public class PoliceOffice {
 				police = new PolicemanUser(robber, position, policeName, Globals.POLICEMAN_VELOCITY);
 			else
 				police = new PolicemanComputer(robber, position, policeName, Globals.POLICEMAN_VELOCITY);
-			new Policeman(this.robber, position , "Police-1", Globals.POLICEMAN_VELOCITY);
 
 			// Add Policeman to the Policeman
 			policeForceArray.add(police);
@@ -77,6 +75,7 @@ public class PoliceOffice {
 	public void draw(){ 
 		for (Policeman police : policeForceArray)
 			police.draw();
+
 	}
 
 	public static void callPolice(Building bldg){
@@ -129,6 +128,8 @@ public class PoliceOffice {
 	}
 
 	public void processInput(Input input){
+		
+		// TODO: Remove this from here
 		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
 			if (userIsPolice){
 
@@ -141,11 +142,9 @@ public class PoliceOffice {
 
 				Building bldg = selectBuilding(pos);
 
-				if (bldg==null)
-					return; 
-
 				// display info for this building
-				bldg.setShowBuildingInfo(true);
+				if (bldg != null) 
+					bldg.setShowBuildingInfo(true);
 
 
 				// save the previous policeman and deselect him later

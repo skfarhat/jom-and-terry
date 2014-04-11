@@ -18,7 +18,7 @@ public abstract class Menu extends BasicGameState {
 	public abstract int getID();
 	public abstract void initButtons();  
 
-	public Menu(int state, StateBasedGame sbg){
+	public Menu(){
 		super();
 	}
 
@@ -67,7 +67,4 @@ public abstract class Menu extends BasicGameState {
 			b.render(g);
 		}
 	}
-
-
-
 }

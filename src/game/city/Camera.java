@@ -6,6 +6,7 @@ import game.city.person.Person;
 import game.menu.PlayerLog;
 
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.tiled.TiledMap;
 
@@ -66,7 +67,8 @@ public class Camera {
 
 		this.person = person; 
 
-		this.playerLog = new PlayerLog(person, Globals.APP_WIDTH-150, 0);
+		Point position = new Point(Globals.APP_WIDTH-150, 0);
+		this.playerLog = new PlayerLog(person, position);
 	}
 
 	/**
@@ -176,4 +178,7 @@ public class Camera {
 		return cameraY;
 	}
 
+	public PlayerLog getPlayerLog() {
+		return playerLog;
+	}
 }

@@ -32,7 +32,7 @@ public class NewAccountView extends Menu {
 	private boolean failedToCreateAccount = false; 
 	// Constructor
 	public NewAccountView(int state, StateBasedGame sbg) {
-		super(state, sbg);
+		super();
 	}
 
 	@Override

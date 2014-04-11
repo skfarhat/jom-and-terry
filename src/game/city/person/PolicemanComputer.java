@@ -3,10 +3,13 @@ package game.city.person;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
+
 import javax.swing.Timer;
+
 import game.Globals;
 import game.city.building.Building;
 import game.city.building.House;
+
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Point;
@@ -46,7 +49,7 @@ public class PolicemanComputer extends Policeman{
 	
 	@Override
 	public void draw(){
-		
+		super.draw();
 		// if Policeman is moving, change xPos and yPos
 		if (isMoving) {
 			float speed = (float) (Globals.VELOCITY_MULTIPLIER * velocity);

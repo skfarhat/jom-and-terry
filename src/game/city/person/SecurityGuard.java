@@ -6,6 +6,7 @@ import game.states.Play;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.Timer;
@@ -24,7 +25,12 @@ import org.newdawn.slick.geom.Vector2f;
  * 
  */
 public class SecurityGuard extends Person {
-
+	
+	/**
+	 * An array containing all the security guards
+	 */
+	public static ArrayList<SecurityGuard> securityGuards = new ArrayList<>(10);
+	
 	private String sgImgPath = "res/bouncer.png";
 
 	private Point destinationPoint;
@@ -33,7 +39,6 @@ public class SecurityGuard extends Person {
 
 	private boolean isMoving = false;
 	private boolean isFollowingRobber = false;
-	private Play play; 
 
 	public Rectangle rect; // frame of the security guard
 	public Vector2f direction; // direction in which the Security is moving
@@ -123,6 +128,9 @@ public class SecurityGuard extends Person {
 		this.destinationPoint = position;
 
 		this.startRoundPatrol();
+		
+		// add the created security guard to the security guards array
+		securityGuards.add(this);
 	}
 
 	/*
@@ -145,10 +153,6 @@ public class SecurityGuard extends Person {
 
 	public void setRobber(Robber robber) {
 		this.robber = robber; 
-	}
-
-	public void setPlay(Play play) {
-		this.play = play;
 	}
 
 	public void setPoliceOffice(PoliceOffice policeOffice) {
@@ -313,7 +317,7 @@ public class SecurityGuard extends Person {
 
 	public boolean arrestRobber(Robber robber) {
 		robber.isCaught = true; 
-		this.play.gameOver();
+		Play.getInstance().gameOver();
 		return true;
 	}
 }

@@ -46,4 +46,9 @@ public class MenuButton  {
 	public boolean isMouseOver() {
 		return moa.isMouseOver();
 	}
+	public void setImage(Image image) {
+		this.image = image;
+		moa = new MouseOverArea(guiContext, image, x, y);   
+
+	}
 }

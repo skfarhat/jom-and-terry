@@ -20,29 +20,30 @@ import org.newdawn.slick.geom.Vector2f;
  */
 public class Policeman extends Person{
 
+	protected static float visionDistance = 130.0f;	// Vision Attribute
+
 	private String policemanImgPath 			= "res/police1.png";
 	private String policeSpriteSheet 			= "res/Spritesheets/police.png";
 	//=================================================================
 	private Image image;
 
-	protected Integer score = 0; 
+	protected float score = 0; 
 	protected Point destPoint; 
 
 	public Vector2f direction; 
-	private float visionDistance = 130.0f;	// Vision Attribute
 	//=================================================================
 	// Behavior
 	protected boolean userIsPolice; 
 	protected boolean isMoving = false;
 	protected boolean isPatrolling = false;
 	protected boolean isFollowingRobber = false;
+	protected boolean robberIsVisible = false;
 	protected boolean isCheckingSuspectRegion= false;
 	//=================================================================
 	//  
 	public Robber robber; 
 
-	protected Circle suspectRegion; 
-
+	protected Circle suspectRegion; 		
 
 	// TODO: the following 2 should be 'constants'
 	// Animations
@@ -80,8 +81,6 @@ public class Policeman extends Person{
 		this.image = new Image(policemanImgPath);
 
 		this.robber = robber;
-
-		//this.startPatrol();
 
 		// initially the player is moving to the right
 		//Create a new animation based on a selection of
@@ -139,7 +138,7 @@ public class Policeman extends Person{
 		return image;
 	}
 
-	public Integer getScore() {
+	public float getScore() {
 		return score;
 	}
 
@@ -148,7 +147,6 @@ public class Policeman extends Person{
 	}
 
 	public void draw() {
-
 		// draw the image at the positon of the policeman
 		this.image.draw(this.position.getX(), this.position.getY());
 
@@ -168,12 +166,13 @@ public class Policeman extends Person{
 		}
 		if (distance < visionDistance)
 		{
-			followRobber();
+			followRobber(); 
 			return true;
 		}
 		else
 		{
-			this.isFollowingRobber  = false; 
+			this.isFollowingRobber  = false;
+		
 		}
 		return false;
 	}
@@ -181,6 +180,8 @@ public class Policeman extends Person{
 	private void followRobber()
 	{
 		this.isFollowingRobber = true;
+		
+		Play.getInstance().getRobber().addScore(0.1f);
 		this.move(robber.position);
 	}
 	/**
@@ -190,9 +191,21 @@ public class Policeman extends Person{
 	 * @return whether the arrest was successful.
 	 */
 	public boolean arrestRobber(Robber robber) {
-		robber.isCaught = true;
-		Play.getInstance().gameOver();
-		return true;
+		
+		float distance = (float)  Math.sqrt(Math.pow(
+				this.position.getX()-this.robber.position.getX(), 2.0) 
+				+ Math.pow(this.position.getY()-this.robber.position.getY(), 2.0)
+				);
+		
+		// arrest only if he is less than some distance away
+		if (distance < Globals.ARREST_DISTANCE)
+		{
+			robber.isCaught = true;
+			Play.getInstance().gameOver();
+			return true;			
+		}
+		else return false; 
+
 	}
 
 	public void move(Point destPoint)

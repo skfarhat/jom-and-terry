@@ -35,7 +35,7 @@ public class MainMenu extends Menu
 	private Account account = null; 
 	
  	public MainMenu(int state, StateBasedGame sbg){
-		super(state,sbg);
+		super();
 		this.gameContainer = sbg; 
 	}
  	

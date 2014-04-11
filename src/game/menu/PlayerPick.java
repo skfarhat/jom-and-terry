@@ -23,7 +23,7 @@ public class PlayerPick extends Menu{
 	
 	
 	public PlayerPick(int state, StateBasedGame sbg){
-		super(state,sbg);
+		super();
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import game.city.building.Shop;
 import game.city.person.Movable;
 import game.city.person.Person;
 import game.city.person.PoliceOffice;
+import game.city.person.Policeman;
 import game.city.person.PolicemanUser;
 import game.city.person.Robber;
 import game.city.person.RobberComputer;
@@ -36,13 +37,23 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 import org.newdawn.slick.tiled.TiledMap;
 
 public class Play extends BasicGameState {
-	
+	enum FlagType{
+		NONE , 
+		RED, 
+		DARK_BLUE, 
+		VIOLET, 
+		GREEN
+	}; 
+
+	// NONE, RED, DARK_BLUE, VIOLET, GREEN 
+	public boolean flagsShown[] = {true, true, true, true, true};  
+
 	// Singleton 
 	public static final Play play = new Play();
 	public static Play getInstance(){
 		return play;
 	}
-	
+
 	// TODO: move to Globals
 	private final String cityTileMapPath = "res/city/city.tmx";
 
@@ -50,7 +61,7 @@ public class Play extends BasicGameState {
 	private Integer gameTime = 0; 
 
 	private TiledMap cityTileMap;
-	
+
 	/**
 	 * Main character can either be police or robber
 	 */
@@ -58,20 +69,11 @@ public class Play extends BasicGameState {
 	public boolean userIsRobber;
 	boolean isGameOver = false;
 	public Rectangle toDraw;  
-	
+
 	// Characters
 	private Robber robber;
-	public PoliceOffice policeOffice;
+	private PoliceOffice policeOffice;
 	// =============================================================================================================================
-
-	
-	// FIXME: Remove, could be pointless
-	// Array of all the security guards
-	// array is filled after all the banks have been initialized
-	// used to access the security guards in play
-	// the alternative is accessing the SG from bank arrays but then O(n2)
-	public ArrayList<SecurityGuard> securityGuardsArray;
-	
 
 	// For Collision Detection
 	ArrayList<Rectangle> blocks;
@@ -85,12 +87,10 @@ public class Play extends BasicGameState {
 
 		blocks = new ArrayList<>(20);
 
-
 		initMap(); 				// Tile Map
-		initRobber(); 			// Robber
-		initPoliceOffice(); 	// PoliceOffice		
+		initRobber(); 			// Robber		
 	}
-	
+
 	public void start() throws SlickException{
 		setMainCharacter(); 
 
@@ -98,7 +98,7 @@ public class Play extends BasicGameState {
 		initSecurityGuards(); 	// Initialize Security Guards		
 
 		startGameTimer();		// Start timer
-		
+
 	}
 
 	private final void initCamera() throws SlickException {
@@ -139,7 +139,7 @@ public class Play extends BasicGameState {
 		for (int objectIndex = 0; objectIndex < housesObjectCount; objectIndex++) {
 			int x = cityTileMap.getObjectX(0, objectIndex);
 			int y = cityTileMap.getObjectY(0, objectIndex);
-			
+
 			Point position = new Point(x,y);
 			float width = cityTileMap.getObjectWidth(0, objectIndex);
 			float height = cityTileMap.getObjectHeight(0, objectIndex);
@@ -147,8 +147,8 @@ public class Play extends BasicGameState {
 			// some random number (1000 ? 3000 ? ...) and need it to be positive
 			// thus the Math.absolute
 			int money = Math.abs(((new Random()).nextInt() % 10) * 1000);
-			
-			
+
+
 			// create new house. The house is added to the static houses array
 			new House(objectIndex, position, width, height, money);
 
@@ -166,7 +166,7 @@ public class Play extends BasicGameState {
 			int x = cityTileMap.getObjectX(1, objectIndex);
 			int y = cityTileMap.getObjectY(1, objectIndex);
 			Point position = new Point (x,y);
-			
+
 			float width = cityTileMap.getObjectWidth(1, objectIndex);
 			float height = cityTileMap.getObjectHeight(1, objectIndex);
 
@@ -189,7 +189,7 @@ public class Play extends BasicGameState {
 			int x = cityTileMap.getObjectX(2, objectIndex);
 			int y = cityTileMap.getObjectY(2, objectIndex);
 			Point position = new Point(x, y); 
-			
+
 			float width = cityTileMap.getObjectWidth(2, objectIndex);
 			float height = cityTileMap.getObjectHeight(2, objectIndex);
 
@@ -212,9 +212,8 @@ public class Play extends BasicGameState {
 	}
 
 	private final void initPoliceOffice() throws SlickException {
-		
+
 		boolean userIsPolice = !userIsRobber; 
-		
 		this.policeOffice = new PoliceOffice(this.robber, userIsPolice);
 	}
 
@@ -225,15 +224,8 @@ public class Play extends BasicGameState {
 	 * @throws SlickException
 	 */
 	private final void initSecurityGuards() throws SlickException {
-		this.securityGuardsArray = new ArrayList<>();
-		for (Bank bank : Bank.banks) {
-			for (SecurityGuard sg : bank.getSecurityGuards()) {
-				sg.setRobber(this.robber);
-				sg.setPlay(this);
-				sg.setPoliceOffice(this.policeOffice);
-
-				this.securityGuardsArray.add(sg);
-			}
+		for (SecurityGuard sg : SecurityGuard.securityGuards) {
+			sg.setRobber(this.robber);
 		}
 	}
 
@@ -260,26 +252,27 @@ public class Play extends BasicGameState {
 		super.enter(container, game);
 		userIsRobber = Game.getInstance().getAccount().getIsRobber();
 		initRobber();
+		initPoliceOffice();
 		setMainCharacter();
 		start();
 	}
-	
+
 	@Override
 	public void leave(GameContainer container, StateBasedGame game)
 			throws SlickException {
 		super.leave(container, game);
-	
-		
+
+
 		if (robber instanceof RobberComputer){
 			RobberComputer temp = (RobberComputer) robber; 
 			temp.stopTimers();
 		}
-		
+
 		policeOffice.stopPolicemenPatrols();
 	}
-	
+
 	// ===============================================================================================================================
-	
+
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
@@ -287,23 +280,25 @@ public class Play extends BasicGameState {
 		// Draw Camera
 		camera.draw(gameTime);
 
+		boolean showRobber = (userIsRobber ||  PoliceOffice.robberVisibleCount > 0);
 		// Draw Robber
-		robber.draw();
+		robber.draw(showRobber);
 
 		// Draw Policemen
 		policeOffice.draw();
 
 		// Draw Security Guards
 		SecurityGuard sg;
-		for (int i = 0; i < securityGuardsArray.size(); i++) {
-			sg = securityGuardsArray.get(i);
+		for (int i = 0; i < SecurityGuard.securityGuards.size(); i++) {
+			sg = SecurityGuard.securityGuards.get(i);
 			sg.draw();
 		}
 
 		// Draw the Buildings 
-		for (Building bldg : Building.buildings) {
-			bldg.draw();
+		for (Building bldg : Building.buildings) { 
+			bldg.draw((flagsShown[bldg.getFlag().flagID]));
 		}
+
 	}
 
 	@Override
@@ -322,18 +317,74 @@ public class Play extends BasicGameState {
 	 * @return
 	 */
 	private void processInput(Input input) {
-		
-	
+
+		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
+
+			camera.getPlayerLog().clickButton();
+			// user is police
+			if (userIsRobber == false){
+
+				int destX = input.getMouseX();
+				int destY = input.getMouseY();
+
+
+				// get the building
+				Point pos = new Point(destX, destY);
+
+				Building bldg = selectBuilding(pos);
+
+				// display info for this building
+				if (bldg != null) 
+					bldg.setShowBuildingInfo(true);
+
+
+				// save the previous policeman and deselect him later
+				PolicemanUser prevPoliceman = (PolicemanUser) Play.getInstance().getMainCharacter();
+
+				// get the policeman that is selected by the mouse
+				PolicemanUser policeman = (PolicemanUser) selectPoliceman(destX, destY);
+
+				// 
+				if (policeman == null)
+					return; 
+
+				// set the isSelected to true
+				policeman.setSelected(true);
+
+				// Deselect the previous policeman
+				prevPoliceman.setSelected(false); 
+
+				// set the main character in the Play
+				Play.getInstance().setMainCharacter(policeman);
+			}
+
+			else {
+				// get the building
+				Point pnt = new Point (input.getMouseX(), input.getMouseY());
+
+				Building bldg = selectBuilding(pnt);
+
+				if (bldg==null)
+					return; 
+
+				// display info for this building
+				bldg.setShowBuildingInfo(true);
+
+
+			}
+
+		}
+
+		policeOffice.processInput(input);
+
 		// Move left, right, up, down		
 		Movable movable = (Movable) mainCharacter;
 		movable.processInput(input);
 
-		
-		// TODO: Move to Robber and Policeman 
-		// MOUSE: Control for Police
-		
+
+
 		if (input.isKeyDown(Input.KEY_ESCAPE)) {
-			
+
 			// go to the pause menu
 			Game.getInstance().enterState(Globals.PAUSE);
 		}
@@ -341,14 +392,59 @@ public class Play extends BasicGameState {
 			robber.stop();
 		}
 	}
-	
+
+
+	private Building selectBuilding(Point pnt){
+		Camera camera = Play.getInstance().getCamera();
+		// create a rectangle and use the intersect method to check whether 
+		// the policeman rect intersects with the mouse click
+		Rectangle rect = new Rectangle(
+				camera.getCameraX() + pnt.getX() - Globals.SELECTION_ERROR/2, 
+				camera.getCameraY() + pnt.getY() - Globals.SELECTION_ERROR/2,
+				Globals.SELECTION_ERROR,
+				Globals.SELECTION_ERROR);
+
+		for (Building bldg: Building.buildings){
+			if (bldg.rect.intersects(rect))
+			{
+				return bldg;  
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param destX x-position of the mouse input
+	 * @param destY y-position of the mouse input
+	 * @return a policeman object if the destX and destY passed are close to a policeman in the map. Returns null otherwise
+	 */
+	private Policeman selectPoliceman(int destX, int destY){
+		Camera camera = Play.getInstance().getCamera();
+
+		// create a rectangle and use the intersect method to check whether 
+		// the policeman rect intersects with the mouse click
+		Rectangle rect = new Rectangle(
+				camera.getCameraX() + destX - Globals.SELECTION_ERROR/2, 
+				camera.getCameraY() + destY - Globals.SELECTION_ERROR/2,
+				Globals.SELECTION_ERROR,
+				Globals.SELECTION_ERROR);
+
+		for (Policeman policeman: policeOffice.getPoliceForceArray()){
+			if (policeman.rect.intersects(rect))
+			{
+				return policeman;  
+			}
+		}
+		return null;
+	}
+
 	// GETTERS/SETTERS
 	// ================================================================================================================================
 
 	public Person getMainCharacter() {
 		return mainCharacter;
 	}
-	
+
 	/**
 	 * Getter method for the camera
 	 * @return camera
@@ -356,7 +452,7 @@ public class Play extends BasicGameState {
 	public Camera getCamera() {
 		return camera;
 	}
-	
+
 	private void startGameTimer(){
 		Timer timer = new Timer(1000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -383,5 +479,17 @@ public class Play extends BasicGameState {
 		return Globals.PLAY;
 	}
 
+	public void showFlag(int flagId){
+		if (flagId < flagsShown.length && flagId >=0)
+			flagsShown[flagId] = true; 
+	}
 
+	public void hideFlag(int flagId){
+		if (flagId < flagsShown.length && flagId >=0)
+			flagsShown[flagId] = false; 
+	}
+
+	public Robber getRobber() {
+		return robber;
+	}
 }

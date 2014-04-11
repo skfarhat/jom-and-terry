@@ -24,7 +24,6 @@ public class RobberComputer extends Robber {
 
 		// Start the robbing
 		startRobbing(); 
-//		automaticallyRob();
 	}
 
 	public void startRobbing() {
@@ -63,7 +62,7 @@ public class RobberComputer extends Robber {
 			return false; 
 
 		// If is in robbing distance directly rob
-		if (bldg.isInRobbingDistance(this.position))
+		if (bldg.isInRobbingDistance(this.rect))
 			return  rob(bldg); 
 
 		// set the building to rob
@@ -76,10 +75,10 @@ public class RobberComputer extends Robber {
 
 	}
 
-	public void draw() {
-		super.draw();
+	public void draw(boolean showRobber) {
+		super.draw(showRobber);
 
-		this.currentAnimation.draw(this.position.getX(), this.position.getY());
+//		this.currentAnimation.draw(this.position.getX(), this.position.getY());
 
 		if (isMoving) {
 
@@ -117,11 +116,9 @@ public class RobberComputer extends Robber {
 			// 2.0f margin of error
 			if (differenceVector.length() < 2.0f) {
 
-				System.out.println(" < 2.0f");
 				this.isMoving = false;
 				if (buildingToRob !=null)
 				{
-					System.out.println("buildingToRob != null");
 					rob(buildingToRob);
 					buildingToRob = null;
 				}
@@ -148,7 +145,7 @@ public class RobberComputer extends Robber {
 
 		// first draw the vector 
 		Vector2f directionVector = new Vector2f(this.position.getX() - bldg.position.getX(), this.position.getY() - bldg.position.getX());
-		System.out.println(String.format("Vector(%f,%f)", directionVector.x, directionVector.y));
+//		System.out.println(String.format("Vector(%f,%f)", directionVector.x, directionVector.y));
 
 		// move horizontal
 		while (Math.abs(directionVector.x) != 0){

@@ -32,7 +32,7 @@ public class StatsView extends Menu {
 
 
 	public StatsView(int state, StateBasedGame sbg){
-		super(state, sbg); 
+		super(); 
 	}
 
 	@Override

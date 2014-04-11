@@ -25,7 +25,7 @@ import org.newdawn.slick.geom.Rectangle;
 public abstract class Building extends Observable{
 
 	/**
-	 * The amount of money a building has.
+	 * An array containing all the buildings created
 	 */
 	public static ArrayList<Building> buildings = new ArrayList<>(20); 
 
@@ -53,7 +53,10 @@ public abstract class Building extends Observable{
 	private boolean isCompletelyRobbed = false; 
 	private float robbedPercent = 0.0f; 
 	//==============================================================================================================================
-
+	
+	public Rectangle robbingRegion; 
+	
+	private Flag flag;
 
 	public Integer ID; 
 	public Integer money;
@@ -82,11 +85,14 @@ public abstract class Building extends Observable{
 		this.width = width; 
 		this.height = height; 
 		this.money = money;
-		this.score = money/1000; 
+		this.score = money/100; 
 
 		// Initially the building is not highlighted
 		this.isHighlighted = false;
 
+		// Flag
+		this.flag = new Flag();
+		
 		// Initialize the timer for showing the building information 
 		displayBuildingInfoTimer = new Timer(Globals.BUILDING_INFO_DISPLAY_TIMER, new ActionListener() {
 			@Override
@@ -99,6 +105,13 @@ public abstract class Building extends Observable{
 		// Initialize the building info
 		this.bldgInfo = new BuildingInfo(this);
 
+		
+		 robbingRegion = new Rectangle(
+				this.position.getX() - Globals.BUILDING_ROBBING_DISTANCE,
+				this.position.getY() - Globals.BUILDING_ROBBING_DISTANCE, 
+				this.rect.getWidth() + 2 * Globals.BUILDING_ROBBING_DISTANCE, 
+				this.rect.getHeight()+ 2 * Globals.BUILDING_ROBBING_DISTANCE);
+		
 		buildings.add(this);
 	}
 
@@ -113,8 +126,31 @@ public abstract class Building extends Observable{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
+				
 				if (isCompletelyRobbed)
-					return;  
+					return;
+				
+				// make sure the robber is in robbing distance of the building
+				if (!isInRobbingDistance(robber.rect))
+				{
+					System.out.println("Not in robbing distance");
+					robbedPercent = 0.0f; 
+					
+					// set the boolean is robbing to false
+					robber.setRobbing(false);
+
+					setBeingRobbed(false);
+					
+					// update the robbed percent
+					bldgInfo.getFillingBar().update(robbedPercent); 
+					
+					isCompletelyRobbed = false; 
+					
+					// stop the robbing timer
+					robbingTimer.stop();
+					
+					return; 
+				}
 
 				// the robber is in fact robbing this building
 				
@@ -159,16 +195,24 @@ public abstract class Building extends Observable{
 		setBeingRobbed(true); 
 	}
 
-	public void draw(){
+	public void draw(boolean showFlag){
 		// Draw the filling bar at the xPos of the building but a bit above
 		if (showBuildingInfo)
 			bldgInfo.draw(position.getX(), position.getY()- BuildingInfo.BUILDING_INFO_HEIGHT);
+		
+		if (showFlag && flag.image != null)
+			flag.draw(bldgInfo.getFrame().getX(), bldgInfo.getFrame().getY()+25);
+	
 	}
 
-	
+	/**
+	 * Change the message string of the flag
+	 * @param message string
+	 */
 	public void nextFlag(){
-		bldgInfo.nextFlag();
+		flag.nextFlag();
 	}
+	
 	// GETTERS/SETTERS
 	//==============================================================================================================================
 	/**
@@ -216,15 +260,36 @@ public abstract class Building extends Observable{
 		}
 		else return ""; 
 	}
-
-	public boolean isInRobbingDistance(Point point){
-		Rectangle rect = new Rectangle(
+ 
+	public boolean isInRobbingDistance(Rectangle rect){
+		Rectangle temprect = new Rectangle(
 				this.position.getX() - Globals.BUILDING_ROBBING_DISTANCE,
 				this.position.getY() - Globals.BUILDING_ROBBING_DISTANCE, 
-				this.rect.getWidth() + Globals.BUILDING_ROBBING_DISTANCE, 
-				this.rect.getHeight()+ Globals.BUILDING_ROBBING_DISTANCE);
+				this.rect.getWidth() + 2 * Globals.BUILDING_ROBBING_DISTANCE, 
+				this.rect.getHeight()+ 2 * Globals.BUILDING_ROBBING_DISTANCE);
 
-		return (rect.intersects(point));
+		return 
+				temprect.intersects(rect);
 	}
 
+	public Flag getFlag() {
+		return flag;
+	}
+
+	// FLAG
+	// ==============================================================================================================================
+
+	/**
+	 * Add flag without a message
+	 */
+	protected void addFlag(){
+		flag = new Flag(); 
+	}
+	/**
+	 * Remove flag by setting its value to null
+	 */
+	protected void removeFlag(){
+		flag = null; 
+	}
+	
 }

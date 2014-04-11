@@ -1,6 +1,7 @@
 package game.city.person;
 
 import game.Globals;
+import game.city.building.Building;
 
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
@@ -9,7 +10,7 @@ import org.newdawn.slick.geom.Point;
 public class PolicemanUser extends Policeman implements Movable{
 
 	private boolean isSelected = false;
-	
+
 	public PolicemanUser(Robber robber, Point position, String name,
 			double velocity) throws SlickException {
 		super(robber, position, name, velocity);
@@ -28,13 +29,14 @@ public class PolicemanUser extends Policeman implements Movable{
 			moveUp();
 		} else if (input.isKeyDown(Input.KEY_DOWN)) {
 			moveDown();
-		} 
+		} else if (input.isKeyPressed(Input.KEY_SPACE)){
+			arrestRobber(robber);
+		}
 		else {
 			stop();
 		}		
 	}
 
-	
 	@Override
 	public void draw() {
 		super.draw();
@@ -42,13 +44,48 @@ public class PolicemanUser extends Policeman implements Movable{
 		if (isSelected){
 			selectedImage.draw(this.position.getX(), this.position.getY()-selectedImage.getHeight());
 		}
+
+		float distance = (float)  Math.sqrt(Math.pow(
+				this.position.getX()-this.robber.position.getX(), 2.0) 
+				+ Math.pow(this.position.getY()-this.robber.position.getY(), 2.0)
+				);
+		if (distance < visionDistance )
+		{
+			if (robberIsVisible == false){
+				PoliceOffice.robberVisibleCount++; 
+
+				// set robberIsVisible to true
+				robberIsVisible = true;			
+			}	
+		}
+		else {
+			if (robberIsVisible)
+			{
+				PoliceOffice.robberVisibleCount--; 
+
+				// set robberIsVisible to false
+				robberIsVisible = false; 				
+			}	
+		}
 	}
 	// MOVEMENT
 	// =====================================================================================================================
 
 	@Override
 	public boolean collides() {
-		return false;
+		// convert the position of the Player from pixels to 'Tile' position
+		// divide by the tile Size (in this case 16px)
+
+		boolean isInCollision = false;
+
+		for (Building bldg: Building.buildings) {
+			if (this.rect.intersects(bldg.rect)) {
+				isInCollision = true;
+				bldg.setShowBuildingInfo(true);
+				break;
+			}
+		}
+		return isInCollision;
 	}
 
 	@Override

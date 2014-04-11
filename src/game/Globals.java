@@ -26,17 +26,17 @@ public final class Globals {
 	
 	// Robber
 	public static final float ROBBER_VISION_DISTANCE = 100.0f; 
-	
+	public static final float ARREST_DISTANCE = 30.0f;  
+
 	// Velocity
-	
 	public static final float VELOCITY_MULTIPLIER = 0.02f; 
 	public static final float ROBBER_VELOCITY = 130.0f;
-	public static final float POLICEMAN_VELOCITY = 100.0f;
+	public static final float POLICEMAN_VELOCITY = 120.0f;
 	public static final float SECURITY_GUARD_VELOCITY = 80.0f; 
 	
 	// Building
 	public static final int BUILDING_INFO_DISPLAY_TIMER = 3000;
-	public static final float BUILDING_ROBBING_DISTANCE = 5.0f;
+	public static final float BUILDING_ROBBING_DISTANCE = 30.0f;
 	
 	// Font
 	public static final String PETITINHO_FONT = "Petitinho.ttf";
