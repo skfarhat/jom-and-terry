@@ -49,7 +49,7 @@ public class PolicemanUser extends Policeman implements Movable{
 				this.position.getX()-this.robber.position.getX(), 2.0) 
 				+ Math.pow(this.position.getY()-this.robber.position.getY(), 2.0)
 				);
-		if (distance < visionDistance )
+		if (distance < Globals.POLICEMAN_VISION_DISTANCE )
 		{
 			if (robberIsVisible == false){
 				PoliceOffice.robberVisibleCount++; 
@@ -79,7 +79,7 @@ public class PolicemanUser extends Policeman implements Movable{
 		boolean isInCollision = false;
 
 		for (Building bldg: Building.buildings) {
-			if (this.rect.intersects(bldg.rect)) {
+			if (this.rect.intersects(bldg.getRect())) {
 				isInCollision = true;
 				bldg.setShowBuildingInfo(true);
 				break;

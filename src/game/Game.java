@@ -31,7 +31,7 @@ public class Game extends StateBasedGame {
 
 	private Game(String gamename) {
 		super(gamename);
-
+		System.out.println("Game-Constructor");
 		// 8 ACCOUNT PICK
 		AccountPick accountView = new AccountPick (Globals.ACCOUNT_PICK, this);
 		this.addState(accountView);
@@ -73,8 +73,10 @@ public class Game extends StateBasedGame {
 	public static Game getInstance() {
 		return game;
 	}
-
+ 
+	
 	public void initStatesList(GameContainer gc) throws SlickException {
+		System.out.println("InitStatesList");
 		this.getState(Globals.PAUSE).init(gc, this);
 		this.getState(Globals.GAME_OVER).init(gc, this);
 		this.getState(Globals.AREA_PICK).init(gc, this);
@@ -86,8 +88,10 @@ public class Game extends StateBasedGame {
 	public static void main(String[] args) {
 
 		AppGameContainer container;
+		AudioGame.getInstance();
+		
 		try {
-			Game game = Game.getInstance(); 
+			Game game = Game.getInstance();
 			container = new AppGameContainer(game);
 			container.setDisplayMode(Globals.APP_WIDTH,Globals.APP_HEIGHT,false);
 			container.setTargetFrameRate(120);

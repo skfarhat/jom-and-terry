@@ -2,6 +2,7 @@ package game;
 
 public final class Globals {
 	public static final String gamename = "Jom & Terry";
+	
 	public static final int MAIN_MENU = 0;
 	public static final int PLAY = 1;
 	public static final int PAUSE = 3;
@@ -21,18 +22,16 @@ public final class Globals {
 	// Directories
 	public static final String SAVE_DIRECTORY_PATH		= "Save/";
 	
-	// For policeman
-	public static final float SELECTION_ERROR = 50.0f; 
-	public static final float POLICEMAN_VISION_DISTANCE = 100.0f; 
+ 
 
 	// Robber
-	public static final float ROBBER_VISION_DISTANCE = 100.0f; 
+	public static final float ROBBER_VISION_DISTANCE = 400.0f; 
 	public static final float ARREST_DISTANCE = 30.0f;  
 
 	// Velocity
 	public static final float VELOCITY_MULTIPLIER = 0.02f; 
 	public static final float ROBBER_VELOCITY = 130.0f;
-	public static final float POLICEMAN_VELOCITY = 120.0f;
+	public static final float POLICEMAN_VELOCITY = 115.0f;
 	public static final float SECURITY_GUARD_VELOCITY = 80.0f; 
 	
 	// Building
@@ -41,4 +40,40 @@ public final class Globals {
 	
 	// Font
 	public static final String PETITINHO_FONT = "Petitinho.ttf";
+
+
+	
+	// Save Accounts
+	public static final String ROBBER_SCORE = "Score";
+	public static final String ROBBER_MONEY = "Money";
+	public static final String ROBBER_POSITION_X= "Position_X";
+	public static final String ROBBER_POSITION_Y= "Position_Y";
+	
+	// For policeman
+	// for when the user is policeman and wants to select other policemen using the mouse
+	public static final float SELECTION_ERROR = 50.0f;		
+	
+	public static final String POLICEMAN_SCORE = "Score";
+	public static final float POLICEMAN_VISION_DISTANCE = 100.0f; 
+	public static final String POLICEMAN_POSITION_X= "Position_X";
+	public static final String POLICEMAN_POSITION_Y= "Position_Y";
+
+	public static final String TYPE 		= "type";
+	public static final String HOUSE 		= "House";
+	public static final String SHOP 		= "Shop";
+	public static final String BANK 		= "Bank";
+	public static final String BUILDINGS 	= "Buildings";
+	
+	public static final String ROBBER 		= "Robber";
+	public static final String POLICE_OFFICE= "PoliceOffice";
+	public static final String POLICEMEN	= "Policemen";
+	public static final String COUNT		= "count";
+	
+	public static final String RESUME 	= "Resume";
+	public static final String ID 		= "id";
+	public static final String MONEY 	= "money";
+	public static final String NUMBER_SECURITY_GUARDS 	= "nbSecurityGuards";
+	public static final String ROBBED = "Robbed";
+	public static final String FLAG = "Flag";
+	public static final String TIME = "Time";
 }

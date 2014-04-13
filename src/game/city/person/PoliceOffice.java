@@ -6,12 +6,14 @@ import game.city.building.Building;
 import game.city.road.Highway;
 import game.menu.PlayerLog;
 import game.states.Play;
+import game.states.Savable;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
-
+import java.util.HashMap;
+import org.json.simple.JSONObject;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Circle;
@@ -21,19 +23,20 @@ import org.newdawn.slick.openal.Audio;
 import org.newdawn.slick.openal.AudioLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
-public class PoliceOffice {
+@SuppressWarnings("unchecked")
+
+public class PoliceOffice implements Savable{
 
 	private static final String EMERGENCY_SOUND = "res/Sounds/Emergency.ogg" ;
- 
+
 	private static final Integer numberOfPolicemen = 3; 
 	public static ArrayList<Policeman> policeForceArray = new ArrayList<>(numberOfPolicemen);
 	private static Audio sound;
 	private static boolean isPlayingSound = false; 
 	private static boolean userIsPolice; 
 
-//	public static Boolean robberIsVisible = false;
 	public static Integer robberVisibleCount = 0; 
-	
+
 	public PoliceOffice(Robber robber, boolean userIsPolice) throws SlickException {
 
 		// Initialize the Police Force Array
@@ -73,10 +76,10 @@ public class PoliceOffice {
 	/**
 	 * Draw all the policemen
 	 */
-	public void draw(){ 
-		for (Policeman police : policeForceArray)
-			police.draw();
-
+	public void draw(){
+		for (Policeman policeman : policeForceArray){
+			policeman.draw();
+		}
 	}
 
 	public static void callPolice(Building bldg){
@@ -102,10 +105,10 @@ public class PoliceOffice {
 
 		playSound();
 	}
-	
+
 
 	public static void callPolice(Highway highway){ 		
-		
+
 		if (!userIsPolice){
 			for (Policeman police: policeForceArray){	
 
@@ -147,7 +150,7 @@ public class PoliceOffice {
 	}
 
 	public void processInput(Input input){
-		
+
 		// TODO: Remove this from here
 		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
 			if (userIsPolice){
@@ -199,7 +202,7 @@ public class PoliceOffice {
 				Globals.SELECTION_ERROR);
 
 		for (Building bldg: Building.buildings){
-			if (bldg.rect.intersects(rect))
+			if (bldg.getRect().intersects(rect))
 			{
 				return bldg;  
 			}
@@ -240,6 +243,50 @@ public class PoliceOffice {
 	 */
 	public ArrayList<Policeman> getPoliceForceArray() {
 		return policeForceArray;
+	}
+
+
+
+	@Override
+	public JSONObject save() {
+			
+		JSONObject policemenObj = new JSONObject(); 
+		
+		for (Policeman policeman: PoliceOffice.policeForceArray)
+		{
+			JSONObject policemanObj= policeman.save();
+			policemenObj.put(policeman.ID, policemanObj);
+		}
+				 
+		JSONObject policeOfficeObj = new JSONObject();
+		
+		// save all the policemen
+		policeOfficeObj.put(Globals.POLICEMEN, policemenObj);
+		
+		// save the number of policemen
+		policeOfficeObj.put(Globals.COUNT, policeForceArray.size());
+		
+		return policeOfficeObj;
+	}
+
+	@Override
+	public void load(Object loadObj) {
+		HashMap<Object, Object> map = (HashMap<Object, Object> ) loadObj;
+		
+
+		// get the Policemen map <ID, PolicemanObj>
+		HashMap<Object, Object> policemenMap = (HashMap<Object, Object>) map.get(Globals.POLICEMEN);
+		System.out.println("PolicemenMap: " + policemenMap);
+		
+		for (Policeman policeman : PoliceOffice.policeForceArray){
+			
+			// get the policeman map 
+			HashMap<Object, Object> policemanMap = (HashMap<Object, Object>) policemenMap.get("" + policeman.ID);
+		
+			// load it into the policeman
+			policeman.load(policemanMap);
+			
+		}
 	}
 
 }

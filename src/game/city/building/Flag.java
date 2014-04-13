@@ -55,6 +55,15 @@ public class Flag implements Renderable{
 		this.image = null;
 	}
 
+	public Flag(int flagID) {
+		
+		// set the flag id one less, then call nextFlag()
+		this.flagID = flagID-1;
+		
+		// this will increment the flagID back 
+		nextFlag();
+	}
+	
 	@Override
 	public void draw(float x, float y) {
 		// draw image

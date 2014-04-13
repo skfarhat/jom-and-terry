@@ -13,6 +13,8 @@ import org.newdawn.slick.geom.Rectangle;
  * 
  */
 public abstract class Person {
+	public static Integer PersonCount = 0 ; 
+	public Integer ID; 
 	public String name;
 	public double velocity;	
 	public Point position; 
@@ -58,6 +60,7 @@ public abstract class Person {
 	public Person (String name, double velocity) {
 		this.name = name;
 		this.velocity = velocity;
+		this.ID = ++PersonCount; 		
 	}
 	
 }

@@ -1,8 +1,12 @@
 package game.city.person;
 
+import java.util.HashMap;
+
 import game.Globals;
 import game.states.Play;
+import game.states.Savable;
 
+import org.json.simple.JSONObject;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -12,19 +16,17 @@ import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
+@SuppressWarnings("unchecked")
+
 /**
  * A policeman.
  * 
  * @author sami
  * 
  */
-public class Policeman extends Person{
+public class Policeman extends Person implements Savable{
 
-	
-	// TODO: Put in globals
-	protected static float visionDistance = 130.0f;	// Vision Attribute
-
-	private static String policemanImgPath 			= "res/police1.png";
+	private static String policemanImgPath 				= "res/police1.png";
 	private static String policeSpriteSheet 			= "res/Spritesheets/police.png";
 	//=================================================================
 	private Image image;
@@ -154,12 +156,12 @@ public class Policeman extends Person{
 	 * @return whether the arrest was successful.
 	 */
 	public boolean arrestRobber(Robber robber) {
-		
+
 		float distance = (float)  Math.sqrt(Math.pow(
 				this.position.getX()-this.robber.position.getX(), 2.0) 
 				+ Math.pow(this.position.getY()-this.robber.position.getY(), 2.0)
 				);
-		
+
 		// arrest only if he is less than some distance away
 		if (distance < Globals.ARREST_DISTANCE)
 		{
@@ -169,6 +171,33 @@ public class Policeman extends Person{
 		}
 		else return false; 
 
+	}
+
+	@Override
+	public JSONObject save() {
+
+		HashMap<String, Object> map = new HashMap<>();
+
+		map.put(Globals.ID, this.ID);
+		map.put(Globals.POLICEMAN_SCORE, this.score);							// put score
+		map.put(Globals.POLICEMAN_POSITION_X, this.position.getX());			// put position x
+		map.put(Globals.POLICEMAN_POSITION_Y, this.position.getY());			// put position y
+
+		JSONObject object = new JSONObject(map);
+
+		return object;
+	}
+
+
+	@Override
+	public void load(Object loadObj) {
+		assert (loadObj!=null): "Object to load is null";
+
+		HashMap<Object, Object> map = (HashMap<Object, Object>) loadObj;
+
+		this.position.setX((float) (double) map.get(Globals.POLICEMAN_POSITION_X));
+		this.position.setY((float) (double) map.get(Globals.POLICEMAN_POSITION_Y));
+		this.score = (float) (double) map.get(Globals.POLICEMAN_SCORE);
 	}
 
 }

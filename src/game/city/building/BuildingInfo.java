@@ -6,7 +6,7 @@ import org.newdawn.slick.geom.Rectangle;
 
 public class BuildingInfo {
 
-	public static int BUILDING_INFO_HEIGHT = 50; 
+	protected final static int BUILDING_INFO_HEIGHT = 50; 
 
 	private Rectangle frame;  
 
@@ -30,7 +30,6 @@ public class BuildingInfo {
 	 * String containing the building type. Can access it through the building field
 	 */
 	private String buildingType = null; 
-
 
 	/**
 	 * 

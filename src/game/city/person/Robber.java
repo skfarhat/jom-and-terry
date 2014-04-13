@@ -2,9 +2,12 @@ package game.city.person;
 
 import game.Globals;
 import game.city.building.Building;
+import game.states.Savable;
 
+import java.util.HashMap;
 import java.util.Random;
 
+import org.json.simple.JSONObject;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -12,8 +15,11 @@ import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 
-public class Robber extends Person{
+@SuppressWarnings("unchecked")
 
+public class Robber extends Person implements Savable{
+
+	// TODO: see what to do with this
 	Random rand = new Random(); 
 
 	private String playerSpriteSheet = "res/SpriteSheets/robber-2.png";
@@ -29,7 +35,7 @@ public class Robber extends Person{
 
 	// =================================================================================================== 
 	// ENVIRONMENT AROUND 
-	public Building nearByBldg;															// Building
+	public Building nearByBldg;													
 
 	// ===================================================================================================
 	// TODO: the following 2 should be 'constants'
@@ -173,6 +179,15 @@ public class Robber extends Person{
 
 	// MOVEMENT
 	//=====================================================================================================
+	
+	public boolean canSeePoliceman(Policeman policeman){
+		
+		float distance = (float)  Math.sqrt(Math.pow(
+				policeman.position.getX()-this.position.getX(), 2.0) 
+				+ Math.pow(policeman.position.getY()-this.position.getY(), 2.0)
+				);
+		return distance < Globals.ROBBER_VISION_DISTANCE;
+	}
 	public void stop() {
 		this.currentAnimation.stop();
 	}
@@ -185,7 +200,6 @@ public class Robber extends Person{
 	public void draw(boolean show) {
 		if (show)
 			this.currentAnimation.draw(this.position.getX(), this.position.getY());
-		
 	}
 
 	public boolean rob()
@@ -220,4 +234,33 @@ public class Robber extends Person{
 
 	}
 
+	@Override
+	public JSONObject save() {
+
+		HashMap<String, Object> map = new HashMap<>();
+		
+		map.put(Globals.ROBBER_MONEY, this.money);							// put money
+		map.put(Globals.ROBBER_SCORE, this.score);							// put score
+ 
+		map.put(Globals.ROBBER_POSITION_X, this.position.getX());			// put position x
+		map.put(Globals.ROBBER_POSITION_Y, this.position.getY());			// put position y
+		
+
+		JSONObject object = new JSONObject(map);
+		
+		return object; 
+	}
+
+	public void load(Object loadObj){
+		assert (loadObj!=null): "Object to load is null";
+		
+		HashMap<Object, Object> map = (HashMap<Object, Object> ) loadObj;
+		
+		this.money = (Integer) map.get(Globals.ROBBER_MONEY);
+		this.score = (float) (double)map.get(Globals.ROBBER_SCORE);
+		
+		this.position.setX((float) (double)map.get(Globals.ROBBER_POSITION_X));
+		this.position.setY((float) (double)map.get(Globals.ROBBER_POSITION_Y));
+		
+	}
 }

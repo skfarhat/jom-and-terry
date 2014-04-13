@@ -1,4 +1,4 @@
-package game.city.person;
+ package game.city.person;
 
 import game.Globals;
 import game.city.building.Building;
@@ -77,8 +77,6 @@ public class RobberComputer extends Robber {
 
 	public void draw(boolean showRobber) {
 		super.draw(showRobber);
-
-//		this.currentAnimation.draw(this.position.getX(), this.position.getY());
 
 		if (isMoving) {
 
@@ -243,4 +241,9 @@ public class RobberComputer extends Robber {
 
 		return true; 
 	}
+ 
+	public void setBuildingToRob(Building buildingToRob) {
+		this.buildingToRob = buildingToRob;
+	}
+
 }

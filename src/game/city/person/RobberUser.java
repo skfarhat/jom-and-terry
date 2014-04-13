@@ -2,8 +2,11 @@ package game.city.person;
 
 import game.Globals;
 import game.city.building.Building;
+import game.states.Play;
+
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Line;
 
 public class RobberUser extends Robber implements Movable {
 
@@ -13,21 +16,7 @@ public class RobberUser extends Robber implements Movable {
 
 	@Override
 	public void processInput(Input input) {
-//		
-//		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
-//		
-//			// get the building
-//			Point pnt = new Point (input.getMouseX(), input.getMouseY());
-//			
-//			Building bldg = selectBuilding(pnt);
-//					
-//			if (bldg==null)
-//				return; 
-//			
-//			// display info for this building
-//			bldg.setShowBuildingInfo(true);
-//			
-//		}
+		
 		 if (input.isKeyDown(Input.KEY_RIGHT)) {
 			moveRight();
 		} else if (input.isKeyDown(Input.KEY_LEFT)) {
@@ -127,8 +116,14 @@ public class RobberUser extends Robber implements Movable {
 		boolean isInCollision = false;
 		this.nearByBldg = null;
 
+		Line[] boundLines = Play.getInstance().getMapBounds();
+		for (Line line : boundLines){
+			if (line.intersects(this.rect))
+				return true; 
+		}
+		
 		for (Building bldg: Building.buildings) {
-			if (this.rect.intersects(bldg.rect)) {
+			if (this.rect.intersects(bldg.getRect())) {
 				this.nearByBldg = bldg;
 				isInCollision = true;
 				bldg.setShowBuildingInfo(true);
@@ -141,24 +136,4 @@ public class RobberUser extends Robber implements Movable {
 		}
 		return isInCollision;
 	}
-
-	
-//	private Building selectBuilding(Point pnt){
-//		Camera camera = Play.getInstance().getCamera();
-//		// create a rectangle and use the intersect method to check whether 
-//		// the policeman rect intersects with the mouse click
-//		Rectangle rect = new Rectangle(
-//				camera.getCameraX() + pnt.getX() - Globals.SELECTION_ERROR/2, 
-//				camera.getCameraY() + pnt.getY() - Globals.SELECTION_ERROR/2,
-//				Globals.SELECTION_ERROR,
-//				Globals.SELECTION_ERROR);
-//		
-//		for (Building bldg: Building.buildings){
-//			if (bldg.rect.intersects(rect))
-//			{
-//				return bldg;  
-//			}
-//		}
-//		return null;
-//	}
 }

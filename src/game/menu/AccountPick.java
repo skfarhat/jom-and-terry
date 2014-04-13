@@ -1,6 +1,7 @@
 package game.menu;
 
 import game.Account;
+import game.AudioGame;
 import game.Game;
 import game.Globals;
 
@@ -54,11 +55,9 @@ public class AccountPick extends Menu {
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1)
 			throws SlickException {
-
 		this.backgroundImage = new Image(backgroundImagePath);
 		backgroundX = (Globals.APP_WIDTH-backgroundImage.getWidth())/2;
 		initButtons();
-
 	}
 
 	@Override
@@ -89,6 +88,8 @@ public class AccountPick extends Menu {
 				.getContainer(), newAccountImage, x, y) {
 			@Override
 			public void performAction() {
+				AudioGame.playAsSound("button-21.ogg");
+
 				Game.getInstance().enterState(Globals.NEW_ACCOUNT_PICK);
 			}
 		};
@@ -105,6 +106,8 @@ public class AccountPick extends Menu {
 				@Override
 				public void performAction() {
 					
+					AudioGame.playAsSound("button-21.ogg");
+					
 					// load account 
 					Account account = Account.load(username);
 					
@@ -114,6 +117,7 @@ public class AccountPick extends Menu {
 					GameContainer container = Game.getInstance().getContainer(); 
 					try {
 						Game.getInstance().getState(Globals.MAIN_MENU).init(container, Game.getInstance());
+
 						Game.getInstance().enterState(Globals.MAIN_MENU);
 					} catch (SlickException e) {
 						e.printStackTrace();

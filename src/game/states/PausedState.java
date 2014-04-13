@@ -1,7 +1,9 @@
 package game.states;
 
+import game.Game;
 import game.menu.MenuButton;
 
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -12,11 +14,16 @@ import org.newdawn.slick.state.StateBasedGame;
 
 public class PausedState extends BasicGameState {
 	
-	private String backToMenuImagePath = "res/buttons/main-menu.png";
-	private String resumeGamePath = "res/buttons/resume.png";
+	private static String backToMenuImagePath = "res/buttons/main-menu.png";
+	private static String resumeGamePath = "res/buttons/resume.png";
+	private static String savePath = "res/buttons/save-button.png";
 	private GameContainer gc;
 	private StateBasedGame sbg; 
-
+	
+	/**
+	 * String used to indicated when the game is saved (or some other message)
+	 */
+	private String message = ""; 
 	protected boolean leftMouseButtonReleased;
 	protected MenuButton[] buttons;
 	
@@ -36,7 +43,11 @@ public class PausedState extends BasicGameState {
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
-		g.drawString("Pause Menu", gc.getWidth()/2 - 50, gc.getHeight()/3);
+		Font font = g.getFont(); 
+
+		final String pauseMenuString = "Pause Menu";
+		g.drawString(pauseMenuString, gc.getWidth()/2 - font.getWidth(pauseMenuString)/2, gc.getHeight()/3);
+		g.drawString(message,  gc.getWidth()/2 - font.getWidth(message)/2, gc.getHeight()/3 + 30);
 		for(MenuButton b : buttons)
 		{
 			b.render(g);
@@ -51,6 +62,20 @@ public class PausedState extends BasicGameState {
 		Input input = gc.getInput();
 		processInput(input);
 
+	}
+	
+	@Override
+	public void enter(GameContainer container, StateBasedGame game)
+			throws SlickException {
+		super.enter(container, game);
+		message = ""; 
+	}
+	
+	@Override
+	public void leave(GameContainer container, StateBasedGame game)
+			throws SlickException {
+		super.leave(container, game);
+		message = ""; 
 	}
 	private void processInput(Input input) {
 		if (input.isKeyDown(Input.KEY_SPACE))
@@ -87,11 +112,12 @@ public class PausedState extends BasicGameState {
 	}
 
 	public void initButtons() {
-		Image backToMenuImage = null, resumeGameImage = null; 
+		Image backToMenuImage = null, resumeGameImage = null, saveImage=null;  
 
 		try{
 			backToMenuImage = new Image(backToMenuImagePath);
 			resumeGameImage = new Image(resumeGamePath);
+			saveImage = new Image(savePath);
 		}
 		catch (SlickException se)
 		{
@@ -106,7 +132,9 @@ public class PausedState extends BasicGameState {
 	
 		int x2 = (int) (this.gc.getWidth()/2.0f - backToMenuImage.getWidth()/2.0f); 
 		int y2 = y1 + 1*verticalMargin;
-	
+
+		int x3 = (int) (this.gc.getWidth()/2.0f - backToMenuImage.getWidth()/2.0f); 
+		int y3 = y1 + 2*verticalMargin;
 		
 		
 		MenuButton resumeGameButton = new MenuButton(this.gc, resumeGameImage, x1, y1) {
@@ -116,8 +144,17 @@ public class PausedState extends BasicGameState {
 				sbg.enterState(1);
 			}
 		};
+		
+		MenuButton saveButton = new MenuButton(this.gc, saveImage, x2, y2) {
+			@Override
+			public void performAction() {		
 
-		MenuButton backToMenuButton = new MenuButton(this.gc, backToMenuImage, x2, y2) {
+				Game.getInstance().getAccount().save();
+				message = "Saved"; 
+			}
+		};
+
+		MenuButton backToMenuButton = new MenuButton(this.gc, backToMenuImage, x3, y3) {
 			@Override
 			public void performAction() {		
 				// back to the main menu
@@ -125,7 +162,8 @@ public class PausedState extends BasicGameState {
 			}
 		};
 
-		this.setButtons(resumeGameButton, backToMenuButton); 
+
+		this.setButtons(resumeGameButton, saveButton, backToMenuButton); 
 	}
 	public final void setButtons(MenuButton...buttons) {
 		this.buttons = buttons;

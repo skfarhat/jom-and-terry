@@ -1,11 +1,16 @@
 package game.city.building;
 
+import game.Globals;
 import game.city.person.Occupant;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.json.simple.JSONObject;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
+
+@SuppressWarnings("unchecked")
 
 /**
  * A house.
@@ -52,5 +57,25 @@ public class House extends Building {
 		return houses;
 	}
 
+	@Override
+	public JSONObject save() {
+		JSONObject obj = new JSONObject(); 
+		obj.put(Globals.ID, this.ID);
+		obj.put(Globals.TYPE, "House");
+		obj.put(Globals.MONEY, this.money);
+		obj.put(Globals.ROBBED, getIsCompletelyRobbed());
+		obj.put(Globals.FLAG, this.getFlag().flagID);
+		
+		return obj;
+	}
+
+	@Override
+	public void load(Object loadObj) {
+		HashMap<Object, Object> map = (HashMap<Object, Object>) loadObj;
+		
+		this.money = (int) map.get(Globals.MONEY); 
+		this.setCompletelyRobbed((Boolean) map.get(Globals.ROBBED));
+		this.getFlag().flagID = (int) map.get(Globals.FLAG); 
+	}
 
 }

@@ -28,7 +28,7 @@ public abstract class Menu extends BasicGameState {
 
 	private void clickButton() {
 		for (MenuButton b : buttons) {
-			if (b.isMouseOver())
+			if (b.isMouseOver() && b.isEnabled())
 				b.performAction();
 		}
 	}

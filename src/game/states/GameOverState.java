@@ -1,6 +1,8 @@
 package game.states;
 
 
+import game.Game;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -12,7 +14,8 @@ import org.newdawn.slick.state.StateBasedGame;
 
 public class GameOverState extends BasicGameState {
 	
-	private String gameOverPath = "res/GameOver/GameOver.png";
+	private static String gameOverPath = "res/GameOver/GameOver.png";
+	private static String youWinPath = "res/GameOver/you_win.png";
 	private GameContainer gc;
 	
 	private Image gameOverImage; 
@@ -25,15 +28,24 @@ public class GameOverState extends BasicGameState {
 			throws SlickException {
 		this.gc = gc;
 		
+
+	}
+
+	@Override
+	public void enter(GameContainer container, StateBasedGame game)
+			throws SlickException {
+		super.enter(container, game);
+		
 		try{
-			this.gameOverImage = new Image(gameOverPath);
+			boolean userIsRobber = Game.getInstance().getAccount().getIsRobber();
+			
+			this.gameOverImage = new Image((userIsRobber)?gameOverPath: youWinPath);
 		}
 		catch(SlickException sexc)
 		{
 			sexc.printStackTrace();
 		}
 	}
-
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {

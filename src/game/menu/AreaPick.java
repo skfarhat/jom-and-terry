@@ -1,5 +1,6 @@
 package game.menu;
 
+import game.AudioGame;
 import game.Game;
 import game.Globals;
 
@@ -16,6 +17,12 @@ public class AreaPick extends Menu {
 	private final String AREA_3_IMAGE_PATH = "res/city/area/area3.png";
 	private final String AREA_4_IMAGE_PATH = "res/city/area/area4.png";
 	private final String AREA_5_IMAGE_PATH = "res/city/area/area5.png";
+	
+	private final String AREA_1_LOCKED_IMAGE_PATH = "res/city/area/area1-locked.png"; 
+	private final String AREA_2_LOCKED_IMAGE_PATH = "res/city/area/area2-locked.png";
+	private final String AREA_3_LOCKED_IMAGE_PATH = "res/city/area/area3-locked.png";
+	private final String AREA_4_LOCKED_IMAGE_PATH = "res/city/area/area4-locked.png";
+	private final String AREA_5_LOCKED_IMAGE_PATH = "res/city/area/area5-locked.png";
 	
 	private StateBasedGame sbg = null; 
 	
@@ -57,10 +64,10 @@ public class AreaPick extends Menu {
 		try{
 			backButtonImage = new Image(BACK_BUTTON_PATH);
 			area1Image = new Image(AREA_1_IMAGE_PATH);
-			area2Image = new Image(AREA_2_IMAGE_PATH);
-			area3Image = new Image(AREA_3_IMAGE_PATH);
-			area4Image = new Image(AREA_4_IMAGE_PATH);
-			area5Image = new Image(AREA_5_IMAGE_PATH);
+			area2Image = new Image(AREA_2_LOCKED_IMAGE_PATH);
+			area3Image = new Image(AREA_3_LOCKED_IMAGE_PATH);
+			area4Image = new Image(AREA_4_LOCKED_IMAGE_PATH);
+			area5Image = new Image(AREA_5_LOCKED_IMAGE_PATH);
 		}
 		catch (SlickException se)
 		{
@@ -96,12 +103,14 @@ public class AreaPick extends Menu {
 		MenuButton area1Button = new MenuButton(sbg.getContainer(), area1Image, x1, y1) {
 			@Override
 			public void performAction() {
+				AudioGame.playAsSound("button-21.ogg");
 				sbg.enterState(Globals.PLAY);
 			}
 		};
 		MenuButton area2Button = new MenuButton(sbg.getContainer(), area2Image, x2, y2) {
 			@Override
 			public void performAction() {
+				AudioGame.playAsSound("button-21.ogg");
 //				sbg.enterState(2);
 
 			}
@@ -109,6 +118,7 @@ public class AreaPick extends Menu {
 		MenuButton area3Button = new MenuButton(sbg.getContainer(), area3Image, x3, y3) {
 			@Override
 			public void performAction() {
+				AudioGame.playAsSound("button-21.ogg");
 //				sbg.enterState(3);
 
 			}
@@ -116,12 +126,14 @@ public class AreaPick extends Menu {
 		MenuButton area4Button = new MenuButton(sbg.getContainer(), area4Image, x4, y4) {
 			@Override
 			public void performAction() {
+				AudioGame.playAsSound("button-21.ogg");
 //				sbg.getContainer().exit();
 			}
 		};
 		MenuButton area5Button = new MenuButton(sbg.getContainer(), area5Image, x5, y5) {
 			@Override
 			public void performAction() {
+				AudioGame.playAsSound("button-21.ogg");
 //				sbg.getContainer().exit();
 			}
 		};

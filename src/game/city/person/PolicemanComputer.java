@@ -63,7 +63,9 @@ public class PolicemanComputer extends Policeman{
 
 	@Override
 	public void draw(){
-		super.draw();
+
+		if (robber.canSeePoliceman(this))
+			super.draw();
 
 		// if there are points for the policeman to check
 		if (nextPoints.size()>0){
@@ -181,7 +183,7 @@ public class PolicemanComputer extends Policeman{
 	private Point randomPointInRect(Rectangle rect){
 		Random rand = new Random(); 
 		int x = (int) rect.getX() + rand.nextInt((int) rect.getWidth());
-
+		
 		int y = (int) rect.getY() + rand.nextInt((int) rect.getHeight());
 
 		return new Point(x,y);
@@ -212,7 +214,7 @@ public class PolicemanComputer extends Policeman{
 			// send a message to signal game over
 			arrestRobber(robber);
 		}
-		if (distance < visionDistance)
+		if (distance < Globals.POLICEMAN_VISION_DISTANCE)
 		{
 			followRobber(); 
 			return true;
