@@ -64,6 +64,7 @@ public class PolicemanComputer extends Policeman{
 	@Override
 	public void draw(){
 
+		// draw the computer police only when he is visible to the robber
 		if (robber.canSeePoliceman(this))
 			super.draw();
 
@@ -188,18 +189,6 @@ public class PolicemanComputer extends Policeman{
 
 		return new Point(x,y);
 
-	}
-
-	private Point randomPointInCircle(Circle circle){
-		Random rand = new Random(); 
-
-		float randAngle =  (float) (rand.nextFloat() * (Math.PI * 2.0f)); 		// random angle 
-		float randRadius = (float)  (rand.nextFloat()%circle.radius); 			// random radius
-
-		float x = circle.getCenterX() + (float) (randRadius * Math.cos(randAngle));
-		float y = circle.getCenterY() + (float) (randRadius* Math.sin(randAngle));
-
-		return new Point(x,y);
 	}
 
 	public boolean lookForRobber()

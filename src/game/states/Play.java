@@ -68,6 +68,8 @@ public class Play extends BasicGameState {
 	private Person mainCharacter = null;
 	public boolean userIsRobber;
 	private boolean isResumingGame = false;
+	private boolean isPausingGame = false; 
+
 	boolean isGameOver = false;
 
 	// Characters
@@ -81,10 +83,15 @@ public class Play extends BasicGameState {
 	public void init(GameContainer gc, StateBasedGame sbg)
 			throws SlickException {
 		initMap(); // Tile Map
-		initRobber(); // Robber
+//		initRobber(); // Robber
 	}
 
 	public void start() throws SlickException {
+		userIsRobber = Game.getInstance().getAccount().getIsRobber();
+		initRobber();
+		initPoliceOffice();
+
+
 		setMainCharacter();
 
 		initCamera(); // Camera to center on the robber
@@ -117,7 +124,7 @@ public class Play extends BasicGameState {
 		Line line3 = new Line(mapWidth, mapHeight, // bottom right to top right
 				mapWidth, -1);
 		Line line4 = new Line(mapWidth, mapHeight, // bottom right to bottom
-													// left
+				// left
 				-1, mapHeight);
 
 		mapBounds = new Line[] { line1, line2, line3, line4 };
@@ -265,12 +272,10 @@ public class Play extends BasicGameState {
 			throws SlickException {
 		super.enter(container, game);
 
-		// TODO: fix these
-		userIsRobber = Game.getInstance().getAccount().getIsRobber();
-		initRobber();
-		initPoliceOffice();
-		setMainCharacter();
-		start();
+		if (!isPausingGame)
+			start();
+		
+		isPausingGame = false; 
 	}
 
 	@Override
@@ -285,13 +290,29 @@ public class Play extends BasicGameState {
 
 		policeOffice.stopPolicemenPatrols();
 
+
+
 		if (!isGameOver)
 			// save the game
 			Game.getInstance().getAccount().save();
 	}
 
-	public void reset() {
+	public void pauseGame(){
+		isPausingGame = true; 
+		// go to the pause menu
+		Game.getInstance().enterState(Globals.PAUSE);
+	}
 
+	public void reset() {
+		isPausingGame = false; 
+		gameTime = 0;
+		mainCharacter = null;
+		isResumingGame = false;
+		isPausingGame = false;
+		
+		// reset the flags
+		for (int i=0; i < flagsShown.length;i++)
+			flagsShown[i] = true; 
 	}
 
 	// ===============================================================================================================================
@@ -410,11 +431,8 @@ public class Play extends BasicGameState {
 		movable.processInput(input);
 
 		if (input.isKeyDown(Input.KEY_ESCAPE)) {
+			pauseGame();
 
-			// go to the pause menu
-			Game.getInstance().enterState(Globals.PAUSE);
-		} else {
-			robber.stop();
 		}
 	}
 

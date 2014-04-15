@@ -18,7 +18,7 @@ public abstract class Person {
 	public String name;
 	public double velocity;	
 	public Point position; 
-	
+
 	public Rectangle rect;
 
 	private static String selectedImgPath 		= "res/selection.png";
@@ -48,7 +48,7 @@ public abstract class Person {
 	int spritesPerRow;
 	int spritesPerColumn;
 	//====================================================================================================
-	
+
 	/**
 	 * Creates a person.
 	 * 
@@ -62,5 +62,28 @@ public abstract class Person {
 		this.velocity = velocity;
 		this.ID = ++PersonCount; 		
 	}
-	
+
+
+
+	protected void initSpriteSheet(String spriteSheetName, int spritesPerRow, int spritesPerColumn)  {
+		try{
+//			spritesPerRow = 4; 
+//			spritesPerColumn = 1;
+			//Get, save, and display the width and the height
+			// of the sprite sheet.
+			Image spriteSheetImage = new Image(spriteSheetName);
+			int spriteSheetWidth 	= spriteSheetImage.getWidth();
+			int spriteSheetHeight 	= spriteSheetImage.getHeight();
+
+			//Compute the width and height of the individual 
+			// sprite images.
+			spriteWidth = (int)(spriteSheetWidth/spritesPerRow);
+			spriteHeight =(int)(spriteSheetHeight/spritesPerColumn);
+
+			this.spriteSheet = new SpriteSheet(spriteSheetImage, spriteWidth, spriteHeight);
+		}
+		catch (Exception exc){
+			exc.printStackTrace();
+		}
+	}
 }

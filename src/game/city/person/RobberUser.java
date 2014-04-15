@@ -22,11 +22,11 @@ public class RobberUser extends Robber implements Movable {
 		} else if (input.isKeyDown(Input.KEY_LEFT)) {
 			moveLeft();
 		} else if (input.isKeyDown(Input.KEY_UP)) {
-			moveUp();
+			moveUp(); 
 		} else if (input.isKeyDown(Input.KEY_DOWN)) {
-			moveDown();
+			moveDown(); 
 		} else if (input.isKeyDown(Input.KEY_SPACE)) {
-			rob();
+			rob(); 
 		}
 		else if (input.isKeyPressed(Input.KEY_F)){
 			if (nearByBldg !=null){

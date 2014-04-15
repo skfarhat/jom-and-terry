@@ -66,7 +66,7 @@ public class MainMenu extends Menu
 			throws SlickException {
 		super.enter(container, game);
 		initButtons();
-
+		Play.getInstance().reset(); 
 	}
 
 	@Override

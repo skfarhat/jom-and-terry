@@ -106,7 +106,6 @@ public class PoliceOffice implements Savable{
 		playSound();
 	}
 
-
 	public static void callPolice(Highway highway){ 		
 
 		if (!userIsPolice){
@@ -123,6 +122,13 @@ public class PoliceOffice implements Savable{
 		}
 
 		playSound();
+	}
+
+	public void gatherAll(Point position){
+		final float regionRadius = 150.0f; 
+		for (Policeman police: policeForceArray){	
+			((PolicemanUser) police).gather(new Circle(position.getX(), position.getY(), regionRadius));
+		}
 	}
 
 	public void stopPolicemenPatrols(){
@@ -189,6 +195,16 @@ public class PoliceOffice implements Savable{
 				Play.getInstance().setMainCharacter(policeman);
 			}
 		}
+		else if (input.isKeyDown(Input.KEY_G)) {
+			if (userIsPolice){
+				Camera camera = Play.getInstance().getCamera();
+
+				float x = input.getMouseX() + camera.getCameraX();
+				float y = input.getMouseY() + camera.getCameraY(); 
+
+				gatherAll(new Point(x,y));
+			}
+		}
 	}
 
 	private Building selectBuilding(Point pnt){
@@ -246,46 +262,45 @@ public class PoliceOffice implements Savable{
 	}
 
 
-
 	@Override
 	public JSONObject save() {
-			
+
 		JSONObject policemenObj = new JSONObject(); 
-		
+
 		for (Policeman policeman: PoliceOffice.policeForceArray)
 		{
 			JSONObject policemanObj= policeman.save();
 			policemenObj.put(policeman.ID, policemanObj);
 		}
-				 
+
 		JSONObject policeOfficeObj = new JSONObject();
-		
+
 		// save all the policemen
 		policeOfficeObj.put(Globals.POLICEMEN, policemenObj);
-		
+
 		// save the number of policemen
 		policeOfficeObj.put(Globals.COUNT, policeForceArray.size());
-		
+
 		return policeOfficeObj;
 	}
 
 	@Override
 	public void load(Object loadObj) {
 		HashMap<Object, Object> map = (HashMap<Object, Object> ) loadObj;
-		
+
 
 		// get the Policemen map <ID, PolicemanObj>
 		HashMap<Object, Object> policemenMap = (HashMap<Object, Object>) map.get(Globals.POLICEMEN);
 		System.out.println("PolicemenMap: " + policemenMap);
-		
+
 		for (Policeman policeman : PoliceOffice.policeForceArray){
-			
+
 			// get the policeman map 
 			HashMap<Object, Object> policemanMap = (HashMap<Object, Object>) policemenMap.get("" + policeman.ID);
-		
+
 			// load it into the policeman
 			policeman.load(policemanMap);
-			
+
 		}
 	}
 

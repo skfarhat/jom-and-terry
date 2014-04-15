@@ -1,6 +1,7 @@
 package game.city.person;
 
 import java.util.HashMap;
+import java.util.Random;
 
 import game.Globals;
 import game.states.Play;
@@ -26,7 +27,10 @@ import org.newdawn.slick.geom.Vector2f;
  */
 public class Policeman extends Person implements Savable{
 
-	private static String policemanImgPath 				= "res/police1.png";
+	static Random rand = new Random(System.currentTimeMillis()); 
+
+//	private static String policemanImgPath 				= "res/police1.png";
+	private static String policemanImgPath 				= "res/robber.png";
 	private static String policeSpriteSheet 			= "res/Spritesheets/police.png";
 	//=================================================================
 	private Image image;
@@ -173,6 +177,19 @@ public class Policeman extends Person implements Savable{
 
 	}
 
+	public static Point randomPointInCircle(Circle circle){
+
+		float randAngle =  (float) (rand.nextFloat() * (Math.PI * 2.0f)); 		// random angle 
+		float randRadius = (float)  (rand.nextFloat() * circle.radius); 			// random radius
+
+		System.out.println("random: " + randAngle + " " + randRadius);
+		float x = circle.getCenterX() + (float) (randRadius * Math.cos(randAngle));
+		float y = circle.getCenterY() + (float) (randRadius* Math.sin(randAngle));
+
+		System.out.println(String.format("Point: %f,%f", x, y));
+		return new Point(x,y);
+	}
+	
 	@Override
 	public JSONObject save() {
 
@@ -187,7 +204,6 @@ public class Policeman extends Person implements Savable{
 
 		return object;
 	}
-
 
 	@Override
 	public void load(Object loadObj) {

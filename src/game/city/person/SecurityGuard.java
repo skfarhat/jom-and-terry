@@ -1,5 +1,6 @@
 package game.city.person;
 
+import game.Game;
 import game.Globals;
 import game.city.building.Bank;
 import game.states.Play;
@@ -31,7 +32,8 @@ public class SecurityGuard extends Person {
 	 */
 	public static ArrayList<SecurityGuard> securityGuards = new ArrayList<>(10);
 	
-	private String sgImgPath = "res/bouncer.png";
+//	private String sgImgPath = "res/bouncer.png";
+	private String sgImgPath = "res/Security Guard.png";
 
 	private Point destinationPoint;
 
@@ -102,6 +104,9 @@ public class SecurityGuard extends Person {
 		// Set the image of the policeman
 		this.image = new Image(sgImgPath);
 
+		spriteWidth = this.image.getWidth(); 
+		spriteHeight= this.image.getHeight(); 
+		
 		// Set the rectangle of the player
 		this.rect = new Rectangle(position.getX(), position.getY(), spriteWidth,
 				spriteHeight);
@@ -113,13 +118,19 @@ public class SecurityGuard extends Person {
 		// SG by the Bank is changed (right edge aw shi)
 		// because the SG patrols around the bank, so would need to change the order 
 
-		this.currentEdge = topLeftEdge = new Point(guardedBank.getRect().getMinX(),
-				guardedBank.getRect().getMinY());
-		topRightEdge = new Point(guardedBank.getRect().getMaxX(),
-				guardedBank.getRect().getMinY());
-		bottomRightEdge = new Point(guardedBank.getRect().getMaxX(),
-				guardedBank.getRect().getMaxY());
-		bottomLeftEdge = new Point(guardedBank.getRect().getMinX(),
+		
+		// NOTE: Remember that the position of the image is at the top right edge, so we shoouldn't add for getMaxY() or getMaxX()
+		this.currentEdge = topLeftEdge = new Point(
+				guardedBank.getRect().getMinX() - this.rect.getWidth(),
+				guardedBank.getRect().getMinY() - this.rect.getHeight());
+		topRightEdge = new Point(
+				guardedBank.getRect().getMaxX(),
+				guardedBank.getRect().getMinY() - this.rect.getHeight());
+		bottomRightEdge = new Point(
+				guardedBank.getRect().getMaxX(),
+				guardedBank.getRect().getMaxY() ) ;
+		bottomLeftEdge = new Point(
+				guardedBank.getRect().getMinX() - this.rect.getWidth(),
 				guardedBank.getRect().getMaxY());
 		
 		this.position = new Point(currentEdge.getX(), currentEdge.getY()); 
@@ -131,24 +142,6 @@ public class SecurityGuard extends Person {
 		// add the created security guard to the security guards array
 		securityGuards.add(this);
 	}
-
-	/*
-	private final void initSpriteSheet() throws SlickException {
-		// Get, save, and display the width and the height
-		// of the sprite sheet.
-		Image spriteSheetImage = new Image(sgSpriteSheet);
-		int spriteSheetWidth = spriteSheetImage.getWidth();
-		int spriteSheetHeight = spriteSheetImage.getHeight();
-
-		// Compute the width and height of the individual
-		// sprite images.
-		spriteWidth = (int) (spriteSheetWidth / spritesPerRow);
-		spriteHeight = (int) (spriteSheetHeight / spritesPerColumn);
-
-		this.spriteSheet = new SpriteSheet(spriteSheetImage, spriteWidth,
-				spriteHeight);
-	}
-	 */
 
 	public void setRobber(Robber robber) {
 		this.robber = robber; 
@@ -166,6 +159,7 @@ public class SecurityGuard extends Person {
 	}
 
 	public void draw() {
+		
 		// if SG is moving, change xPos and yPos
 		if (isMoving) {
 

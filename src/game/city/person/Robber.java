@@ -22,7 +22,8 @@ public class Robber extends Person implements Savable{
 	// TODO: see what to do with this
 	Random rand = new Random(); 
 
-	private String playerSpriteSheet = "res/SpriteSheets/robber-2.png";
+//	private String playerSpriteSheet = "res/SpriteSheets/robber-2.png";
+	private static String playerSpriteSheet = "res/SpriteSheets/robber-spritesheet.png";
 	public boolean isCaught = false;
 
 	protected boolean isRobbing = false; 
@@ -57,8 +58,9 @@ public class Robber extends Person implements Savable{
 		// TODO: set name and velocity somewhere else
 		super("Robber", Globals.ROBBER_VELOCITY);
 
+		super.initSpriteSheet(playerSpriteSheet, 4, 4);
 		// set the Sprite Sheet
-		this.initSpriteSheet();
+//		initSpriteSheet();
 
 		// set initial position
 		this.position = new Point(0,0);
@@ -75,13 +77,15 @@ public class Robber extends Person implements Savable{
 		// Create a new animation based on a selection of
 		// sprites from the sprite sheet.
 		int lastColumn = 3;
-		int rightWalkRow = 2; 
+		int rightWalkRow = 0; 
 		int leftWalkRow = 1; 
+		
+		int downWalkRow = 2;
 		int upWalkRow = 3; 
-		int downWalkRow = 0;
 
 
-		int duration = 200;
+		int duration = 100;
+		System.out.println("spritesheet +" + spriteSheet);
 		currentAnimation =  rightWalkAnimation = new Animation(this.spriteSheet,
 				0,//first column
 				rightWalkRow,//first row
@@ -119,28 +123,10 @@ public class Robber extends Person implements Savable{
 				duration,//display time
 				true//autoupdate
 				);
-
-		currentAnimation.stop();  
+	
+		currentAnimation.start();  
 	}
 
-	private void initSpriteSheet() throws SlickException {
-
-		spritesPerRow = 4; 
-		spritesPerColumn = 4;
-		//Get, save, and display the width and the height
-		// of the sprite sheet.
-		Image spriteSheetImage = new Image(playerSpriteSheet);
-		int spriteSheetWidth 	= spriteSheetImage.getWidth();
-		int spriteSheetHeight 	= spriteSheetImage.getHeight();
-
-		//Compute the width and height of the individual 
-		// sprite images.
-		spriteWidth = (int)(spriteSheetWidth/spritesPerRow);
-		spriteHeight =(int)(spriteSheetHeight/spritesPerColumn);
-
-		this.spriteSheet = new SpriteSheet(spriteSheetImage, spriteWidth, spriteHeight);
-
-	}
 
 
 	// ====================================================================================================
@@ -188,7 +174,9 @@ public class Robber extends Person implements Savable{
 				);
 		return distance < Globals.ROBBER_VISION_DISTANCE;
 	}
+
 	public void stop() {
+		// FIXME: Robber spritesheet stops
 		this.currentAnimation.stop();
 	}
 
@@ -198,8 +186,9 @@ public class Robber extends Person implements Savable{
 	}
 
 	public void draw(boolean show) {
-		if (show)
+		if (show){
 			this.currentAnimation.draw(this.position.getX(), this.position.getY());
+		}
 	}
 
 	public boolean rob()
