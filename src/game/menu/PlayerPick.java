@@ -87,7 +87,7 @@ public class PlayerPick extends Menu{
 			@Override
 			public void performAction() {
 				AudioGame.playAsSound("button-21.ogg");
-				Game.getInstance().getAccount().setIsRobber(false);
+				Game.getInstance().getAccount().setIsRobber(false); 
 				sbg.enterState(Globals.AREA_PICK);
 			}
 		};

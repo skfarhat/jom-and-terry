@@ -2,16 +2,13 @@ package game.city.person;
 
 import java.util.HashMap;
 import java.util.Random;
-
 import game.Globals;
 import game.states.Play;
 import game.states.Savable;
-
 import org.json.simple.JSONObject;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
@@ -28,10 +25,7 @@ import org.newdawn.slick.geom.Vector2f;
 public class Policeman extends Person implements Savable{
 
 	static Random rand = new Random(System.currentTimeMillis()); 
-
-//	private static String policemanImgPath 				= "res/police1.png";
-	private static String policemanImgPath 				= "res/robber.png";
-	private static String policeSpriteSheet 			= "res/Spritesheets/police.png";
+	private static String policeSpriteSheet 			= "res/Spritesheets/Police.png";
 	//=================================================================
 	private Image image;
 
@@ -42,19 +36,12 @@ public class Policeman extends Person implements Savable{
 	//=================================================================
 	// Behavior
 	protected boolean userIsPolice; 
-	protected boolean isMoving = false;
 	protected boolean robberIsVisible = false;
 	//=================================================================
 	//  
 	public Robber robber; 
-
 	protected Circle suspectRegion; 		
 
-	// TODO: the following 2 should be 'constants'
-	// Animations
-	Animation currentAnimation = null; 
-	static Animation rightWalkAnimation = null;
-	static Animation leftWalkAnimation = null;
 	//=================================================================
 
 	/**
@@ -73,8 +60,8 @@ public class Policeman extends Person implements Savable{
 		// call superclass constructor (Person)
 		super(name, velocity);
 
+		super.initSpriteSheet(policeSpriteSheet, 4, 2);
 		// set the Sprite Sheet
-		this.initSpriteSheet();
 
 		// Set the position of the policeman
 		this.position= position; 
@@ -83,54 +70,56 @@ public class Policeman extends Person implements Savable{
 		this.rect = new Rectangle(position.getX(), position.getY(), spriteWidth, spriteHeight);
 
 		// Set the image of the policeman
-		this.image = new Image(policemanImgPath);
-
 		this.robber = robber;
 
-		// initially the player is moving to the right
-		//Create a new animation based on a selection of
-		// sprites from the sprite sheet.
-		int duration = 200;
+
+		int lastColumn 		= 3;
+		int rightWalkRow	= 0; 
+		int leftWalkRow		= 1; 
+		int downWalkRow 	= 0;
+		int upWalkRow 		= 1; 
+
+
+		int duration = 100;
 		currentAnimation =  rightWalkAnimation = new Animation(this.spriteSheet,
 				0,//first column
-				0,//first row
-				5,//last column
-				0,//last row
+				rightWalkRow,//first row
+				lastColumn,//last column
+				rightWalkRow,//last row
 				true,//horizontal
 				duration,//display time
 				true//autoupdate
 				);
 		leftWalkAnimation = new Animation(this.spriteSheet,
 				0,//first column
-				1,//first row
-				5,//last column 
-				1,//last row
+				leftWalkRow,//first row
+				lastColumn,//last column 
+				leftWalkRow,//last row
+				true,//horizontal
+				duration,//display time
+				true//autoupdate
+				);
+		upWalkAnimation = new Animation(this.spriteSheet,
+				0,//first column
+				upWalkRow,//first row
+				lastColumn,//last column 
+				upWalkRow,//last row
 				true,//horizontal
 				duration,//display time
 				true//autoupdate
 				);
 
-		currentAnimation.stop();  
-	}
-
-	private void initSpriteSheet() throws SlickException {
-
-		spritesPerRow = 6;
-		spritesPerColumn = 2;
-
-		//Get, save, and display the width and the height
-		// of the sprite sheet.
-		Image spriteSheetImage = new Image(policeSpriteSheet);
-		int spriteSheetWidth 	= spriteSheetImage.getWidth();
-		int spriteSheetHeight 	= spriteSheetImage.getHeight();
-
-		//Compute the width and height of the individual 
-		// sprite images.
-		spriteWidth = (int)(spriteSheetWidth/spritesPerRow);
-		spriteHeight =(int)(spriteSheetHeight/spritesPerColumn);
-
-		this.spriteSheet = new SpriteSheet(spriteSheetImage, spriteWidth, spriteHeight);
-
+		downWalkAnimation = new Animation(this.spriteSheet,
+				0,//first column
+				downWalkRow,//first row
+				lastColumn,//last column 
+				downWalkRow,//last row
+				true,//horizontal
+				duration,//display time
+				true//autoupdate
+				);
+	
+//		currentAnimation.start();  
 	}
 
 	/**
@@ -149,7 +138,8 @@ public class Policeman extends Person implements Savable{
 
 	public void draw() {
 		// draw the image at the positon of the policeman
-		this.image.draw(this.position.getX(), this.position.getY());
+//		this.image.draw(this.position.getX(), this.position.getY());
+		this.currentAnimation.draw(this.position.getX(), this.position.getY());
 
 	}
 
@@ -166,11 +156,11 @@ public class Policeman extends Person implements Savable{
 				+ Math.pow(this.position.getY()-this.robber.position.getY(), 2.0)
 				);
 
+		
 		// arrest only if he is less than some distance away
 		if (distance < Globals.ARREST_DISTANCE)
 		{
-			robber.isCaught = true;
-			Play.getInstance().gameOver();
+			Play.getInstance().gameOver(userIsPolice);
 			return true;			
 		}
 		else return false; 
@@ -182,11 +172,9 @@ public class Policeman extends Person implements Savable{
 		float randAngle =  (float) (rand.nextFloat() * (Math.PI * 2.0f)); 		// random angle 
 		float randRadius = (float)  (rand.nextFloat() * circle.radius); 			// random radius
 
-		System.out.println("random: " + randAngle + " " + randRadius);
 		float x = circle.getCenterX() + (float) (randRadius * Math.cos(randAngle));
 		float y = circle.getCenterY() + (float) (randRadius* Math.sin(randAngle));
 
-		System.out.println(String.format("Point: %f,%f", x, y));
 		return new Point(x,y);
 	}
 	

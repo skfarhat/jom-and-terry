@@ -30,6 +30,9 @@ import org.newdawn.slick.geom.Rectangle;
  */
 public abstract class Building extends Observable implements Savable{
 
+	
+	private final Area area; 
+	
 	/**
 	 * An array containing all the buildings created
 	 */
@@ -82,10 +85,12 @@ public abstract class Building extends Observable implements Savable{
 	 * @param positionY
 	 * @param money
 	 */
-	public Building(int ID, Point position, float width, float height, Integer money) {
+	public Building(int ID, final Area area, Point position, float width, float height, Integer money) {
 
 		this.ID = ID; 
 
+		this.area = area; 
+		
 		this.rect = new Rectangle(position.getX(), position.getY(), width, height);
 
 		this.position = position; 
@@ -185,6 +190,8 @@ public abstract class Building extends Observable implements Savable{
 					{
 						((RobberComputer)robber).setBuildingToRob(null);
 					}
+					
+					area.incrementNumberOfRobbedBuildings();
 					robbingTimer.stop();						// stop the robbing timer
 				}
 
@@ -279,7 +286,6 @@ public abstract class Building extends Observable implements Savable{
 		if (isCompletelyRobbed)
 			this.bldgInfo.getFillingBar().update(1.0f);
 	}
-
 
 	public Rectangle getRect() {
 		return rect;

@@ -1,8 +1,6 @@
 package game.states;
 
 
-import game.Game;
-
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -13,39 +11,68 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 public class GameOverState extends BasicGameState {
-	
-	private static String gameOverPath = "res/GameOver/GameOver.png";
-	private static String youWinPath = "res/GameOver/you_win.png";
+
+	private static String RobberGameOver 	= "res/GameOver/Robber-GameOver.png";
+	private static String RobberWin			= "res/GameOver/Robber-Win.png";
+
+	private static String PoliceWin 		= "res/GameOver/Police-Win.png";
+	private static String PoliceGameOver 	= "res/GameOver/Police-GameOver.png";
+
 	private GameContainer gc;
-	
-	private Image gameOverImage; 
-	
-	public GameOverState(int state, StateBasedGame sbg){
+	private Image gameOverImage;
+
+	protected boolean youWin = false;  
+
+	public GameOverState() {
 	}
+	
+	public void set(boolean userIsRobber, boolean youWin){
+		try{
+			if (youWin)
+				this.gameOverImage = new Image((userIsRobber)?RobberWin: PoliceWin);
+			else
+				this.gameOverImage = new Image((userIsRobber)?RobberGameOver: PoliceGameOver);
+		}
+		catch (Exception exc){
+			exc.printStackTrace();
+		}
+	}
+	public GameOverState(boolean userIsRobber, boolean youWin) {
+		try{
+			if (youWin)
+				this.gameOverImage = new Image((userIsRobber)?RobberWin: PoliceWin);
+			else
+				this.gameOverImage = new Image((userIsRobber)?RobberGameOver: PoliceGameOver);
+		}
+		catch (Exception exc){
+			exc.printStackTrace();
+		}
+	}
+	
 
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg)
 			throws SlickException {
 		this.gc = gc;
-		
+
 
 	}
 
-	@Override
-	public void enter(GameContainer container, StateBasedGame game)
-			throws SlickException {
-		super.enter(container, game);
-		
-		try{
-			boolean userIsRobber = Game.getInstance().getAccount().getIsRobber();
-			
-			this.gameOverImage = new Image((userIsRobber)?gameOverPath: youWinPath);
-		}
-		catch(SlickException sexc)
-		{
-			sexc.printStackTrace();
-		}
-	}
+//	@Override
+//	public void enter(GameContainer container, StateBasedGame game)
+//			throws SlickException {
+//		super.enter(container, game);
+//
+//		try{
+//			boolean userIsRobber = Game.getInstance().getAccount().getIsRobber();
+//
+//			this.gameOverImage = new Image((userIsRobber)?RobberGameOver: PoliceWin);
+//		}
+//		catch(SlickException exc)
+//		{
+//			exc.printStackTrace();
+//		}
+//	}
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
@@ -70,5 +97,8 @@ public class GameOverState extends BasicGameState {
 	public int getID() {
 		return 4;
 	}
-	
+
+	public void setYouWin(boolean youWin) {
+		this.youWin = youWin;
+	}
 }

@@ -22,7 +22,6 @@ public class Occupant implements Observer{
 	
 	private Timer vacationTimer; 
 
-	
 	/**
 	 * When creating a HouseOccupant associate it with a House
 	 * @param bldg
@@ -56,7 +55,6 @@ public class Occupant implements Observer{
 
 		vacationTimer.start(); 
 	}
-
 
 	public void callPolice() {
 		// call Police

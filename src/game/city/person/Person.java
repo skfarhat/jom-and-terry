@@ -1,5 +1,6 @@
 package game.city.person;
 
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
@@ -24,6 +25,8 @@ public abstract class Person {
 	private static String selectedImgPath 		= "res/selection.png";
 	public static Image selectedImage;
 
+	protected boolean isMoving = false;
+	
 	// Initialize the selection image
 	static {
 		try {
@@ -37,6 +40,12 @@ public abstract class Person {
 	//====================================================================================================
 	//SpriteSheet
 	//====================================================================================================
+	Animation currentAnimation = null; 
+	Animation rightWalkAnimation = null;
+	Animation leftWalkAnimation = null;
+	Animation downWalkAnimation = null;
+	Animation upWalkAnimation = null;
+	
 	SpriteSheet spriteSheet; 
 	// Dimensions a single sprite
 	int spriteWidth;
@@ -63,12 +72,8 @@ public abstract class Person {
 		this.ID = ++PersonCount; 		
 	}
 
-
-
 	protected void initSpriteSheet(String spriteSheetName, int spritesPerRow, int spritesPerColumn)  {
 		try{
-//			spritesPerRow = 4; 
-//			spritesPerColumn = 1;
 			//Get, save, and display the width and the height
 			// of the sprite sheet.
 			Image spriteSheetImage = new Image(spriteSheetName);
@@ -85,5 +90,9 @@ public abstract class Person {
 		catch (Exception exc){
 			exc.printStackTrace();
 		}
+	}
+
+	 public boolean isMoving() {
+		return isMoving;
 	}
 }

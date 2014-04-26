@@ -34,8 +34,8 @@ public class House extends Building {
 	 * @param positionY
 	 * @param money
 	 */
-	public House(int ID, Point position, float width, float height, Integer money) {
-		super(ID, position, width, height, money);
+	public House(int ID, Area area, Point position, float width, float height, Integer money) {
+		super(ID, area, position, width, height, money);
 		
 		this.frame = new Rectangle(position.getX(), position.getY(), width, height);
 		

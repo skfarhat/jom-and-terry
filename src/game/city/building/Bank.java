@@ -51,8 +51,8 @@ public class Bank extends Building {
 	 * @param money
 	 * @throws SlickException
 	 */
-	public Bank(int ID, Point position, float width, float height, Integer money) throws SlickException {
-		super(ID, position, width, height, money);
+	public Bank(int ID, Area area,  Point position, float width, float height, Integer money) throws SlickException {
+		super(ID, area,  position, width, height, money);
 
 		this.securityGuards = new ArrayList<>();
 		this.position = position; 

@@ -17,7 +17,8 @@ public class PolicemanUser extends Policeman implements Movable{
 	 */
 	private boolean isGathering = false; 
 	private boolean isSelected = false;
-
+	private boolean robberArrested = false; 
+	
 	public PolicemanUser(Robber robber, Point position, String name,
 			double velocity) throws SlickException {
 		super(robber, position, name, velocity);
@@ -37,13 +38,13 @@ public class PolicemanUser extends Policeman implements Movable{
 		} else if (input.isKeyDown(Input.KEY_DOWN)) {
 			moveDown();
 		} else if (input.isKeyPressed(Input.KEY_SPACE)){
-			arrestRobber(robber);
+			if (!isGathering)
+				robberArrested = arrestRobber(robber);
 		}
 		else {
 			stop();
 		}		
 	}
-
 
 	public void gather(Circle region){
 		this.destPoint = randomPointInCircle(region);
@@ -101,7 +102,10 @@ public class PolicemanUser extends Policeman implements Movable{
 					&& Math.abs(this.position.getY() - this.destPoint.getY()) < 2.0f) {
 
 				this.isMoving = false;
-				this.isGathering = false; 
+				this.isGathering = false;
+					
+				// attempt to arrest the robber after arriving to the spot
+				this.robberArrested = robber.isCaught = arrestRobber(this.robber);
 			}
 		}
 
@@ -132,6 +136,7 @@ public class PolicemanUser extends Policeman implements Movable{
 			}	
 		}
 	}
+
 	// MOVEMENT
 	// =====================================================================================================================
 
@@ -154,16 +159,15 @@ public class PolicemanUser extends Policeman implements Movable{
 
 	@Override
 	public void stop() {
-
+		this.currentAnimation.stop();
 	}
 
 	public boolean moveRight() {
 		this.currentAnimation.start();
-
 		this.position.setX((float) (this.position.getX()+Globals.VELOCITY_MULTIPLIER*velocity));
-
 		this.rect.setX(this.position.getX());
-
+		this.currentAnimation = this.rightWalkAnimation;
+		
 		if (collides()){
 			normalForceLeft();
 			return false;
@@ -175,6 +179,7 @@ public class PolicemanUser extends Policeman implements Movable{
 		this.currentAnimation.start();
 		this.position.setX((float) (this.position.getX()-Globals.VELOCITY_MULTIPLIER*velocity));
 		this.rect.setX(this.position.getX());
+		this.currentAnimation = this.leftWalkAnimation;
 		if (collides()){
 			normalForceRight();
 			return false; 
@@ -229,5 +234,13 @@ public class PolicemanUser extends Policeman implements Movable{
 
 	public void setSelected(boolean isSelected) {
 		this.isSelected = isSelected;
+	}
+
+	public boolean isRobberArrested() {
+		return robberArrested;
+	}
+
+	public boolean isGathering() {
+		return isGathering;
 	}
 }

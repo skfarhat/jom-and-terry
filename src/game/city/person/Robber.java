@@ -9,9 +9,7 @@ import java.util.Random;
 
 import org.json.simple.JSONObject;
 import org.newdawn.slick.Animation;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 
@@ -29,23 +27,20 @@ public class Robber extends Person implements Savable{
 	protected boolean isRobbing = false; 
 
 	protected float score; 
-	protected Integer money; 
-
-	// Movement attributes
-	public boolean isMoving = false; 
+	protected Integer money;  
 
 	// =================================================================================================== 
 	// ENVIRONMENT AROUND 
 	public Building nearByBldg;													
 
 	// ===================================================================================================
-	// TODO: the following 2 should be 'constants'
-	// Animations
-	Animation currentAnimation = null; 
-	static Animation rightWalkAnimation = null;
-	static Animation leftWalkAnimation = null;
-	static Animation downWalkAnimation = null;
-	static Animation upWalkAnimation = null;
+//	// TODO: the following 2 should be 'constants'
+//	// Animations
+//	Animation currentAnimation = null; 
+//	static Animation rightWalkAnimation = null;
+//	static Animation leftWalkAnimation = null;
+//	static Animation downWalkAnimation = null;
+//	static Animation upWalkAnimation = null;
 
 
 	/**
@@ -176,7 +171,6 @@ public class Robber extends Person implements Savable{
 	}
 
 	public void stop() {
-		// FIXME: Robber spritesheet stops
 		this.currentAnimation.stop();
 	}
 

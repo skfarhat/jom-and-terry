@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.json.simple.JSONObject;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
@@ -35,10 +36,14 @@ public class PoliceOffice implements Savable{
 	private static boolean isPlayingSound = false; 
 	private static boolean userIsPolice; 
 
+	protected static int gatherCount = 0; 
 	public static Integer robberVisibleCount = 0; 
 
+	private Robber robber; 
 	public PoliceOffice(Robber robber, boolean userIsPolice) throws SlickException {
 
+		this.robber = robber; 
+		
 		// Initialize the Police Force Array
 		policeForceArray = new ArrayList<>(numberOfPolicemen);
 
@@ -125,10 +130,37 @@ public class PoliceOffice implements Savable{
 	}
 
 	public void gatherAll(Point position){
-		final float regionRadius = 150.0f; 
+		final float regionRadius = 25.0f; 
 		for (Policeman police: policeForceArray){	
 			((PolicemanUser) police).gather(new Circle(position.getX(), position.getY(), regionRadius));
 		}
+		gatherCount++;
+			
+		if (gatherCount==3){
+			
+			// TODO: Make clearer and comment
+			new Thread((new Runnable() {
+				@Override
+				public void run() {
+					boolean notArrived = false;
+					do{
+						notArrived = false; 
+						for (Policeman police: policeForceArray){	
+							notArrived = notArrived || police.isMoving;
+						}
+					}
+					while(notArrived);
+					
+					
+					if (!robber.isCaught){
+						// you lose
+						Play.getInstance().gameOver(false);
+					}
+					
+				}
+			})).start();;
+		}
+		
 	}
 
 	public void stopPolicemenPatrols(){
@@ -195,7 +227,7 @@ public class PoliceOffice implements Savable{
 				Play.getInstance().setMainCharacter(policeman);
 			}
 		}
-		else if (input.isKeyDown(Input.KEY_G)) {
+		else if (input.isKeyPressed(Input.KEY_G)) {
 			if (userIsPolice){
 				Camera camera = Play.getInstance().getCamera();
 

@@ -32,7 +32,7 @@ public class Account {
 	// Class Fields
 	private String username;
 	private Integer highscore = 0;
-	private Integer highestLevelReached = 0; 
+	private Integer highestLevelReached = 1; 
 	private Integer timePlaying = 0; 
 	private Boolean isRobber = true;
 	private ArrayList<HashMap<Date, Integer>> pastScores = null; 
@@ -49,7 +49,6 @@ public class Account {
 	}
 
 	public boolean create() {
-		System.out.print("Create Account");
 		try{
 			File accountFile = new File(SAVE_DIRECTORY_PATH + username + ".json");
 
@@ -87,7 +86,7 @@ public class Account {
 			ObjectMapper mapper = new ObjectMapper(); 
 			JSONObject mainObj = new JSONObject(); 
 
-			JSONObject resumeObj = Play.getInstance().saveState();
+			JSONObject resumeObj = Play.getInstance().save();
 			mainObj.put(HIGHSCORE, highscore.toString());
 			mainObj.put(LEVEL_REACHED, highestLevelReached.toString());
 			mainObj.put(TIME_PLAYING, timePlaying.toString());
@@ -114,12 +113,9 @@ public class Account {
 			Account account = mapper.readValue(accountFile, Account.class);
 
 			if (account == null){
-				System.out.println("account is null");
 				return null; 
 			}
-			else{
-				System.out.println("Loaded account " + account.getUsername());
-				
+			else{				
 				return account; 
 			}
 		}

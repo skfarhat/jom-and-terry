@@ -37,8 +37,8 @@ public class Shop extends Building {
 	 * @param money
 	 * @param securityGuards
 	 */
-	public Shop(int ID, Point position, float width, float height, Integer money) {
-		super(ID, position, width, height, money);
+	public Shop(int ID, Area area,  Point position, float width, float height, Integer money) {
+		super(ID, area, position, width, height, money);
 	}
 
 	@Override

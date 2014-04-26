@@ -45,7 +45,6 @@ public class Highway extends Road {
 		// the boolean is needed so that
 		
 		if (robber.rect.intersects(getRect()) && !intersectRoad){
-			System.out.println("Highway intersects");
 			intersectRoad = true; 
 			
 			// increment the number of times the robber passed by the highway
@@ -65,7 +64,6 @@ public class Highway extends Road {
 	}
 	
 	public void notifiyPoliceOffice(){
-		System.out.println("NotifypoliceOffice");
 		PoliceOffice.callPolice(this);
 	}
 

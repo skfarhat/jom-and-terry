@@ -2,6 +2,7 @@ package game.city.person;
 
 import game.Globals;
 import game.city.building.Building;
+import game.city.building.Gate;
 import game.states.Play;
 
 import org.newdawn.slick.Input;
@@ -16,96 +17,120 @@ public class RobberUser extends Robber implements Movable {
 
 	@Override
 	public void processInput(Input input) {
-		
-		 if (input.isKeyDown(Input.KEY_RIGHT)) {
+
+		boolean keyPressed = false; 
+		if (input.isKeyDown(Input.KEY_RIGHT)) {
 			moveRight();
+			keyPressed = true; 
 		} else if (input.isKeyDown(Input.KEY_LEFT)) {
 			moveLeft();
-		} else if (input.isKeyDown(Input.KEY_UP)) {
-			moveUp(); 
-		} else if (input.isKeyDown(Input.KEY_DOWN)) {
-			moveDown(); 
-		} else if (input.isKeyDown(Input.KEY_SPACE)) {
-			rob(); 
+			keyPressed = true; 
 		}
-		else if (input.isKeyPressed(Input.KEY_F)){
-			if (nearByBldg !=null){
+		if (input.isKeyDown(Input.KEY_UP)) {
+			moveUp();
+			keyPressed = true; 
+		} else if (input.isKeyDown(Input.KEY_DOWN)) {
+			moveDown();
+			keyPressed = true; 
+		}
+		if (input.isKeyDown(Input.KEY_SPACE)) {
+			rob();
+			keyPressed = true; 
+		} else if (input.isKeyPressed(Input.KEY_F)) {
+			if (nearByBldg != null) {
 				nearByBldg.nextFlag();
 			}
+			keyPressed = true; 
 		}
-		else {
+		if (!keyPressed)
 			stop();
-		}
+
 	}
-	
+
 	public boolean moveRight() {
 		this.currentAnimation.start();
-		
-		this.position.setX((float) (this.position.getX()+Globals.VELOCITY_MULTIPLIER*velocity));
-		
-		this.rect.setX(this.position.getX());
-		this.currentAnimation = Robber.rightWalkAnimation;
 
-		if (collides()){
+		this.position
+				.setX((float) (this.position.getX() + Globals.VELOCITY_MULTIPLIER
+						* velocity));
+
+		this.rect.setX(this.position.getX());
+		this.currentAnimation = this.rightWalkAnimation;
+
+		if (collides()) {
 			normalForceLeft();
-			return false; 
+			return false;
 		}
 
-		return true; 
+		return true;
 	}
 
 	public boolean moveLeft() {
 		this.currentAnimation.start();
-		this.position.setX((float) (this.position.getX()-Globals.VELOCITY_MULTIPLIER*velocity));
+		this.position
+				.setX((float) (this.position.getX() - Globals.VELOCITY_MULTIPLIER
+						* velocity));
 		this.rect.setX(this.position.getX());
-		this.currentAnimation = Robber.leftWalkAnimation;
-		if (collides()){
+		this.currentAnimation = this.leftWalkAnimation;
+		if (collides()) {
 			normalForceRight();
 			return false;
 		}
-		return true; 
+		return true;
 	}
 
 	public boolean moveUp() {
-		this.position.setY((float) (this.position.getY()-Globals.VELOCITY_MULTIPLIER*velocity));
+		this.position
+				.setY((float) (this.position.getY() - Globals.VELOCITY_MULTIPLIER
+						* velocity));
 
 		this.rect.setY(this.position.getY());
-		this.currentAnimation = Robber.upWalkAnimation;
-		if (collides()){
+		this.currentAnimation = this.upWalkAnimation;
+		if (collides()) {
 			normalForceDown();
-			return false; 
+			return false;
 		}
-		return true; 
+		return true;
 	}
 
 	public boolean moveDown() {
-		this.position.setY((float) (this.position.getY()+Globals.VELOCITY_MULTIPLIER*velocity));
+		this.position
+				.setY((float) (this.position.getY() + Globals.VELOCITY_MULTIPLIER
+						* velocity));
 		this.rect.setY(this.position.getY());
-		this.currentAnimation = Robber.downWalkAnimation;
-		if (collides()){
+		this.currentAnimation = this.downWalkAnimation;
+		if (collides()) {
 			normalForceUp();
-			return false; 
+			return false;
 		}
-		return true; 
+		return true;
 	}
 
 	public void normalForceRight() {
-		this.position.setX((float) (this.position.getX()+Globals.VELOCITY_MULTIPLIER*velocity));
+		this.position
+				.setX((float) (this.position.getX() + Globals.VELOCITY_MULTIPLIER
+						* velocity));
 		this.rect.setX(this.position.getX());
 	}
 
 	public void normalForceLeft() {
-		this.position.setX((float) (this.position.getX()-Globals.VELOCITY_MULTIPLIER*velocity));
+		this.position
+				.setX((float) (this.position.getX() - Globals.VELOCITY_MULTIPLIER
+						* velocity));
 		this.rect.setX(this.position.getX());
 	}
 
 	public void normalForceUp() {
-		this.position.setY((float) (this.position.getY()-Globals.VELOCITY_MULTIPLIER*velocity));
+		this.position
+				.setY((float) (this.position.getY() - Globals.VELOCITY_MULTIPLIER
+						* velocity));
 		this.rect.setY(this.position.getY());
 	}
 
 	public void normalForceDown() {
-		this.position.setY((float) (this.position.getY()+Globals.VELOCITY_MULTIPLIER*velocity));
+		this.position
+				.setY((float) (this.position.getY() + Globals.VELOCITY_MULTIPLIER
+						* velocity));
 		this.rect.setY(this.position.getY());
 	}
 
@@ -116,20 +141,28 @@ public class RobberUser extends Robber implements Movable {
 		boolean isInCollision = false;
 		this.nearByBldg = null;
 
-		Line[] boundLines = Play.getInstance().getMapBounds();
-		for (Line line : boundLines){
-			if (line.intersects(this.rect))
-				return true; 
+		// Check if trying to pass through gates
+		for (Gate gate : Play.getInstance().getArea().getGates()) {
+			if (gate.intersects(this.rect))
+				return !gate.passThrough(this);
 		}
-		
-		for (Building bldg: Building.buildings) {
+
+		// Collision with boundaries
+		Line[] boundLines = Play.getInstance().getArea().getMapBounds();
+		for (Line line : boundLines) {
+			if (line.intersects(this.rect))
+				return true;
+		}
+
+		// Collision wiht Buildings
+		for (Building bldg : Building.buildings) {
 			if (this.rect.intersects(bldg.getRect())) {
 				this.nearByBldg = bldg;
 				isInCollision = true;
 				bldg.setShowBuildingInfo(true);
 				break;
 			}
-			if (this.rect.intersects(bldg.robbingRegion)){
+			if (this.rect.intersects(bldg.robbingRegion)) {
 				this.nearByBldg = bldg;
 				bldg.setShowBuildingInfo(true);
 			}

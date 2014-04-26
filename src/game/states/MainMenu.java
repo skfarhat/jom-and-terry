@@ -133,7 +133,7 @@ public class MainMenu extends Menu
 			@Override
 			public void performAction() {
 				AudioGame.playAsSound("button-21.ogg");
-				gameContainer.enterState(Globals.PLAYER_PICK);
+				gameContainer.enterState(Globals.AREA_PICK);
 			}
 		};
 		MenuButton statisticsButton = new MenuButton(this.gameContainer.getContainer(), statisticsImage, x3, y3) {

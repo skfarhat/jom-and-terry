@@ -1,59 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="150" height="60" tilewidth="16" tileheight="16">
  <tileset firstgid="1" name="house" tilewidth="16" tileheight="16">
-  <image source="bank1.png" width="73" height="92"/>
+  <image source="./images/bank1.png" width="73" height="92"/>
  </tileset>
  <tileset firstgid="21" name="bank" tilewidth="16" tileheight="16">
-  <image source="bank2.png" width="191" height="111"/>
+  <image source="./images/bank2.png" width="191" height="111"/>
  </tileset>
  <tileset firstgid="87" name="road_east" tilewidth="16" tileheight="16">
-  <image source="road_east.png" width="100" height="100"/>
+  <image source="./images/road_east.png" width="100" height="100"/>
  </tileset>
  <tileset firstgid="123" name="road_north" tilewidth="16" tileheight="16">
-  <image source="road_up.png" width="100" height="100"/>
+  <image source="./images/road_up.png" width="100" height="100"/>
  </tileset>
  <tileset firstgid="159" name="tileset2" tilewidth="16" tileheight="16">
-  <image source="tileset2.png" width="1024" height="720"/>
+  <image source="./images/tileset2.png" width="1024" height="720"/>
  </tileset>
  <tileset firstgid="3039" name="tileset1" tilewidth="16" tileheight="16">
-  <image source="tileset1.png" width="512" height="512"/>
+  <image source="./images/tileset1.png" width="512" height="512"/>
  </tileset>
  <tileset firstgid="4063" name="tileset3" tilewidth="16" tileheight="16">
-  <image source="tileset3.png" width="1408" height="704"/>
+  <image source="./images/tileset3.png" width="1408" height="704"/>
  </tileset>
  <tileset firstgid="7935" name="terrain" tilewidth="16" tileheight="16">
-  <image source="terrain.png" width="3010" height="2260"/>
+  <image source="./images/terrain.png" width="3010" height="2260"/>
  </tileset>
  <tileset firstgid="34443" name="bank1-highlighted" tilewidth="16" tileheight="16">
-  <image source="bank1-highlighted.png" width="73" height="92"/>
+  <image source="./images/bank1-highlighted.png" width="73" height="92"/>
  </tileset>
  <tileset firstgid="34463" name="scbw_tiles" tilewidth="16" tileheight="16" margin="1">
-  <image source="scbw_tiles.png" trans="ff00ff" width="918" height="678"/>
+  <image source="./images/scbw_tiles.png" trans="ff00ff" width="918" height="678"/>
  </tileset>
  <tileset firstgid="36857" name="5123zs" tilewidth="16" tileheight="16" margin="1">
-  <image source="5123zs.png" trans="ff00ff" width="512" height="512"/>
+  <image source="./images/5123zs.png" trans="ff00ff" width="512" height="512"/>
  </tileset>
  <tileset firstgid="37818" name="water" tilewidth="16" tileheight="16" margin="1">
-  <image source="water.png" trans="ff00ff" width="256" height="256"/>
+  <image source="./images/water.png" trans="ff00ff" width="256" height="256"/>
  </tileset>
  <tileset firstgid="38043" name="banca_euro" tilewidth="16" tileheight="16" margin="1">
-  <image source="banca_euro.png" width="200" height="242"/>
+  <image source="./images/banca_euro.png" width="200" height="242"/>
  </tileset>
  <tileset firstgid="38223" name="road1_straight_border" tilewidth="16" tileheight="16" margin="1">
-  <image source="road1_straight_border.png" width="256" height="256"/>
+  <image source="./images/road1_straight_border.png" width="256" height="256"/>
  </tileset>
  <tileset firstgid="38448" name="cxe4y" tilewidth="16" tileheight="16" margin="1">
-  <image source="cxe4y.jpg" width="1944" height="1296"/>
+  <image source="./images/cxe4y.jpg" width="1944" height="1296"/>
  </tileset>
  <tileset firstgid="48128" name="Lamp Post" tilewidth="16" tileheight="16" margin="1">
-  <image source="Lamp Post.png" width="38" height="100"/>
+  <image source="./images/Lamp Post.png" width="38" height="100"/>
  </tileset>
  <tileset firstgid="48140" name="cxe4y-small" tilewidth="16" tileheight="16" margin="1">
-  <image source="cxe4y-small.png" width="1000" height="667"/>
+  <image source="./images/cxe4y-small.jpg" width="1000" height="667"/>
+ </tileset>
+ <tileset firstgid="50682" name="open-gate-hi" tilewidth="16" tileheight="16" margin="1">
+  <image source="./images/open-gate-hi.png" width="100" height="40"/>
+ </tileset>
+ <tileset firstgid="50694" name="open-gate-hi 2" tilewidth="16" tileheight="16" margin="1">
+  <image source="./images/open-gate-hi 2.png" width="40" height="100"/>
  </tileset>
  <layer name="Grass" width="150" height="60">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+2bV3LkNhCGZ7OyfATnVfYRnFfZR3BeZR/BeZX9QM6z8yr7CJaTsnwE59Vm5yP4e2EVCzWYJoeAaIn9V30lEg0CDaKL5DSgUkmlUqlUKpVKpVKdVNUHpVIDNEITNEMLtMIDgWy36X5YKv0Of8Cf8Bf8Df/Av6Fs9+VvfcI6Pu5J2nZd9iO1Vet4bWrD1g4d0Ald0A098EQg222qK+MPNEAjNEEztEBrWbb78rctYR0f9yRtuy77kdqqdbw29WLrg34YgEEYgmF4IZDtNl0mNtqgHTqgE7qgG3rKst2Xv70J6/i4J2nbddmP1Fat47VpBNsojME4TMAkTMEbgWy36Qqx0Qt90A8DMAhDMFyW7b78HUlYx8c9Sduuy36ktmodr03T2GZgFuZgHhZgET4IZLtNV4mNERiFMRiHCZiEqbJs9+XvdMI6Pu5J2nZd9iO1Vet4bVrCtgwrsAprsA4b8EUg2226RmxMwwzMwhzMwwIslmW7L3+XEtbxcU/StuuyH6mtWsdr0za2HdiFPdiHAziE7wPZbtN1YmMJlmEFVmEN1mGjLNt9+budsI6Pe5K2XZf9SG3VOl6bjrDdhFtwG+7AXbgH9wPZbtMWsbENO7ALe7APB3BYlu2+/D1KWMfHPUnbrst+pLZqHa9Nmr8qRv4qfp3L8dqk+ati5K/i17kcr02av8onfxX91kqSv4rqRv1Ivwcl/1yO1ybNX+WTv4piI2n+Kqq/mCCuJP9cjtcmzV8VI38Vv87leG3S/FUx8lfx61yO1ybNXxUjfxW/zuV4bdL8VTHyV/HrXI7XJs1fFS9/5dIPmzR/Vbz8lUs/bNL8VTH2X2UZn6/8Vfw46bNY81fZfT+ufrL4YVOS3EX8OGlcaf4qu+/H1U8WP2xKkruIHyeNK81fZff9uPrJ4odNSXIX8eOk346av8ru+3H1k8UPm5LkLuLHSb8dNX+V3ffj6ieLHyqVSqVSqVQqlerkqj4slRqgEZrCyudmWTO0QGuV9eEz2M7COTgPF+AiXIK6ULZb/Q38rhm7tOe1vh3VS1vf9n8VcaIycd2ZOWyHDugMK5+bZV3QDT1V5v9BbA/Bw/AIPAqPweNwOZTtVn8Dv2vGLu15rW9H9ZLWN+PIvC5OVCauOzOHfdAPA2Hlc7NsEIZguMr8P4ntKXganoFn4Tl4Hq6Est3qb+B3zdilPa/17ahe0vpmHJnXxYnKxHVn5nAUxmA8rHxulk3AJExVmf8Xsb0EL8Mr8Cq8Bq/D1VC22+T73eJyzfakvAfNOHLxHpxmDmdgFubCyudm2TwswGKV+X8T21vwNrwD78J78D5cC2W7Tb7fLS7XbIv8HlxiDpdhBVbDyudm2Rqsw0aV+f8Q20fwMXwCn8Jn8DlcD2W7Tb7fLS7XbIv8HtxmDndgF/bCyudm2T4cwGGV+f8S2yZ8BV/DN/AtfAdboWy3yffeKZdrtnnt8zKfP2nfg2Y/caIyaf/VEXN4E27B7bDyuVl2B+7CvSrz/wO2H+En+Bl+gV/hN7gRynabfO+dcrlmm9c+L/P5I70HzTgy+4kTlUn7r6o9i6K/Pp5XWxXO48c2+d475dKe1z4v8/kjvQfNODL7iROVSfuvqj2Lor8+nlc3KpzHj23yvXfKpT2vfV5p34NmHJn9xInKpP1XJ02+9065tOe1zyvte9CMo+jcVh6PN1VxlPY9qPKszVLpzGbeTmSX+R0u/X5U+dVZYurcKYgr8ztc+v2o8qvzxNSFUxBX5ne49PtR5VcXialLpyCuzO9r6fejyq/qiKn6UxBXqv+XGoipRo0rlUqlUqlUKpVKpVKpVCqV6tToP4ve7Y2gjAAA
+   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
   </data>
  </layer>
  <layer name="Road Objects" width="150" height="60">
@@ -71,7 +77,7 @@
    <property name="Passable" value="False"/>
   </properties>
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3ZyY1CQRBEwc8+LDPAgP+2kh7AofPQIkJ6t1IZULUsAADArFZpnTZpO3C+tZc57NI+HdLPwPnWXuZwTKd0TpeB8629zOE3/aVrug2cb+1lDvf0nx7pOXC+tRcA4Fu5X9HgfkWD+xUN7lc0uF8BAAAA7/i30ODfQoN/Cw3+LTT4twAAAAAAAAAAAAAAAAAAAAAAAPCJF8995cugjAAA
+   H4sIAAAAAAAAA+3bd3CTdRzH8Z+TVbppmyYtOCgddACtbFEB2QcyHIACpdDdQgfgYkPLUlA89ykuQK1/uEBWSwer6WC1paWyz33KElx3vnP+hdqQphk+8fu+e92VkDx57vhQes8TlJIkSZIkSZIkSavdgBtxE2624fPtdVxHtMHrn4+9x2MbsQmb//b7Bfz6o395jas0Ua/UJEzGo3gMUzBV3/RrbsGtaIXWFryHpc+313Elx/cx+/kEn+IzfI4t2GpmV23QFu3gZsF7WPp8ex1XcnxtDfy5wA3t4Q4PeBqafk17uMMDnha8h6XPt9dxJccXz36mIwEzMBOJSDKzK9OPBd7wga8F72Hp8+11XMnxbWM/27EDO7ELhSgysyvJtiX5OPsMbJ93EH/f4YsO8IM/AoKcfWau3y72VIgiF9xVCvtJRRrSkYFMzJJdSS2omP2UoBRl2IO92OeEXWn5+pV0bYHBSulhQBCC0RGdgh1/Lv+n61f1OqUadH993ahz7rnYoyz2k40c5GIO5mKeE3bl6tevogOVikE3dEcPxCIu0NlnZvsOsJ9yGFGBSlSh2gm7cvXrV3nsJx8rsBKrsBprXHBX/6Vc/frVCfZzEqdwGmdwFudkV1IL6qlXqhd6ow/6oh/6m7lnJknX61n2sxbr8Byex3q8ILuSWtBX7OdrfINv8R2+xw+yK6kFDTAodQ/uxX0YiEEYLPfMnNpsf6WykI0c5GIO5mKev7PP7vq9yH5ewst4Ba/iNbwuu3Jq+9nOAZTDiApUogrVGtjVj+znJ5zHBVzEJVyWXVmVre633Bag1O24A3eiM0LQBaEBtjlXezYkSKmhGIbhGIGRGCX3Yq3KVvdbHmc7T+BJPIWnMR8LsFADu3qD/byJDXgLb+MdvCu7sipb3W85yHYO4TCO4ChqUIs6DezqCvu5il/wK37D7/hDdmVVtrrfEqZTKhwR6IpIRCEaMRq4dzs6WKkxeABjMQ7jMcEJ98xcIVvdb1nEdhZjCZZiGZYjD/ka2NVG9rMJm/E+PsCHKJBdSZIkSZIkSZIk2aUpgUpNxTTEYzoSMAMzkYgkJCMFqUhDejM+b1e+VikjKlCJKlTjoJnHJW23hX1sxRfYhu3YgZ3YhUIUYTeKUYJSlDVjVzHs5Pw6pS7g4rprv76Ey/gZV3AV3rIrzeehV8oTXvCGD3zRAX7wRwB0CIQeBgQ143NRo9lJq/VKtUYbtEU7uKE93OEBT3ihm+xK8yWyjyQkIwWpSEM6MpCJWZiNLGQjB7nN2FUGO/FjL/4IgA6B0MOAIASjIzqtl+9XrlAh+yjCbhSjBKUowx7sxT7sxwGUw4iKZuzKtJPO7CUEXRCKMIQjAl0RiShEy/crycJMO4llL3G4Cz3RC73RB33RD/1xN8bIriQLMu1kIHsZhMG4H0MwFMMwHCMwEqOQKbuSLMi0k7HsZRzGYwIexEN4GI9gIiZhMp6xcleV/NtchWocxCEcxhEcRQ1qUYdjqEcDjqNR/n+G5jLtZBp7icd0JGAGZiIRSUhGClJRYOWuQgz8/IZQhCEcEeiKSEQhGjHohu7ogVjEyeedNVdBM69fGa3c1Xy2sQALsQiLsQRLsQzLkYd8rMBKrMJqrJFdaS5jE9fVzV2Ht6YatlGLOhxDPRpwHI34EidwEqdwGmdwFudkV5IkSZIkSZIkSZIkSZIkSZIkSZIkSZIkSZLksP4EEp91i6CMAAA=
   </data>
  </layer>
  <layer name="Banks" width="150" height="60">
@@ -84,6 +90,11 @@
    H4sIAAAAAAAAA+3ax05VYRhG4T9hKCBEpQmIHXuhiTTnlpuwxwZW7PRevB/7zC52ei9ehmtwQmLiiCj7HFkreWZ78A3ewR78IZiZmZmZmS1Pq5JCSEYKUpOivsb+l46ypWM4jhPuyv5S3WypB73oc1dmZmZmZmZmZmZmZmZmZmZmZmYrssaMEJrQjBa0og3t6MiI+rr4bFVaCMlIQSpWIw3paVFfFj8NsZ1hjGAUYxjHBCZjuxrK4huMYBRjGMdEVrS3R9VJ9nMKp3EGZ3EO593VYgcyQziIIhSjBKUow6HM2DfZfIMiFKMEpSjLjvb2qHrMfp7gKZ7hOV7gpbtarJPtdKEbPehFH/rxKLarTvbThW70oBd96F+hu1qTHsJarEMGMpGF7PSoL4ufptjONGYwiznMYwE/Y7uaYj/TmMEs5jCPhRW6qwvs5yIu4TKuoBZ17mqxcv6RDqMClahCNWpwJPb/VJ7DN6hAJapQjZqcaG83MzMzMzMz+1NZuSFkIwfrkYs85GMDCnKjvtASsVp2U4eruIbruIGbuIV6d2VL6BW7eY03eIt3eI8P+IgBd2VLqCAvhI3YhM3Ygq3Yhu0ozIv6QkvE6tnNbdzBXdzDfTzAQzS4K1tCA+zmEz7jC77iG77jBwbjbFe+R0qMCvND2IGd2IXd2IO92If9+VFf+Hu+R0qMGthNI5rQjBa0og3t6IizXfkeKTEaZDdDGMYIRjGGcUxgMs525Xsk+xf5HsnMzMzMzMzMzMzMzMzMzMzMzJa7X3+nGwSgjAAA
   </data>
  </layer>
+ <layer name="Gates" width="150" height="60">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3OyQmAUBQEwQeup2/+8bmG4dwNQIUq6HtXAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwLesrWpLezrSma729hV/1y1VfRrSmKY0L29fwdMNJ9Z1wKCMAAA=
+  </data>
+ </layer>
  <objectgroup name="Houses" width="150" height="60">
   <object name="House 1" x="96" y="80" width="64" height="80"/>
   <object name="House 2" x="448" y="80" width="64" height="80"/>
@@ -92,6 +103,10 @@
   <object name="House 5" x="640" y="208" width="64" height="80"/>
   <object name="House 6" x="288" y="384" width="64" height="80"/>
   <object name="House 7" x="288" y="80" width="64" height="80"/>
+  <object name="House 8" x="1616" y="656" width="64" height="64"/>
+  <object name="House 9" x="1680" y="656" width="64" height="64"/>
+  <object name="House 10" x="1744" y="656" width="64" height="64"/>
+  <object name="House 11" x="1808" y="656" width="64" height="64"/>
  </objectgroup>
  <objectgroup name="Banks" width="150" height="60">
   <object name="Bank1" x="800" y="336" width="432" height="128"/>
@@ -105,9 +120,51 @@
   <object name="Shop5" x="96" y="560" width="144" height="144"/>
   <object name="Shop7" x="1616" y="368" width="128" height="96"/>
   <object name="Shop8" x="448" y="544" width="176" height="96"/>
+  <object name="Shop 9" x="2288" y="128" width="112" height="128"/>
+  <object name="Shop 10" x="576" y="352" width="128" height="112"/>
+  <object name="Shop 11" x="1344" y="352" width="112" height="112"/>
+  <object name="Shop 12" x="800" y="544" width="80" height="80"/>
+  <object name="Shop 13" x="880" y="544" width="80" height="80"/>
+  <object name="Shop 14" x="960" y="544" width="80" height="80"/>
  </objectgroup>
  <objectgroup name="Highway" width="150" height="60">
   <object name="Highway" x="0" y="800" width="2400" height="144"/>
+ </objectgroup>
+ <objectgroup name="Gates" width="150" height="60">
+  <object name="Gate 1" x="2080" y="912" width="64" height="32"/>
+ </objectgroup>
+ <objectgroup name="Road" width="150" height="60">
+  <object name="Road 1" x="96" y="464" width="256" height="80"/>
+  <object name="Road 2" x="448" y="464" width="256" height="80"/>
+  <object name="Road 3" x="96" y="704" width="256" height="96"/>
+  <object name="Road 4" x="448" y="704" width="256" height="96"/>
+  <object name="Road 5" x="0" y="80" width="96" height="384"/>
+  <object name="Road 6" x="352" y="80" width="96" height="384"/>
+  <object name="Road 7" x="704" y="80" width="96" height="384"/>
+  <object name="Road 8" x="704" y="544" width="96" height="160"/>
+  <object name="Road 9" x="0" y="544" width="96" height="160"/>
+  <object name="Road 10" x="352" y="544" width="96" height="160"/>
+  <object name="Road 11" x="96" y="0" width="256" height="80"/>
+  <object name="Road 12" x="448" y="0" width="256" height="80"/>
+  <object name="Road 13" x="800" y="464" width="656" height="80"/>
+  <object name="Road 14" x="800" y="720" width="656" height="80"/>
+  <object name="Road 15" x="1568" y="720" width="304" height="80"/>
+  <object name="Road 16" x="1456" y="80" width="96" height="384"/>
+  <object name="Road 17" x="800" y="0" width="656" height="80"/>
+  <object name="Road 18" x="1552" y="464" width="320" height="80"/>
+  <object name="Road 19" x="1872" y="80" width="96" height="384"/>
+  <object name="Road 20" x="1872" y="544" width="96" height="176"/>
+  <object name="Road 21" x="2064" y="544" width="96" height="176"/>
+  <object name="Road 22" x="1968" y="720" width="96" height="80"/>
+  <object name="Road 23" x="1968" y="464" width="96" height="80"/>
+  <object name="Road 24" x="2160" y="464" width="240" height="80"/>
+  <object name="Road 25" x="1552" y="0" width="320" height="80"/>
+  <object name="Road 26" x="1968" y="0" width="400" height="80"/>
+  <object name="Road 27" x="2160" y="720" width="256" height="80"/>
+ </objectgroup>
+ <objectgroup name="Objects" width="150" height="60">
+  <object name="Object 1" x="1616" y="80" width="256" height="192"/>
+  <object name="Object 2" x="1200" y="544" width="208" height="176"/>
  </objectgroup>
  <layer name="House 1- highlighted" width="150" height="60" visible="0">
   <data encoding="base64" compression="gzip">

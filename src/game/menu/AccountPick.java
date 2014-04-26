@@ -116,8 +116,8 @@ public class AccountPick extends Menu {
 					
 					GameContainer container = Game.getInstance().getContainer(); 
 					try {
-						Game.getInstance().getState(Globals.MAIN_MENU).init(container, Game.getInstance());
 
+						Game.getInstance().getState(Globals.MAIN_MENU).init(container, Game.getInstance());
 						Game.getInstance().enterState(Globals.MAIN_MENU);
 					} catch (SlickException e) {
 						e.printStackTrace();

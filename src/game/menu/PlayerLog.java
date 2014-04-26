@@ -1,6 +1,7 @@
 package game.menu;
 
 import game.Game;
+import game.city.building.Area;
 import game.city.person.Person;
 import game.city.person.Policeman;
 import game.city.person.Robber;
@@ -30,7 +31,10 @@ public class PlayerLog  {
 	private final int LOG_X = 0;
 	private final int LOG_Y = 60;
 
-	private final int FLAGS_X_INTERVAL = 30;
+	private final int ROBBED_BLDGS_X = 0;
+	private final int ROBBED_BLDGS_Y = 70;
+	
+	private final int FLAGS_X_INTERVAL = 20;
 	private final int FLAGS_Y = 100;
 
 
@@ -145,6 +149,8 @@ public class PlayerLog  {
 
 	public void draw(int timer){ 
 
+		final Area area = Play.getInstance().getArea(); 
+		
 		if (Game.getInstance().getAccount().getIsRobber()){
 			Robber robber = (Robber) person; 
 			String scoreString = String.format("Score: %d", (int) robber.getScore());
@@ -155,7 +161,12 @@ public class PlayerLog  {
 			g.drawImage(background, position.getX(), position.getY());
 			g.drawString(scoreString, position.getX() + SCORE_X, position.getY()+ SCORE_Y);
 			g.drawString(moneyString, position.getX() + MONEY_X, position.getY()+ MONEY_Y);
-			g.drawString(timerString, position.getX() + TIMER_X, position.getY()+ TIMER_Y); 
+			g.drawString(timerString, position.getX() + TIMER_X, position.getY()+ TIMER_Y);
+			g.drawString(
+					String.format("Robbed: %d/%d",
+							area.getNumberOfRobbedBuildings(),
+							area.getBuildings().size()),
+					position.getX() + ROBBED_BLDGS_X, position.getY() + ROBBED_BLDGS_Y);
 			g.drawString(logText,position.getX() + LOG_X, position.getY()+ LOG_Y);
 		}
 		else {

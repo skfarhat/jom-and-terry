@@ -1,8 +1,10 @@
 package game.states;
 
+import game.AudioGame;
 import game.Game;
 import game.Globals;
 import game.city.Camera;
+import game.city.building.Area;
 import game.city.building.Bank;
 import game.city.building.Building;
 import game.city.building.House;
@@ -17,28 +19,28 @@ import game.city.person.RobberComputer;
 import game.city.person.RobberUser;
 import game.city.person.SecurityGuard;
 import game.city.road.Highway;
+import game.city.road.Road;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Random;
+
 import javax.swing.Timer;
+
 import org.json.simple.JSONObject;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
-import org.newdawn.slick.tiled.TiledMap;
 
 @SuppressWarnings("unchecked")
-public class Play extends BasicGameState {
+public class Play extends BasicGameState implements Savable {
 	enum FlagType {
 		NONE, RED, DARK_BLUE, VIOLET, GREEN
 	};
@@ -50,17 +52,18 @@ public class Play extends BasicGameState {
 	public static final Play play = new Play();
 
 	public static Play getInstance() {
+
 		return play;
 	}
 
-	// TODO: move to Globals
-	private final String cityTileMapPath = "res/city/city.tmx";
+	private Area area;
 
 	private Camera camera;
 	private Integer gameTime = 0;
 
-	private TiledMap cityTileMap;
-	private Line[] mapBounds; // bounds
+	// Characters
+	private Robber robber;
+	private PoliceOffice policeOffice;
 
 	/**
 	 * Main character can either be police or robber
@@ -68,13 +71,9 @@ public class Play extends BasicGameState {
 	private Person mainCharacter = null;
 	public boolean userIsRobber;
 	private boolean isResumingGame = false;
-	private boolean isPausingGame = false; 
-
-	boolean isGameOver = false;
-
-	// Characters
-	private Robber robber;
-	private PoliceOffice policeOffice;
+	private boolean isPausingGame = false;
+	private boolean isGameOver = false;
+	private boolean isLevelUp = false;
 
 	// =============================================================================================================================
 
@@ -82,15 +81,13 @@ public class Play extends BasicGameState {
 	// ===============================================================================================================================
 	public void init(GameContainer gc, StateBasedGame sbg)
 			throws SlickException {
-		initMap(); // Tile Map
-//		initRobber(); // Robber
 	}
 
 	public void start() throws SlickException {
 		userIsRobber = Game.getInstance().getAccount().getIsRobber();
+
 		initRobber();
 		initPoliceOffice();
-
 
 		setMainCharacter();
 
@@ -98,7 +95,10 @@ public class Play extends BasicGameState {
 		initSecurityGuards(); // Initialize Security Guards
 
 		if (isResumingGame) {
-			initFromSavedGame();
+			HashMap<Object, Object> resumeGame = Game.getInstance()
+					.getAccount().getResumeGame();
+
+			load(resumeGame);
 
 			setResumingGame(false);
 		}
@@ -108,121 +108,7 @@ public class Play extends BasicGameState {
 	}
 
 	private final void initCamera() throws SlickException {
-		camera = new Camera(cityTileMap, mainCharacter);
-	}
-
-	private final void initMap() throws SlickException {
-		cityTileMap = new TiledMap(cityTileMapPath);
-
-		float mapWidth = cityTileMap.getWidth() * cityTileMap.getTileWidth();
-		float mapHeight = cityTileMap.getHeight() * cityTileMap.getTileHeight();
-		// init the mapBounds
-		Line line1 = new Line(-1, -1, // top left to top right
-				mapWidth, -1);
-		Line line2 = new Line(-1, -1, // top left to bottom left
-				-1, mapHeight);
-		Line line3 = new Line(mapWidth, mapHeight, // bottom right to top right
-				mapWidth, -1);
-		Line line4 = new Line(mapWidth, mapHeight, // bottom right to bottom
-				// left
-				-1, mapHeight);
-
-		mapBounds = new Line[] { line1, line2, line3, line4 };
-
-		int bldgID = 0;
-		// HOUSES
-		// ========================================================================================
-		// TODO: Make the index Constant in a separate file
-		// Houses Object Group has index 0
-		int housesObjectCount = cityTileMap.getObjectCount(0);
-
-		// create all Houses
-		for (int objectIndex = 0; objectIndex < housesObjectCount; objectIndex++) {
-			int x = cityTileMap.getObjectX(0, objectIndex);
-			int y = cityTileMap.getObjectY(0, objectIndex);
-
-			Point position = new Point(x, y);
-			float width = cityTileMap.getObjectWidth(0, objectIndex);
-			float height = cityTileMap.getObjectHeight(0, objectIndex);
-
-			// some random number (1000 ? 3000 ? ...) and need it to be positive
-			// thus the Math.absolute
-			int money = Math.abs(((new Random()).nextInt() % 10) * 1000);
-
-			// create new house. The house is added to the static houses array
-			new House(bldgID, position, width, height, money);
-
-			bldgID++;
-			// add the house to the houses Array
-		}
-
-		// BANKS
-		// ========================================================================================
-		// Banks Object Group has index 1
-		int banksObjectCount = cityTileMap.getObjectCount(1);
-		// banks = new ArrayList<>(10);
-
-		// create all Banks
-		for (int objectIndex = 0; objectIndex < banksObjectCount; objectIndex++) {
-			int x = cityTileMap.getObjectX(1, objectIndex);
-			int y = cityTileMap.getObjectY(1, objectIndex);
-			Point position = new Point(x, y);
-
-			float width = cityTileMap.getObjectWidth(1, objectIndex);
-			float height = cityTileMap.getObjectHeight(1, objectIndex);
-
-			// TODO: put this in the Banks class
-			// some random number (1000 ? 3000 ? ...) and need it to be positive
-			// thus the Math.absolute
-			int money = Math.abs(((new Random()).nextInt() % 10) * 1000000);
-
-			// Create new bank that is added to the static bank array
-			new Bank(bldgID, position, width, height, money);
-
-			bldgID++;
-		}
-
-		// TODO: SHOPS
-		// Banks Object Group has index 1
-		int shopsObjectCount = cityTileMap.getObjectCount(2);
-		// create all Banks
-		for (int objectIndex = 0; objectIndex < shopsObjectCount; objectIndex++) {
-			int x = cityTileMap.getObjectX(2, objectIndex);
-			int y = cityTileMap.getObjectY(2, objectIndex);
-			Point position = new Point(x, y);
-
-			float width = cityTileMap.getObjectWidth(2, objectIndex);
-			float height = cityTileMap.getObjectHeight(2, objectIndex);
-
-			// some random number (1000 ? 3000 ? ...) and need it to be positive
-			// thus the Math.absolute
-			int money = Math.abs(((new Random()).nextInt() % 10) * 10000);
-
-			// Create new Shop that is added to the static shop array
-			new Shop(bldgID, position, width, height, money);
-
-			bldgID++;
-		}
-
-		// HIGHWAY
-		// ========================================================================================
-		int highwayObjectCount = cityTileMap.getObjectCount(3);
-
-		for (int objectIndex = 0; objectIndex < highwayObjectCount; objectIndex++) {
-			int x = cityTileMap.getObjectX(3, objectIndex);
-			int y = cityTileMap.getObjectY(3, objectIndex);
-			Point position = new Point(x, y);
-
-			float width = cityTileMap.getObjectWidth(3, objectIndex);
-			float height = cityTileMap.getObjectHeight(3, objectIndex);
-
-			// create the rectangle of the highway
-			Rectangle rect = new Rectangle(x, y, width, height);
-
-			// Create new Shop that is added to the static shop array
-			new Highway(position, rect);
-		}
-
+		camera = new Camera(area.getAreaTileMap(), mainCharacter);
 	}
 
 	private final void initRobber() throws SlickException {
@@ -274,8 +160,8 @@ public class Play extends BasicGameState {
 
 		if (!isPausingGame)
 			start();
-		
-		isPausingGame = false; 
+
+		isPausingGame = false;
 	}
 
 	@Override
@@ -290,29 +176,33 @@ public class Play extends BasicGameState {
 
 		policeOffice.stopPolicemenPatrols();
 
-
-
 		if (!isGameOver)
 			// save the game
 			Game.getInstance().getAccount().save();
 	}
 
-	public void pauseGame(){
-		isPausingGame = true; 
+	public void pauseGame() {
+		isPausingGame = true;
 		// go to the pause menu
 		Game.getInstance().enterState(Globals.PAUSE);
 	}
 
 	public void reset() {
-		isPausingGame = false; 
+		isPausingGame = false;
 		gameTime = 0;
 		mainCharacter = null;
 		isResumingGame = false;
 		isPausingGame = false;
-		
+
+		// remove buildings
+		Building.buildings.clear();
+		Shop.shops.clear();
+		House.getHouses().clear();
+		Bank.banks.clear();
+
 		// reset the flags
-		for (int i=0; i < flagsShown.length;i++)
-			flagsShown[i] = true; 
+		for (int i = 0; i < flagsShown.length; i++)
+			flagsShown[i] = true;
 	}
 
 	// ===============================================================================================================================
@@ -347,6 +237,10 @@ public class Play extends BasicGameState {
 		// Draw the Highways
 		for (Highway highway : Highway.highways) {
 			highway.draw();
+		}
+
+		for (Road road: area.getRoads()){
+			road.drawRoadInfo();
 		}
 
 	}
@@ -409,17 +303,20 @@ public class Play extends BasicGameState {
 			}
 
 			else {
-				// get the building
-				Point pnt = new Point(input.getMouseX(), input.getMouseY());
 
+				// SELECT BUILDING
+				Point pnt = new Point(input.getMouseX(), input.getMouseY());
 				Building bldg = selectBuilding(pnt);
 
-				if (bldg == null)
+				if (bldg != null) {
+					bldg.setShowBuildingInfo(true);					// display info for this building
 					return;
+				}
 
-				// display info for this building
-				bldg.setShowBuildingInfo(true);
-
+				// SELECT ROAD
+				Road road = selectRoad(pnt);
+				if (road != null)
+					road.setShowRoadInfo(true);
 			}
 
 		}
@@ -432,7 +329,6 @@ public class Play extends BasicGameState {
 
 		if (input.isKeyDown(Input.KEY_ESCAPE)) {
 			pauseGame();
-
 		}
 	}
 
@@ -448,6 +344,23 @@ public class Play extends BasicGameState {
 		for (Building bldg : Building.buildings) {
 			if (bldg.getRect().intersects(rect)) {
 				return bldg;
+			}
+		}
+		return null;
+	}
+
+	private Road selectRoad(Point pnt) {
+		Camera camera = Play.getInstance().getCamera();
+		// create a rectangle and use the intersect method to check whether
+		// the policeman rect intersects with the mouse click
+		Rectangle rect = new Rectangle(camera.getCameraX() + pnt.getX()
+				- Globals.SELECTION_ERROR / 2, camera.getCameraY() + pnt.getY()
+				- Globals.SELECTION_ERROR / 2, Globals.SELECTION_ERROR,
+				Globals.SELECTION_ERROR);
+
+		for (Road road : area.getRoads()) {
+			if (road.getRect().intersects(rect)) {
+				return road;
 			}
 		}
 		return null;
@@ -504,22 +417,34 @@ public class Play extends BasicGameState {
 		timer.start();
 	}
 
-	public void gameOver() {
+	public void levelUp() {
 
-		robber.isCaught = true;
-		isGameOver = true;
+		// return if already entered this function
+		if (isLevelUp)
+			return;
 
-		// go to Game Over state
-		Game.getInstance().enterState(Globals.GAME_OVER,
-				new FadeOutTransition(), new FadeInTransition());
+		AudioGame.playAsSound("success.ogg");
+		isLevelUp = true;
+		gameOver(true);
 	}
 
-	/**
-	 * Play class will have ID 1 This method returns 1
-	 */
-	@Override
-	public int getID() {
-		return Globals.PLAY;
+	public void gameOver(boolean youWin) {
+
+		if (isGameOver)
+			return; 
+
+		
+		System.out.println("Should be entering state");
+		GameOverState gameOver = (GameOverState) Game.getInstance().getState(Globals.GAME_OVER);
+		
+		System.out.println("userIsRobber: " + userIsRobber + "\nYouWin: " + youWin);
+		gameOver.set(userIsRobber, youWin);
+		
+		Game.getInstance().enterState(Globals.GAME_OVER,
+				new FadeOutTransition(), new FadeInTransition());
+		
+		
+		isGameOver = true;
 	}
 
 	public void showFlag(int flagId) {
@@ -536,10 +461,6 @@ public class Play extends BasicGameState {
 		return robber;
 	}
 
-	public Line[] getMapBounds() {
-		return mapBounds;
-	}
-
 	public void setResumingGame(boolean isResumingGame) {
 		this.isResumingGame = isResumingGame;
 	}
@@ -548,8 +469,27 @@ public class Play extends BasicGameState {
 		return isResumingGame;
 	}
 
-	// Change to savable
-	public JSONObject saveState() {
+	public void setArea(Area area) {
+		this.area = area;
+	}
+
+	public Area getArea() {
+		return area;
+	}
+
+	/**
+	 * Play class will have ID 1 This method returns 1
+	 */
+	@Override
+	public int getID() {
+		return Globals.PLAY;
+	}
+
+	// SAVABLE
+	// ================================================================================================================================
+
+	@Override
+	public JSONObject save() {
 
 		// Save: Robber
 		JSONObject robberObj = robber.save();
@@ -573,9 +513,10 @@ public class Play extends BasicGameState {
 		return map;
 	}
 
-	public void initFromSavedGame() {
-		HashMap<Object, Object> resumeGame = Game.getInstance().getAccount()
-				.getResumeGame();
+	@Override
+	public void load(Object loadObj) {
+
+		HashMap<Object, Object> resumeGame = (HashMap<Object, Object>) loadObj;
 
 		assert resumeGame != null : "There is some type of inconsistency in the resume game";
 

@@ -22,8 +22,7 @@ public final class Globals {
 	// Directories
 	public static final String SAVE_DIRECTORY_PATH		= "Save/";
 	
- 
-
+	
 	// Robber
 	public static final float ROBBER_VISION_DISTANCE = 400.0f; 
 	public static final float ARREST_DISTANCE = 30.0f;  
@@ -40,8 +39,6 @@ public final class Globals {
 	
 	// Font
 	public static final String PETITINHO_FONT = "Petitinho.ttf";
-
-
 	
 	// Save Accounts
 	public static final String ROBBER_SCORE = "Score";
@@ -53,8 +50,12 @@ public final class Globals {
 	// for when the user is policeman and wants to select other policemen using the mouse
 	public static final float SELECTION_ERROR = 50.0f;		
 	
-	public static final String POLICEMAN_SCORE = "Score";
+	// Camera
+	public static final float CAMERA_SCROLL_SPEED= 2.0f;
+	
+	
 	public static final float POLICEMAN_VISION_DISTANCE = 100.0f; 
+	public static final String POLICEMAN_SCORE = "Score";
 	public static final String POLICEMAN_POSITION_X= "Position_X";
 	public static final String POLICEMAN_POSITION_Y= "Position_Y";
 
@@ -76,4 +77,23 @@ public final class Globals {
 	public static final String ROBBED = "Robbed";
 	public static final String FLAG = "Flag";
 	public static final String TIME = "Time";
+	
+	
+	
+	// MAP INDICES
+	public static final int HOUSE_OBJECT_INDEX 		= 0; 
+	public static final int BANK_OBJECT_INDEX 		= 1; 
+	public static final int SHOP_OBJECT_INDEX 		= 2;
+	public static final int HIGHWAY_OBJECT_INDEX 	= 3;
+	public static final int GATES_OBJECT_INDEX 		= 4;
+	public static final int ROAD_OBJECT_INDEX 		= 5;
+	
+	public static final int CITY_COUNT = 5; 
+	
+	// City
+	public static final String  CITY_1 = 	"res/city/City1.tmx";
+	public static final String  CITY_2 = 	"res/city/City2.tmx";
+	public static final String  CITY_3 = 	"res/city/City3.tmx";
+	public static final String  CITY_4 = 	"res/city/City4.tmx";
+	public static final String  CITY_5 = 	"res/city/City5.tmx";
 }

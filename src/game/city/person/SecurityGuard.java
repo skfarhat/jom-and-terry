@@ -1,9 +1,7 @@
 package game.city.person;
 
-import game.Game;
 import game.Globals;
 import game.city.building.Bank;
-import game.states.Play;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +12,6 @@ import javax.swing.Timer;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
@@ -27,19 +24,15 @@ import org.newdawn.slick.geom.Vector2f;
  */
 public class SecurityGuard extends Person {
 	
+	private String sgImgPath = "res/Security Guard.png";
+
 	/**
 	 * An array containing all the security guards
 	 */
 	public static ArrayList<SecurityGuard> securityGuards = new ArrayList<>(10);
 	
-//	private String sgImgPath = "res/bouncer.png";
-	private String sgImgPath = "res/Security Guard.png";
-
 	private Point destinationPoint;
-
 	private Image image;
-
-	private boolean isMoving = false;
 	private boolean isFollowingRobber = false;
 
 	public Rectangle rect; // frame of the security guard
@@ -60,8 +53,7 @@ public class SecurityGuard extends Person {
 	private Point topLeftEdge, topRightEdge, bottomRightEdge, bottomLeftEdge;
 
 	// used to know at which edge the SG is currently
-	// we could use the position and compare to the edge, but positions are not
-	// always exact
+	// we could use the position and compare to the edge, but positions are not always exact
 	// so this field is used to avoid interval comparing
 	private Point currentEdge;
 
@@ -69,22 +61,7 @@ public class SecurityGuard extends Person {
 	 * The bank the Security Guard is responsible for guarding
 	 */
 	Bank guardedBank = null;
-
-	// ====================================================================================================
-	// SpriteSheet
-	// ====================================================================================================
-	SpriteSheet spriteSheet;
-
-	// Dimensions a single sprite
-	int spriteWidth;
-	int spriteHeight;
-
-	// Dimensions for the whole sheet containing all the sprites
-	float spriteSheetWidth;
-	float spriteSheetHeight;
-
-	int spritesPerRow = 4;
-	int spritesPerColumn = 4;
+	
 
 	/**
 	 * Creates a security guard.
@@ -314,8 +291,9 @@ public class SecurityGuard extends Person {
 	}
 
 	public boolean arrestRobber(Robber robber) {
-		robber.isCaught = true; 
-		Play.getInstance().gameOver();
+		robber.isCaught = true;
+		// FIXME: 
+//		Play.getInstance().gameOver();
 		return true;
 	}
 }

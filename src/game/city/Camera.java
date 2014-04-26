@@ -12,6 +12,7 @@ import org.newdawn.slick.tiled.TiledMap;
 
 public class Camera {
 
+	protected boolean isScrolling = false; 
 	/** the map used for our scene */
 	protected TiledMap map;
 
@@ -111,6 +112,36 @@ public class Camera {
 		this.centerOn(shape.getCenterX(), shape.getCenterY());
 	}
 
+
+	public void mouseScroll() {
+		final float error = 50.0f; 
+		float mouseX = gc.getInput().getMouseX(); 
+		float mouseY = gc.getInput().getMouseY(); 
+
+		isScrolling = true; 
+
+		if (mouseX > (gc.getWidth() - error) && (cameraX + gc.getWidth()) < mapWidth)
+			cameraX = cameraX + Globals.CAMERA_SCROLL_SPEED; 
+
+		else if (mouseX <= error && cameraX >= Globals.CAMERA_SCROLL_SPEED)
+			cameraX = cameraX - Globals.CAMERA_SCROLL_SPEED; 
+
+		else if (mouseY > (gc.getHeight() - error) && cameraX < mapHeight/2)
+			cameraY = cameraY + Globals.CAMERA_SCROLL_SPEED; 
+
+		else if (mouseY < (error) && cameraY > mapHeight/2)
+			cameraY = cameraY - Globals.CAMERA_SCROLL_SPEED;
+
+		if (!(
+				mouseY < (error) 
+				|| mouseY > (gc.getHeight() - error)
+				|| mouseX > (gc.getWidth() - error) 
+				|| mouseX <= error 
+				) || person.isMoving())
+			isScrolling = false; 
+
+	}
+
 	/**
 	 * draws the part of the map which is currently focussed by the camera on the screen
 	 */
@@ -119,8 +150,12 @@ public class Camera {
 	}
 
 	public void draw(int playTimer) {
-		this.centerOn(person.rect);
+		this.mouseScroll();
+		if (!isScrolling)
+			this.centerOn(person.rect);
 		this.drawMap(0, 0);
+
+
 		// Draw the money the Robber has
 		this.playerLog.draw(playTimer);
 		this.translateGraphics();
