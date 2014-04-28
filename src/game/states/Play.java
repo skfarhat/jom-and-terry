@@ -3,12 +3,8 @@ package game.states;
 import game.AudioGame;
 import game.Game;
 import game.Globals;
-import game.city.Camera;
 import game.city.building.Area;
-import game.city.building.Bank;
 import game.city.building.Building;
-import game.city.building.House;
-import game.city.building.Shop;
 import game.city.person.Movable;
 import game.city.person.Person;
 import game.city.person.PoliceOffice;
@@ -16,7 +12,6 @@ import game.city.person.Policeman;
 import game.city.person.PolicemanUser;
 import game.city.person.Robber;
 import game.city.person.RobberComputer;
-import game.city.person.RobberUser;
 import game.city.person.SecurityGuard;
 import game.city.road.Highway;
 import game.city.road.Road;
@@ -44,27 +39,18 @@ public class Play extends BasicGameState implements Savable {
 	enum FlagType {
 		NONE, RED, DARK_BLUE, VIOLET, GREEN
 	};
-
 	// NONE, RED, DARK_BLUE, VIOLET, GREEN
 	public boolean flagsShown[] = { true, true, true, true, true };
-
 	// Singleton
 	public static final Play play = new Play();
-
 	public static Play getInstance() {
 
 		return play;
 	}
-
 	private Area area;
-
-	private Camera camera;
 	private Integer gameTime = 0;
-
-	// Characters
-	private Robber robber;
-	private PoliceOffice policeOffice;
-
+	
+	
 	/**
 	 * Main character can either be police or robber
 	 */
@@ -75,55 +61,60 @@ public class Play extends BasicGameState implements Savable {
 	private boolean isGameOver = false;
 	private boolean isLevelUp = false;
 
-	// =============================================================================================================================
+	private int level = -1;  
+	private String cityPath = null;  
 
-	// INIT
-	// ===============================================================================================================================
-	public void init(GameContainer gc, StateBasedGame sbg)
-			throws SlickException {
+	private Timer gameTimer;  
+
+
+	public void set(int level, String cityPath){
+		this.level = level; 
+		this.cityPath = cityPath; 
 	}
 
 	public void start() throws SlickException {
+
+		if (level <= 0 || cityPath == null)
+		{
+			// TODO: throw Exception
+			return; 
+		}
+		reset();
+		//---------------------------------------------------------------------------------
+		// Create Area
+		area = new Area(level, cityPath);
+		//---------------------------------------------------------------------------------
+		// Create Robber
 		userIsRobber = Game.getInstance().getAccount().getIsRobber();
-
-		initRobber();
-		initPoliceOffice();
-
+//		if (userIsRobber)
+//			robber = new RobberUser(area);
+//		else
+//			robber = new RobberComputer(area);
+//		//---------------------------------------------------------------------------------
+//		// Create Police Office		
+//		boolean userIsPolice = !userIsRobber;
+//		this.policeOffice = new PoliceOffice(area, this.robber, userIsPolice);
+		//---------------------------------------------------------------------------------
+		
 		setMainCharacter();
 
-		initCamera(); // Camera to center on the robber
-		initSecurityGuards(); // Initialize Security Guards
+		area.getCamera().setPerson(mainCharacter);
+
+		// Initialize Security Guards
+		initSecurityGuards(); 
 
 		if (isResumingGame) {
 			HashMap<Object, Object> resumeGame = Game.getInstance()
 					.getAccount().getResumeGame();
 
 			load(resumeGame);
-
 			setResumingGame(false);
 		}
 
 		startGameTimer(); // Start timer
-
 	}
 
-	private final void initCamera() throws SlickException {
-		camera = new Camera(area.getAreaTileMap(), mainCharacter);
-	}
-
-	private final void initRobber() throws SlickException {
-		if (userIsRobber)
-			robber = new RobberUser();
-		else
-			robber = new RobberComputer();
-	}
-
-	private final void initPoliceOffice() throws SlickException {
-
-		boolean userIsPolice = !userIsRobber;
-		this.policeOffice = new PoliceOffice(this.robber, userIsPolice);
-	}
-
+	// TODO: Remove
 	/**
 	 * Method needs to be called after the initMap method to make sure the banks
 	 * array has already been filled
@@ -132,26 +123,31 @@ public class Play extends BasicGameState implements Savable {
 	 */
 	private final void initSecurityGuards() throws SlickException {
 		for (SecurityGuard sg : SecurityGuard.securityGuards) {
-			sg.setRobber(this.robber);
+			sg.setRobber(getRobber());
 		}
-	}
-
-	public void setMainCharacter(Person mainCharacter) {
-		this.mainCharacter = mainCharacter;
-		if (mainCharacter instanceof PolicemanUser) {
-			PolicemanUser police = (PolicemanUser) mainCharacter;
-			police.setSelected(true);
-		}
-		if (camera != null)
-			camera.setPerson(mainCharacter);
 	}
 
 	public void setMainCharacter() {
 		if (userIsRobber)
-			setMainCharacter(robber);
+			this.mainCharacter = getRobber();
 		else
-			setMainCharacter(policeOffice.getPoliceForceArray().get(0));
+			this.mainCharacter = getPoliceOffice().getSelectedPoliceman();
+
+		if (mainCharacter instanceof PolicemanUser) {
+			PolicemanUser police = (PolicemanUser) mainCharacter;
+			police.setSelected(true);
+		}
+		if (area!=null)
+			area.getCamera().setPerson(mainCharacter);
 	}
+
+
+	@Override
+	public void init(GameContainer arg0, StateBasedGame arg1)
+			throws SlickException {
+		// TODO Auto-generated method stub
+
+	} 
 
 	@Override
 	public void enter(GameContainer container, StateBasedGame game)
@@ -160,6 +156,8 @@ public class Play extends BasicGameState implements Savable {
 
 		if (!isPausingGame)
 			start();
+		else
+			gameTimer.start();
 
 		isPausingGame = false;
 	}
@@ -169,12 +167,13 @@ public class Play extends BasicGameState implements Savable {
 			throws SlickException {
 		super.leave(container, game);
 
-		if (robber instanceof RobberComputer) {
-			RobberComputer temp = (RobberComputer) robber;
+		if (getRobber() instanceof RobberComputer) {
+			RobberComputer temp = (RobberComputer) getRobber();
 			temp.stopTimers();
 		}
 
-		policeOffice.stopPolicemenPatrols();
+		gameTimer.stop();
+		getPoliceOffice().stopPolicemenPatrols();
 
 		if (!isGameOver)
 			// save the game
@@ -187,40 +186,47 @@ public class Play extends BasicGameState implements Savable {
 		Game.getInstance().enterState(Globals.PAUSE);
 	}
 
+	// FIXME 
 	public void reset() {
 		isPausingGame = false;
 		gameTime = 0;
 		mainCharacter = null;
 		isResumingGame = false;
 		isPausingGame = false;
-
-		// remove buildings
-		Building.buildings.clear();
-		Shop.shops.clear();
-		House.getHouses().clear();
-		Bank.banks.clear();
+		isLevelUp = false;
+		isGameOver = false;
+		
+		if (gameTimer !=null)
+			if (gameTimer.isRunning())
+				gameTimer.stop();
+		
+		//		// remove buildings
+		//		Building.buildings.clear();
+		//		Shop.shops.clear();
+		//		House.getHouses().clear();
+		//		Bank.banks.clear();
 
 		// reset the flags
 		for (int i = 0; i < flagsShown.length; i++)
 			flagsShown[i] = true;
 	}
 
-	// ===============================================================================================================================
+	//===============================================================================================================================
 
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
 
 		// Draw Camera
-		camera.draw(gameTime);
+		area.getCamera().draw(gameTime);
 
 		boolean showRobber = (userIsRobber || PoliceOffice.robberVisibleCount > 0);
 
 		// Draw Robber
-		robber.draw(showRobber);
+		getRobber().draw(showRobber);
 
 		// Draw Policemen
-		policeOffice.draw();
+		getPoliceOffice().draw();
 
 		// Draw Security Guards
 		SecurityGuard sg;
@@ -230,7 +236,7 @@ public class Play extends BasicGameState implements Savable {
 		}
 
 		// Draw the Buildings
-		for (Building bldg : Building.buildings) {
+		for (Building bldg : area.getBuildings()) {
 			bldg.draw((flagsShown[bldg.getFlag().flagID]));
 		}
 
@@ -264,7 +270,7 @@ public class Play extends BasicGameState implements Savable {
 
 		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
 
-			camera.getPlayerLog().clickButton();
+			area.getCamera().getPlayerLog().clickButton();
 			// user is police
 			if (userIsRobber == false) {
 
@@ -280,9 +286,9 @@ public class Play extends BasicGameState implements Savable {
 				if (bldg != null)
 					bldg.setShowBuildingInfo(true);
 
-				// save the previous policeman and deselect him later
-				PolicemanUser prevPoliceman = (PolicemanUser) Play
-						.getInstance().getMainCharacter();
+				//				// save the previous policeman and deselect him later
+				//				PolicemanUser prevPoliceman = (PolicemanUser) Play
+				//						.getInstance().getMainCharacter();
 
 				// get the policeman that is selected by the mouse
 				PolicemanUser policeman = (PolicemanUser) selectPoliceman(
@@ -292,14 +298,10 @@ public class Play extends BasicGameState implements Savable {
 				if (policeman == null)
 					return;
 
-				// set the isSelected to true
-				policeman.setSelected(true);
-
-				// Deselect the previous policeman
-				prevPoliceman.setSelected(false);
+				getPoliceOffice().setSelectedPoliceman(policeman);
 
 				// set the main character in the Play
-				Play.getInstance().setMainCharacter(policeman);
+				setMainCharacter();
 			}
 
 			else {
@@ -321,27 +323,25 @@ public class Play extends BasicGameState implements Savable {
 
 		}
 
-		policeOffice.processInput(input);
+		getPoliceOffice().processInput(input);
 
 		// Move left, right, up, down
-		Movable movable = (Movable) mainCharacter;
+		Movable movable = (Movable) mainCharacter;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 		movable.processInput(input);
-
 		if (input.isKeyDown(Input.KEY_ESCAPE)) {
 			pauseGame();
 		}
 	}
 
 	private Building selectBuilding(Point pnt) {
-		Camera camera = Play.getInstance().getCamera();
 		// create a rectangle and use the intersect method to check whether
 		// the policeman rect intersects with the mouse click
-		Rectangle rect = new Rectangle(camera.getCameraX() + pnt.getX()
-				- Globals.SELECTION_ERROR / 2, camera.getCameraY() + pnt.getY()
+		Rectangle rect = new Rectangle(area.getCamera().getCameraX() + pnt.getX()
+				- Globals.SELECTION_ERROR / 2, area.getCamera().getCameraY() + pnt.getY()
 				- Globals.SELECTION_ERROR / 2, Globals.SELECTION_ERROR,
 				Globals.SELECTION_ERROR);
 
-		for (Building bldg : Building.buildings) {
+		for (Building bldg : area.getBuildings()) {
 			if (bldg.getRect().intersects(rect)) {
 				return bldg;
 			}
@@ -350,11 +350,10 @@ public class Play extends BasicGameState implements Savable {
 	}
 
 	private Road selectRoad(Point pnt) {
-		Camera camera = Play.getInstance().getCamera();
 		// create a rectangle and use the intersect method to check whether
 		// the policeman rect intersects with the mouse click
-		Rectangle rect = new Rectangle(camera.getCameraX() + pnt.getX()
-				- Globals.SELECTION_ERROR / 2, camera.getCameraY() + pnt.getY()
+		Rectangle rect = new Rectangle(area.getCamera().getCameraX() + pnt.getX()
+				- Globals.SELECTION_ERROR / 2, area.getCamera().getCameraY() + pnt.getY()
 				- Globals.SELECTION_ERROR / 2, Globals.SELECTION_ERROR,
 				Globals.SELECTION_ERROR);
 
@@ -375,16 +374,14 @@ public class Play extends BasicGameState implements Savable {
 	 *         policeman in the map. Returns null otherwise
 	 */
 	private Policeman selectPoliceman(int destX, int destY) {
-		Camera camera = Play.getInstance().getCamera();
-
 		// create a rectangle and use the intersect method to check whether
 		// the policeman rect intersects with the mouse click
-		Rectangle rect = new Rectangle(camera.getCameraX() + destX
-				- Globals.SELECTION_ERROR / 2, camera.getCameraY() + destY
+		Rectangle rect = new Rectangle(area.getCamera().getCameraX() + destX
+				- Globals.SELECTION_ERROR / 2, area.getCamera().getCameraY() + destY
 				- Globals.SELECTION_ERROR / 2, Globals.SELECTION_ERROR,
 				Globals.SELECTION_ERROR);
 
-		for (Policeman policeman : policeOffice.getPoliceForceArray()) {
+		for (Policeman policeman : area.getPoliceOffice().getPoliceForceArray()) {
 			if (policeman.rect.intersects(rect)) {
 				return policeman;
 			}
@@ -392,29 +389,21 @@ public class Play extends BasicGameState implements Savable {
 		return null;
 	}
 
+
 	// GETTERS/SETTERS
-	// ================================================================================================================================
+	//================================================================================================================================
 
 	public Person getMainCharacter() {
 		return mainCharacter;
 	}
 
-	/**
-	 * Getter method for the camera
-	 * 
-	 * @return camera
-	 */
-	public Camera getCamera() {
-		return camera;
-	}
-
 	private void startGameTimer() {
-		Timer timer = new Timer(1000, new ActionListener() {
+		gameTimer = new Timer(1000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				gameTime++;
 			}
 		});
-		timer.start();
+		gameTimer.start();
 	}
 
 	public void levelUp() {
@@ -433,17 +422,19 @@ public class Play extends BasicGameState implements Savable {
 		if (isGameOver)
 			return; 
 
-		
-		System.out.println("Should be entering state");
+		if (youWin)
+		{
+			Game.getInstance().getAccount().setHighestLevelReached(area.getLevel()+1);
+			Game.getInstance().getAccount().save();
+		}
+
 		GameOverState gameOver = (GameOverState) Game.getInstance().getState(Globals.GAME_OVER);
-		
-		System.out.println("userIsRobber: " + userIsRobber + "\nYouWin: " + youWin);
 		gameOver.set(userIsRobber, youWin);
-		
+
 		Game.getInstance().enterState(Globals.GAME_OVER,
 				new FadeOutTransition(), new FadeInTransition());
-		
-		
+
+
 		isGameOver = true;
 	}
 
@@ -458,7 +449,10 @@ public class Play extends BasicGameState implements Savable {
 	}
 
 	public Robber getRobber() {
-		return robber;
+		return area.getRobber();
+	}
+	public PoliceOffice getPoliceOffice(){
+		return area.getPoliceOffice();
 	}
 
 	public void setResumingGame(boolean isResumingGame) {
@@ -492,13 +486,14 @@ public class Play extends BasicGameState implements Savable {
 	public JSONObject save() {
 
 		// Save: Robber
-		JSONObject robberObj = robber.save();
+		JSONObject robberObj = getRobber().save();
 
 		// Save: Policemen
-		JSONObject policeOfficeObj = policeOffice.save();
+		JSONObject policeOfficeObj = getPoliceOffice().save();
 
-		// Save: Buildings
-		JSONObject bldgsObj = Building.saveBuildings();
+		// Save: Area
+
+		JSONObject areaObj = area.save();
 
 		// TODO: save highway information (numberof times passed...)
 		// TODO: selected main character
@@ -506,7 +501,7 @@ public class Play extends BasicGameState implements Savable {
 		JSONObject map = new JSONObject();
 		map.put(Globals.ROBBER, robberObj);
 		map.put(Globals.POLICE_OFFICE, policeOfficeObj);
-		map.put(Globals.BUILDINGS, bldgsObj);
+		map.put(Globals.AREA, areaObj);
 		map.put(Globals.TIME, this.gameTime);
 		map.put(Globals.TIME, this.gameTime);
 
@@ -518,21 +513,25 @@ public class Play extends BasicGameState implements Savable {
 
 		HashMap<Object, Object> resumeGame = (HashMap<Object, Object>) loadObj;
 
+		System.out.println(resumeGame);
 		assert resumeGame != null : "There is some type of inconsistency in the resume game";
 
 		gameTime = (int) resumeGame.get(Globals.TIME);
 
 		// LOAD: Robber
 		Object robberObj = resumeGame.get(Globals.ROBBER);
-		robber.load(robberObj);
+		getRobber().load(robberObj);
 
 		// LOAD: PoliceOffice
 		Object policeOfficeObj = resumeGame.get(Globals.POLICE_OFFICE);
-		policeOffice.load(policeOfficeObj);
+		getPoliceOffice().load(policeOfficeObj);
 
 		// LOAD: Buildings
-		Object buildingsObj = resumeGame.get(Globals.BUILDINGS);
-		Building.loadBuildings(buildingsObj);
+		Object areaObj = resumeGame.get(Globals.AREA);
+		area.load(areaObj);
+		//		Building.loadBuildings(areaObj);
 	}
+
+
 
 }

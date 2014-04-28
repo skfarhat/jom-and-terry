@@ -1,6 +1,7 @@
 package game.city.person;
 
 import game.Globals;
+import game.city.building.Area;
 import game.city.building.Building;
 
 import java.awt.event.ActionEvent;
@@ -20,8 +21,8 @@ public class RobberComputer extends Robber {
 
 	private Building buildingToRob = null;
 
-	public RobberComputer() throws SlickException {
-		super();
+	public RobberComputer(Area area) throws SlickException {
+		super(area);
 
 		// Start the robbing
 		startRobbing(); 
@@ -37,10 +38,10 @@ public class RobberComputer extends Robber {
 				if (!isRobbing && !goingToRob) 
 				{
 					// get random number between 0-size
-					int randNum = rand.nextInt(Building.buildings.size()); 
+					int randNum = rand.nextInt(area.getBuildings().size()); 
 
 					// get building at the random index
-					final Building bldg = Building.buildings.get(randNum);
+					final Building bldg = area.getBuildings().get(randNum);
 
 					// if the bldg is not completely robbed 
 					if (!bldg.getIsCompletelyRobbed()){
@@ -162,7 +163,7 @@ public class RobberComputer extends Robber {
 	{
 		// check that the distance between the robber and all the police force is less than 50.0 
 		// If less than 50.0f for some police return true
-		for (Policeman policeman : PoliceOffice.policeForceArray)
+		for (Policeman policeman : area.getPoliceOffice().getPoliceForceArray())
 		{
 			float distance = (float)  Math.sqrt(Math.pow(policeman.position.getX()-this.position.getX(), 2.0) 
 					+ Math.pow(policeman.position.getY()-this.position.getY(), 2.0));

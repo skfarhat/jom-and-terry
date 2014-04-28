@@ -3,6 +3,7 @@ package game.city.building;
 import game.AudioGame;
 import game.city.person.Robber;
 import game.states.Play;
+
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 

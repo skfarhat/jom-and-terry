@@ -33,7 +33,7 @@ public class PlayerLog  {
 
 	private final int ROBBED_BLDGS_X = 0;
 	private final int ROBBED_BLDGS_Y = 70;
-	
+
 	private final int FLAGS_X_INTERVAL = 20;
 	private final int FLAGS_Y = 100;
 
@@ -71,13 +71,13 @@ public class PlayerLog  {
 
 		final Image redImage = new Image("res/Flags/red.png");
 		final Image redImageDeselected = new Image("res/Flags/red-deselected.png");
-		
+
 		final Image violetImage = new Image("res/Flags/violet.png");
 		final Image violetImageDeselected = new Image("res/Flags/violet-deselected.png");
-		
+
 		final Image greenImage = new Image("res/Flags/green.png");
 		final Image greenImageDeselected = new Image("res/Flags/green-deselected.png");
-		
+
 		final Image darkBlueImage = new Image("res/Flags/dark-blue.png");
 		final Image darkBlueImageDeselected = new Image("res/Flags/dark-blue-deselected.png");
 
@@ -85,21 +85,21 @@ public class PlayerLog  {
 				.getContainer(), redImage , (int) position.getX() + FLAGS_X_INTERVAL*1, FLAGS_Y) {
 			@Override
 			public void performAction() {
-				
+
 				// set the flagsShown in the Play State
 				// grab the boolean determining whether we need to show the flag or not
 				boolean shown = Play.getInstance().flagsShown[1] = !Play.getInstance().flagsShown[1];
 
 				// change the image of the button
 				this.setImage((shown)? redImage : redImageDeselected);
-	
+
 			}
 		};
 		MenuButton greenFlagButton = new MenuButton(Game.getInstance()
 				.getContainer(), greenImage , (int) (int)position.getX() + FLAGS_X_INTERVAL*2, FLAGS_Y) {
 			@Override
 			public void performAction() {
-				
+
 				// set the flagsShown in the Play State
 				// grab the boolean determining whether we need to show the flag or not
 				boolean shown = Play.getInstance().flagsShown[2] = !Play.getInstance().flagsShown[2];
@@ -115,7 +115,7 @@ public class PlayerLog  {
 				// set the flagsShown in the Play State
 				// grab the boolean determining whether we need to show the flag or not
 				boolean shown = Play.getInstance().flagsShown[3] = !Play.getInstance().flagsShown[3];
-				
+
 				// change the image of the button
 				this.setImage((shown)? darkBlueImage : darkBlueImageDeselected);
 			}
@@ -124,7 +124,7 @@ public class PlayerLog  {
 				.getContainer(), violetImage ,(int) position.getX() + FLAGS_X_INTERVAL*4, FLAGS_Y) {
 			@Override
 			public void performAction() {
-				
+
 				// set the flagsShown in the Play State
 				// grab the boolean determining whether we need to show the flag or not 
 				boolean shown = Play.getInstance().flagsShown[4] = !Play.getInstance().flagsShown[4];
@@ -150,7 +150,7 @@ public class PlayerLog  {
 	public void draw(int timer){ 
 
 		final Area area = Play.getInstance().getArea(); 
-		
+
 		if (Game.getInstance().getAccount().getIsRobber()){
 			Robber robber = (Robber) person; 
 			String scoreString = String.format("Score: %d", (int) robber.getScore());
@@ -166,7 +166,7 @@ public class PlayerLog  {
 					String.format("Robbed: %d/%d",
 							area.getNumberOfRobbedBuildings(),
 							area.getBuildings().size()),
-					position.getX() + ROBBED_BLDGS_X, position.getY() + ROBBED_BLDGS_Y);
+							position.getX() + ROBBED_BLDGS_X, position.getY() + ROBBED_BLDGS_Y);
 			g.drawString(logText,position.getX() + LOG_X, position.getY()+ LOG_Y);
 		}
 		else {
@@ -209,7 +209,9 @@ public class PlayerLog  {
 		return String.format("%s:%s", mnStr, secStr);
 
 	}
-
+	public void setPerson(Person person) {
+		this.person = person;
+	}
 	public void clickButton() {
 		for (MenuButton b : buttons) {
 			if (b.isMouseOver())

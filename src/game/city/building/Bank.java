@@ -21,11 +21,6 @@ import org.newdawn.slick.geom.Point;
 public class Bank extends Building {
 
 	/**
-	 * ArrayList that contains all the created banks
-	 */
-	public static ArrayList<Bank> banks = new ArrayList<>(10);
-	
-	/**
 	 * The number of security guards this bank has
 	 */
 	int numberOfSecurityGuards = 1;
@@ -65,9 +60,6 @@ public class Bank extends Building {
 
 			// add the security guard to the array
 			this.securityGuards.add(sg);
-			
-			// add the created bank to the static banks array
-			banks.add(this);
 		}
 	}
 

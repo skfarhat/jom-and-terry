@@ -2,8 +2,9 @@ package game.city.person;
 
 import game.Globals;
 import game.city.Camera;
+import game.city.building.Area;
 import game.city.building.Building;
-import game.city.road.Highway;
+import game.city.road.Road;
 import game.menu.PlayerLog;
 import game.states.Play;
 import game.states.Savable;
@@ -13,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import org.json.simple.JSONObject;
 import org.newdawn.slick.Input;
@@ -28,10 +30,12 @@ import org.newdawn.slick.util.ResourceLoader;
 
 public class PoliceOffice implements Savable{
 
+	final Random rand = new Random(System.currentTimeMillis());
+		
 	private static final String EMERGENCY_SOUND = "res/Sounds/Emergency.ogg" ;
 
-	private static final Integer numberOfPolicemen = 3; 
-	public static ArrayList<Policeman> policeForceArray = new ArrayList<>(numberOfPolicemen);
+	private Integer numberOfPolicemen = 0;  
+	public ArrayList<Policeman> policeForceArray;
 	private static Audio sound;
 	private static boolean isPlayingSound = false; 
 	private static boolean userIsPolice; 
@@ -39,37 +43,44 @@ public class PoliceOffice implements Savable{
 	protected static int gatherCount = 0; 
 	public static Integer robberVisibleCount = 0; 
 
-	private Robber robber; 
-	public PoliceOffice(Robber robber, boolean userIsPolice) throws SlickException {
+	private Area area; 
+	private Robber robber;
+	private Policeman selectedPoliceman; 
+	
+	public PoliceOffice(Area area, Robber robber, boolean userIsPolice) throws SlickException {
 
+		PoliceOffice.userIsPolice = userIsPolice; 
+
+		this.area = area; 
 		this.robber = robber; 
 		
-		// Initialize the Police Force Array
 		policeForceArray = new ArrayList<>(numberOfPolicemen);
+		numberOfPolicemen = area.getBuildings().size()/5;			// 1 policeman for 5 buildings
 
-		// set the boolean user is police
-		PoliceOffice.userIsPolice = userIsPolice; 
 
 		// Create Policemen 
 		for (int i=0; i< numberOfPolicemen; i++) {
 
-			// initial position of policemen
-			int x = 400, y = 500;
+			// random first position for the policeman 
+			final int x = rand.nextInt(800);
+			final int y = rand.nextInt(800);
+			final Point position = new Point(x,y);
+			final String policeName = "Police-1";
 
 			// Create Policeman
 			Policeman police; 
-			final String policeName = "Police-1";
-			final Point position = new Point(x,y);
 
 			if (userIsPolice)
-				police = new PolicemanUser(robber, position, policeName, Globals.POLICEMAN_VELOCITY);
+				police = new PolicemanUser(area, robber, position, policeName, Globals.POLICEMAN_VELOCITY);
 			else
-				police = new PolicemanComputer(robber, position, policeName, Globals.POLICEMAN_VELOCITY);
+				police = new PolicemanComputer(area, robber, position, policeName, Globals.POLICEMAN_VELOCITY);
 
 			// Add Policeman to the Policeman
 			policeForceArray.add(police);
 		}
-
+		
+		selectedPoliceman = policeForceArray.get(0);	// selected policeman is the  first on the list
+		
 		// Initialize the Emergency calling sound
 		try {
 			sound = AudioLoader.getStreamingAudio("OGG", ResourceLoader.getResource(EMERGENCY_SOUND));
@@ -87,7 +98,7 @@ public class PoliceOffice implements Savable{
 		}
 	}
 
-	public static void callPolice(Building bldg){
+	public void callPolice(Building bldg){
 		Point center = bldg.position; 		
 		float error = 10.0f; 
 
@@ -111,12 +122,12 @@ public class PoliceOffice implements Savable{
 		playSound();
 	}
 
-	public static void callPolice(Highway highway){ 		
+	public void callPolice(Road road){ 		
 
 		if (!userIsPolice){
 			for (Policeman police: policeForceArray){	
 
-				((PolicemanComputer) police).checkoutHighway(highway);
+				((PolicemanComputer) police).checkoutHighway(road);
 			}
 		}
 
@@ -193,6 +204,7 @@ public class PoliceOffice implements Savable{
 		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
 			if (userIsPolice){
 
+				System.out.println("here in process input of police");
 				int destX = input.getMouseX();
 				int destY = input.getMouseY();
 
@@ -205,31 +217,11 @@ public class PoliceOffice implements Savable{
 				// display info for this building
 				if (bldg != null) 
 					bldg.setShowBuildingInfo(true);
-
-
-				// save the previous policeman and deselect him later
-				PolicemanUser prevPoliceman = (PolicemanUser) Play.getInstance().getMainCharacter();
-
-				// get the policeman that is selected by the mouse
-				PolicemanUser policeman = (PolicemanUser) selectPoliceman(destX, destY);
-
-				// 
-				if (policeman == null)
-					return; 
-
-				// set the isSelected to true
-				policeman.setSelected(true);
-
-				// Deselect the previous policeman
-				prevPoliceman.setSelected(false); 
-
-				// set the main character in the Play
-				Play.getInstance().setMainCharacter(policeman);
 			}
 		}
 		else if (input.isKeyPressed(Input.KEY_G)) {
 			if (userIsPolice){
-				Camera camera = Play.getInstance().getCamera();
+				Camera camera = area.getCamera();
 
 				float x = input.getMouseX() + camera.getCameraX();
 				float y = input.getMouseY() + camera.getCameraY(); 
@@ -240,16 +232,15 @@ public class PoliceOffice implements Savable{
 	}
 
 	private Building selectBuilding(Point pnt){
-		Camera camera = Play.getInstance().getCamera();
 		// create a rectangle and use the intersect method to check whether 
 		// the policeman rect intersects with the mouse click
 		Rectangle rect = new Rectangle(
-				camera.getCameraX() + pnt.getX() - Globals.SELECTION_ERROR/2, 
-				camera.getCameraY() + pnt.getY() - Globals.SELECTION_ERROR/2,
+				area.getCamera().getCameraX() + pnt.getX() - Globals.SELECTION_ERROR/2, 
+				area.getCamera().getCameraY() + pnt.getY() - Globals.SELECTION_ERROR/2,
 				Globals.SELECTION_ERROR,
 				Globals.SELECTION_ERROR);
 
-		for (Building bldg: Building.buildings){
+		for (Building bldg: area.getBuildings()){
 			if (bldg.getRect().intersects(rect))
 			{
 				return bldg;  
@@ -264,7 +255,7 @@ public class PoliceOffice implements Savable{
 	 * @return a policeman object if the destX and destY passed are close to a policeman in the map. Returns null otherwise
 	 */
 	private Policeman selectPoliceman(int destX, int destY){
-		Camera camera = Play.getInstance().getCamera();
+		Camera camera = area.getCamera();
 
 		// create a rectangle and use the intersect method to check whether 
 		// the policeman rect intersects with the mouse click
@@ -293,13 +284,35 @@ public class PoliceOffice implements Savable{
 		return policeForceArray;
 	}
 
+	public Policeman getSelectedPoliceman() {
+		return selectedPoliceman;
+	}
+	
+	public void setSelectedPoliceman(Policeman selectedPoliceman) {
+		
+		// deselect the previously selected policemen 
+		((PolicemanUser)this.selectedPoliceman).setSelected(false);
+		
+		// set the new selected policeman to the passed one
+		this.selectedPoliceman = selectedPoliceman;
+
+		// make the new policeman selected
+		((PolicemanUser)this.selectedPoliceman).setSelected(true);
+	}
+	
+	public void setArea(Area area){
+		for (Policeman policeman: policeForceArray){
+			policeman.setArea(area);
+		}
+		this.area = area;  
+	}
 
 	@Override
 	public JSONObject save() {
 
 		JSONObject policemenObj = new JSONObject(); 
 
-		for (Policeman policeman: PoliceOffice.policeForceArray)
+		for (Policeman policeman: policeForceArray)
 		{
 			JSONObject policemanObj= policeman.save();
 			policemenObj.put(policeman.ID, policemanObj);
@@ -325,7 +338,7 @@ public class PoliceOffice implements Savable{
 		HashMap<Object, Object> policemenMap = (HashMap<Object, Object>) map.get(Globals.POLICEMEN);
 		System.out.println("PolicemenMap: " + policemenMap);
 
-		for (Policeman policeman : PoliceOffice.policeForceArray){
+		for (Policeman policeman : policeForceArray){
 
 			// get the policeman map 
 			HashMap<Object, Object> policemanMap = (HashMap<Object, Object>) policemenMap.get("" + policeman.ID);

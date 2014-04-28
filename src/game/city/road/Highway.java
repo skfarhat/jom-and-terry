@@ -1,6 +1,6 @@
 package game.city.road;
 
-import game.city.person.PoliceOffice;
+import game.city.building.Area;
 import game.city.person.Robber;
 import game.states.Play;
 
@@ -31,8 +31,8 @@ public class Highway extends Road {
 	 * @param positionX
 	 * @param positionY
 	 */
-	public Highway(Point position, Rectangle rect) {
-		super(position,rect);
+	public Highway(Area area, Point position, Rectangle rect) {
+		super(area, position,rect);
 		
 		// add the created highway to the array list 
 		highways.add(this);
@@ -64,7 +64,7 @@ public class Highway extends Road {
 	}
 	
 	public void notifiyPoliceOffice(){
-		PoliceOffice.callPolice(this);
+		callPolice();
 	}
 
 }

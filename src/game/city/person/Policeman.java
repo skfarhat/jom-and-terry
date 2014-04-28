@@ -1,10 +1,13 @@
 package game.city.person;
 
-import java.util.HashMap;
-import java.util.Random;
 import game.Globals;
+import game.city.building.Area;
 import game.states.Play;
 import game.states.Savable;
+
+import java.util.HashMap;
+import java.util.Random;
+
 import org.json.simple.JSONObject;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
@@ -54,11 +57,11 @@ public class Policeman extends Person implements Savable{
 	 * @param velocity
 	 * @throws SlickException
 	 */
-	public Policeman(Robber robber,  Point position, String name,
+	public Policeman(Area area, Robber robber,  Point position, String name,
 			double velocity) throws SlickException {
 
 		// call superclass constructor (Person)
-		super(name, velocity);
+		super(area, name, velocity);
 
 		super.initSpriteSheet(policeSpriteSheet, 4, 2);
 		// set the Sprite Sheet
@@ -117,9 +120,7 @@ public class Policeman extends Person implements Savable{
 				true,//horizontal
 				duration,//display time
 				true//autoupdate
-				);
-	
-//		currentAnimation.start();  
+				);  
 	}
 
 	/**
@@ -138,11 +139,13 @@ public class Policeman extends Person implements Savable{
 
 	public void draw() {
 		// draw the image at the positon of the policeman
-//		this.image.draw(this.position.getX(), this.position.getY());
 		this.currentAnimation.draw(this.position.getX(), this.position.getY());
 
 	}
 
+	public void stop(){
+		this.currentAnimation.stop(); 
+	}
 	/**
 	 * Attempt to arrest a robber.
 	 * 
@@ -156,7 +159,7 @@ public class Policeman extends Person implements Savable{
 				+ Math.pow(this.position.getY()-this.robber.position.getY(), 2.0)
 				);
 
-		
+		System.out.println("the distance is " + distance);
 		// arrest only if he is less than some distance away
 		if (distance < Globals.ARREST_DISTANCE)
 		{

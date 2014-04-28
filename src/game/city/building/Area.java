@@ -1,12 +1,21 @@
 package game.city.building;
 
+import game.Game;
 import game.Globals;
+import game.city.Camera;
+import game.city.person.PoliceOffice;
+import game.city.person.Robber;
+import game.city.person.RobberComputer;
+import game.city.person.RobberUser;
 import game.city.road.Highway;
 import game.city.road.Road;
+import game.states.Savable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
+import org.json.simple.JSONObject;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Point;
@@ -14,52 +23,73 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.tiled.TiledMap;
 
 
-public class Area {
-	
+public class Area implements Savable{
+
 	// TODO: make the loops only one loop
 	private TiledMap areaTileMap;
 	private Line[] mapBounds;
 	private Gate exitGate = null; 
 	private int numberOfRobbedBuildings = 0; 
+	protected int level; 
+
+	protected Camera camera;
+
+	protected Robber robber; 
+	protected PoliceOffice policeOffice; 
 
 	/**
 	 * An array containing all the buildings created in the current area
 	 */
 	private ArrayList<Building> buildings = new ArrayList<>(20);
-
 	/**
 	 * ArrayList that contains all the created banks
 	 */
 	private ArrayList<Bank> banks = new ArrayList<>(10);
-
 	/**
 	 * ArrayList containing all the created shops
 	 */
 	private ArrayList<Shop> shops = new ArrayList<>(10); 
-
 	/**
 	 * ArrayList containing all the created houses
 	 */
 	private ArrayList<House> houses = new ArrayList<>(10);
-
 	/**
 	 * ArrayList containing all the created highways
 	 */
 	private ArrayList<Highway> highways = new ArrayList<>(10);
-
 	/**
 	 * ArrayList containing all the created gates. One gate will open when the user has robbed all the buildings
 	 */
-	private ArrayList<Gate> gates = new ArrayList<>(10);
-	
+	private ArrayList<Gate> gates = new ArrayList<>(10);	
 	/**
 	 * ArrayList containing all the road objects.
 	 */
 	private ArrayList<Road> roads = new ArrayList<>(10);
 
-	public Area(String areaMapPath) {
+	/**
+	 * Constructor
+	 * @param level
+	 * @param areaMapPath
+	 */
+	public Area(int level, String areaMapPath) {
+		this.level = level; 
 		try{
 			initMap(areaMapPath);
+
+
+			// Create Robber
+			boolean userIsRobber = Game.getInstance().getAccount().getIsRobber();
+			if (userIsRobber)
+				robber = new RobberUser(this);
+			else
+				robber = new RobberComputer(this);
+
+			// Create Police Office		
+			boolean userIsPolice = !userIsRobber;
+			this.policeOffice = new PoliceOffice(this, robber, userIsPolice);
+
+			// Create Camera
+			camera = new Camera(getAreaTileMap());
 		}
 		catch (Exception exc){
 			exc.printStackTrace();
@@ -177,8 +207,8 @@ public class Area {
 			// create the rectangle of the highway
 			Rectangle rect = new Rectangle(x, y, width, height);
 
-			
-			Highway highway = new Highway(position, rect);
+
+			Highway highway = new Highway(this, position, rect);
 			highways.add(highway);
 		}
 
@@ -203,12 +233,12 @@ public class Area {
 		}
 
 		// randomly choose a gate as the exit game
-		
+
 		int randIndex = new Random(System.currentTimeMillis()).nextInt(gates.size()); 
 		this.exitGate = gates.get(randIndex);
-		
-		
-		
+
+
+
 		// ROAD
 		// ==========================================================================================
 		int roadsObjectCount = areaTileMap.getObjectCount(Globals.ROAD_OBJECT_INDEX);
@@ -224,8 +254,8 @@ public class Area {
 			// create the rectangle of the road
 			Rectangle rect = new Rectangle(x, y, width, height);
 
-			Road road = new Road(position, rect); 
-			
+			Road road = new Road(this, position, rect); 
+
 			roads.add(road);
 		}
 	}
@@ -242,8 +272,7 @@ public class Area {
 		numberOfRobbedBuildings++; 
 
 		if (numberOfRobbedBuildings == buildings.size()){
-			// TODO: LEVEL UP
-			// the player has finished the game
+			// Exit Gate is open the player can finish the level
 			exitGate.setOpen(true);
 
 		}
@@ -252,11 +281,10 @@ public class Area {
 	public int getNumberOfRobbedBuildings() {
 		return numberOfRobbedBuildings;
 	}
-	
+
 	public void reset(){
 		numberOfRobbedBuildings = 0; 
 	}
-
 
 	public Gate getExitGate() {
 		return exitGate;
@@ -274,5 +302,46 @@ public class Area {
 		return roads;
 	}
 
+	public ArrayList<House> getHouses() {
+		return houses;
+	}
+	public ArrayList<Bank> getBanks() {
+		return banks;
+	}
+	public ArrayList<Shop> getShops() {
+		return shops;
+	}
+	public Robber getRobber() {
+		return robber;
+	}
+	public PoliceOffice getPoliceOffice() {
+		return policeOffice;
+	}
+	public int getLevel() {
+		return level;
+	}
+	public Camera getCamera() {
+		return camera;
+	}	
+
+	@Override
+	public JSONObject save() {
+		JSONObject bldgObjects = new JSONObject();
+		for (Building bldg: buildings){
+			JSONObject bldgObject = bldg.save(); 
+			bldgObjects.put(bldg.ID, bldgObject);
+		}
+		return bldgObjects;
+	}
+
+	@Override
+	public void load(Object loadObj) {
+		HashMap<Object, Object> map = (HashMap<Object, Object>) loadObj;
+
+		for (Building bldg: buildings){
+			HashMap<Object, Object> bldgMap = (HashMap<Object, Object> ) map.get(""+ bldg.ID);
+			bldg.load(bldgMap);
+		}
+	}
 }
 

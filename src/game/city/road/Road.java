@@ -1,6 +1,7 @@
 package game.city.road;
 
 import game.Globals;
+import game.city.building.Area;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +18,9 @@ import org.newdawn.slick.geom.Rectangle;
  * 
  */
 public class Road {
+	
+	protected Area area; 
+	
 	/**
 	 * Indicates whether the road is lighted.
 	 */
@@ -45,7 +49,7 @@ public class Road {
 	 * @param positionY
 	 * @param isLighted
 	 */
-	public Road(Point position, Rectangle rect) {
+	public Road(Area area, Point position, Rectangle rect) {
 		// set the position
 		this.position = position; 
 
@@ -65,6 +69,11 @@ public class Road {
 		displayRoadInfoTimer.setRepeats(false);
 	}
 
+
+	public void callPolice(){
+		area.getPoliceOffice().callPolice(this);
+	}
+	
 	public void drawRoadInfo(){
 		if (showRoadInfo)
 			roadInfo.draw(position.getX(), position.getY()- RoadInfo.ROAD_INFO_HEIGHT);

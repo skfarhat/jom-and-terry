@@ -43,9 +43,10 @@ public class Account {
 	public Account() {
 	}
 
-	public Account(String username) {
+	public Account(String username, boolean isRobber) {
 		this.username = username; 
-		this.pastScores = new ArrayList<>(); 
+		this.pastScores = new ArrayList<>();
+		this.isRobber = isRobber;
 	}
 
 	public boolean create() {
@@ -149,6 +150,10 @@ public class Account {
 	}
 
 	
+	public void setHighestLevelReached(Integer highestLevelReached) {
+		if (highestLevelReached > this.highestLevelReached)
+			this.highestLevelReached = highestLevelReached;			
+	}
 	public void setIsRobber(Boolean isRobber) {
 		this.isRobber = isRobber;
 	}

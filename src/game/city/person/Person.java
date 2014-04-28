@@ -1,5 +1,7 @@
 package game.city.person;
 
+import game.city.building.Area;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -26,7 +28,7 @@ public abstract class Person {
 	public static Image selectedImage;
 
 	protected boolean isMoving = false;
-	
+	protected Area area; 
 	// Initialize the selection image
 	static {
 		try {
@@ -66,10 +68,11 @@ public abstract class Person {
 	 * @param name
 	 * @param velocity
 	 */
-	public Person (String name, double velocity) {
+	public Person (Area area, String name, double velocity) {
 		this.name = name;
 		this.velocity = velocity;
-		this.ID = ++PersonCount; 		
+		this.ID = ++PersonCount;
+		this.area = area;  
 	}
 
 	protected void initSpriteSheet(String spriteSheetName, int spritesPerRow, int spritesPerColumn)  {
@@ -95,4 +98,9 @@ public abstract class Person {
 	 public boolean isMoving() {
 		return isMoving;
 	}
+
+	 public void setArea(Area area) {
+		this.area = area;
+	}
+
 }

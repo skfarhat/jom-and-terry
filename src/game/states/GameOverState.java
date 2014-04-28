@@ -1,6 +1,9 @@
 package game.states;
 
 
+import game.Game;
+import game.Globals;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -32,11 +35,13 @@ public class GameOverState extends BasicGameState {
 				this.gameOverImage = new Image((userIsRobber)?RobberWin: PoliceWin);
 			else
 				this.gameOverImage = new Image((userIsRobber)?RobberGameOver: PoliceGameOver);
+	
 		}
 		catch (Exception exc){
 			exc.printStackTrace();
 		}
 	}
+	
 	public GameOverState(boolean userIsRobber, boolean youWin) {
 		try{
 			if (youWin)
@@ -49,7 +54,6 @@ public class GameOverState extends BasicGameState {
 		}
 	}
 	
-
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg)
 			throws SlickException {
@@ -57,22 +61,7 @@ public class GameOverState extends BasicGameState {
 
 
 	}
-
-//	@Override
-//	public void enter(GameContainer container, StateBasedGame game)
-//			throws SlickException {
-//		super.enter(container, game);
-//
-//		try{
-//			boolean userIsRobber = Game.getInstance().getAccount().getIsRobber();
-//
-//			this.gameOverImage = new Image((userIsRobber)?RobberGameOver: PoliceWin);
-//		}
-//		catch(SlickException exc)
-//		{
-//			exc.printStackTrace();
-//		}
-//	}
+	
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
@@ -89,7 +78,8 @@ public class GameOverState extends BasicGameState {
 
 		if (input.isKeyDown(Input.KEY_ENTER) || input.isKeyDown(Input.KEY_ESCAPE) || input.isKeyDown(Input.KEY_SPACE))
 		{
-			this.gc.reinit();
+			gc.reinit();
+			Game.getInstance().enterState(Globals.AREA_PICK);
 		}
 	}
 

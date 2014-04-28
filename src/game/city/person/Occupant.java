@@ -58,8 +58,7 @@ public class Occupant implements Observer{
 
 	public void callPolice() {
 		// call Police
-		PoliceOffice.callPolice(building);
-
+		building.getArea().getPoliceOffice().callPolice(building);
 	}
 
 	/**

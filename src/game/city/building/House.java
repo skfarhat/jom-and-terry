@@ -3,7 +3,6 @@ package game.city.building;
 import game.Globals;
 import game.city.person.Occupant;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.simple.JSONObject;
@@ -19,11 +18,6 @@ import org.newdawn.slick.geom.Rectangle;
  * 
  */
 public class House extends Building {
-	
-	/**
-	 * Static array of all the houses created
-	 */
-	private static ArrayList<House> houses = new ArrayList<>(10);
 	
 	public Rectangle frame;
 	
@@ -49,12 +43,6 @@ public class House extends Building {
 		// add the occupant to the house occupants array 
 		occupants.add(occupant);
 		
-		// add this house to the static array list containing all the houses
-		houses.add(this);
-	}
-	
-	public static ArrayList<House> getHouses() {
-		return houses;
 	}
 
 	@Override

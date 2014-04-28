@@ -18,14 +18,12 @@ public final class Globals {
 	public static final int APP_HEIGHT = 800;
 	public static final int TILE_SIZE = 16;
 
-	
 	// Directories
 	public static final String SAVE_DIRECTORY_PATH		= "Save/";
 	
-	
 	// Robber
 	public static final float ROBBER_VISION_DISTANCE = 400.0f; 
-	public static final float ARREST_DISTANCE = 30.0f;  
+	public static final float ARREST_DISTANCE = 50.0f;  
 
 	// Velocity
 	public static final float VELOCITY_MULTIPLIER = 0.02f; 
@@ -63,7 +61,8 @@ public final class Globals {
 	public static final String HOUSE 		= "House";
 	public static final String SHOP 		= "Shop";
 	public static final String BANK 		= "Bank";
-	public static final String BUILDINGS 	= "Buildings";
+	public static final String AREA			= "Area";
+//	public static final String BUILDINGS 	= "Buildings";
 	
 	public static final String ROBBER 		= "Robber";
 	public static final String POLICE_OFFICE= "PoliceOffice";

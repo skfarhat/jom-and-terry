@@ -10,17 +10,13 @@ import game.states.Savable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.Timer;
 
-import org.json.simple.JSONObject;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
-
-@SuppressWarnings("unchecked")
 
 /**
  * Buildings abstract class.
@@ -28,15 +24,8 @@ import org.newdawn.slick.geom.Rectangle;
  * @author sami
  * 
  */
-public abstract class Building extends Observable implements Savable{
-
-	
-	private final Area area; 
-	
-	/**
-	 * An array containing all the buildings created
-	 */
-	public static ArrayList<Building> buildings = new ArrayList<>(20); 
+public abstract class Building extends Observable implements Savable{	
+	private final Area area;  
 
 	// Observers
 	public ArrayList<Observer> observers = new ArrayList<>(3);
@@ -50,7 +39,7 @@ public abstract class Building extends Observable implements Savable{
 	protected boolean showBuildingInfo = false;
 	public boolean isHighlighted;
 	private Timer displayBuildingInfoTimer;
- 
+
 	//==============================================================================================================================
 	// ROBBING
 	// FIXME: ROBBING DURATION modify for each building
@@ -90,7 +79,7 @@ public abstract class Building extends Observable implements Savable{
 		this.ID = ID; 
 
 		this.area = area; 
-		
+
 		this.rect = new Rectangle(position.getX(), position.getY(), width, height);
 
 		this.position = position; 
@@ -125,7 +114,7 @@ public abstract class Building extends Observable implements Savable{
 				this.rect.getWidth() + 2 * Globals.BUILDING_ROBBING_DISTANCE, 
 				this.rect.getHeight()+ 2 * Globals.BUILDING_ROBBING_DISTANCE);
 
-		buildings.add(this);
+		//		buildings.add(this);
 	}
 
 	public void rob(final Robber robber){
@@ -190,7 +179,7 @@ public abstract class Building extends Observable implements Savable{
 					{
 						((RobberComputer)robber).setBuildingToRob(null);
 					}
-					
+
 					area.incrementNumberOfRobbedBuildings();
 					robbingTimer.stop();						// stop the robbing timer
 				}
@@ -205,7 +194,7 @@ public abstract class Building extends Observable implements Savable{
 	}
 
 	public void draw(boolean showFlag){
-	
+
 		// Draw the filling bar at the xPos of the building but a bit above
 		if (showBuildingInfo)
 			bldgInfo.draw(position.getX(), position.getY()- BuildingInfo.BUILDING_INFO_HEIGHT);
@@ -222,6 +211,10 @@ public abstract class Building extends Observable implements Savable{
 		flag.nextFlag();
 	}
 
+	
+	public void callPolice(){
+		area.getPoliceOffice().callPolice(this);
+	}
 	// GETTERS/SETTERS
 	//==============================================================================================================================
 	/**
@@ -269,7 +262,6 @@ public abstract class Building extends Observable implements Savable{
 		}
 		else return ""; 
 	}
-
 	public boolean isInRobbingDistance(Rectangle rect){
 		Rectangle temprect =  new Rectangle(
 				this.position.getX() - Globals.BUILDING_ROBBING_DISTANCE,
@@ -280,7 +272,6 @@ public abstract class Building extends Observable implements Savable{
 		return 
 				temprect.intersects(rect);
 	}
-
 	protected void setCompletelyRobbed(boolean isCompletelyRobbed) {
 		this.isCompletelyRobbed = isCompletelyRobbed;
 		if (isCompletelyRobbed)
@@ -290,11 +281,12 @@ public abstract class Building extends Observable implements Savable{
 	public Rectangle getRect() {
 		return rect;
 	}
-	
 	public Flag getFlag() {
 		return flag;
 	}
-
+	public Area getArea() {
+		return area;
+	}
 	// FLAG
 	// ==============================================================================================================================
 
@@ -311,21 +303,4 @@ public abstract class Building extends Observable implements Savable{
 		flag = null; 
 	}
 
-	public static JSONObject saveBuildings(){
-		JSONObject bldgObjects = new JSONObject();
-		for (Building bldg: Building.buildings){
-			JSONObject bldgObject = bldg.save(); 
-			bldgObjects.put(bldg.ID, bldgObject);
-		}
-		return bldgObjects;
-	}
-
-	public static void loadBuildings(Object loadObj){
-		HashMap<Object, Object> map = (HashMap<Object, Object>) loadObj;
-
-		for (Building bldg: Building.buildings){
-			HashMap<Object, Object> bldgMap = (HashMap<Object, Object> ) map.get(""+ bldg.ID);
-			bldg.load(bldgMap);
-		}
-	}
 }

@@ -54,7 +54,7 @@ public class Camera {
 	 * @param gc the GameContainer, used for getting the size of the GameCanvas
 	 * @param map the TiledMap used for the current scene
 	 */
-	public Camera(TiledMap map, Person person) {
+	public Camera(TiledMap map) {
 		this.map = map;
 
 		this.numTilesX = map.getWidth();
@@ -65,8 +65,6 @@ public class Camera {
 
 		this.mapWidth = this.numTilesX * this.tileWidth;
 		this.mapHeight = this.numTilesY * this.tileHeight;
-
-		this.person = person; 
 
 		Point position = new Point(Globals.APP_WIDTH-150, 0);
 		this.playerLog = new PlayerLog(person, position);
@@ -126,10 +124,11 @@ public class Camera {
 		else if (mouseX <= error && cameraX >= Globals.CAMERA_SCROLL_SPEED)
 			cameraX = cameraX - Globals.CAMERA_SCROLL_SPEED; 
 
-		else if (mouseY > (gc.getHeight() - error) && cameraX < mapHeight/2)
+		else if (mouseY > (gc.getHeight() - error) && (cameraX + gc.getWidth()) < mapHeight)
 			cameraY = cameraY + Globals.CAMERA_SCROLL_SPEED; 
 
-		else if (mouseY < (error) && cameraY > mapHeight/2)
+		else if (mouseY <= error && cameraY >= Globals.CAMERA_SCROLL_SPEED)
+			//		else if (mouseY < (error) )
 			cameraY = cameraY - Globals.CAMERA_SCROLL_SPEED;
 
 		if (!(
@@ -204,6 +203,7 @@ public class Camera {
 
 	public void setPerson(Person person) {
 		this.person = person;
+		this.playerLog.setPerson(person);
 	}
 
 	public float getCameraX() {

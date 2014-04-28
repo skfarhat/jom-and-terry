@@ -105,26 +105,20 @@ public class AccountPick extends Menu {
 					.getContainer(), accountImage, username.toUpperCase(),  x, y1) {
 				@Override
 				public void performAction() {
-					
 					AudioGame.playAsSound("button-21.ogg");
 					
 					// load account 
 					Account account = Account.load(username);
-					
 					// set the current selected account 
 					Game.getInstance().setAccount(account);
 					
 					GameContainer container = Game.getInstance().getContainer(); 
 					try {
-
 						Game.getInstance().getState(Globals.MAIN_MENU).init(container, Game.getInstance());
 						Game.getInstance().enterState(Globals.MAIN_MENU);
 					} catch (SlickException e) {
 						e.printStackTrace();
 					}
-					// go to Main Menu
-
-
 				}
 			};
 

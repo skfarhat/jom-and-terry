@@ -73,7 +73,7 @@ public class SecurityGuard extends Person {
 	 */
 	public SecurityGuard(Point position, String name,
 			double velocity, Bank guardedBank) throws SlickException {
-		super(name, velocity);
+		super(null, name, velocity);
 
 
 		this.guardedBank = guardedBank;
@@ -286,8 +286,7 @@ public class SecurityGuard extends Person {
 	 * @return
 	 */
 	public void callPolice(Point center, float error) {
-
-		PoliceOffice.callPolice(this.guardedBank);
+		guardedBank.callPolice();
 	}
 
 	public boolean arrestRobber(Robber robber) {

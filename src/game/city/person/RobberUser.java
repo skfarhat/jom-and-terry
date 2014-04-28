@@ -1,6 +1,7 @@
 package game.city.person;
 
 import game.Globals;
+import game.city.building.Area;
 import game.city.building.Building;
 import game.city.building.Gate;
 import game.states.Play;
@@ -11,8 +12,8 @@ import org.newdawn.slick.geom.Line;
 
 public class RobberUser extends Robber implements Movable {
 
-	public RobberUser() throws SlickException {
-		super();
+	public RobberUser(Area area) throws SlickException {
+		super(area);
 	}
 
 	@Override
@@ -155,7 +156,7 @@ public class RobberUser extends Robber implements Movable {
 		}
 
 		// Collision wiht Buildings
-		for (Building bldg : Building.buildings) {
+		for (Building bldg : area.getBuildings()) {
 			if (this.rect.intersects(bldg.getRect())) {
 				this.nearByBldg = bldg;
 				isInCollision = true;

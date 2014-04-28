@@ -1,9 +1,9 @@
 package game.city.person;
 
 import game.Globals;
+import game.city.building.Area;
 import game.city.building.Building;
-import game.city.building.House;
-import game.city.road.Highway;
+import game.city.road.Road;
 import game.states.Play;
 
 import java.awt.event.ActionEvent;
@@ -32,10 +32,10 @@ public class PolicemanComputer extends Policeman{
 	 */
 	private ArrayList<Point> nextPoints = new ArrayList<>(5);
 
-	public PolicemanComputer(Robber robber, Point position,
+	public PolicemanComputer(Area area, Robber robber, Point position,
 			String name, double velocity)
 					throws SlickException {
-		super(robber, position, name, velocity);
+		super(area, robber, position, name, velocity);
 	}
 
 	public void startPatrol()
@@ -44,8 +44,8 @@ public class PolicemanComputer extends Policeman{
 
 		patrolTimer = new Timer(2000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Integer index = (new Random()).nextInt(House.getHouses().size());
-				Building bldg = Building.buildings.get(index);
+				Integer index = (new Random()).nextInt(area.getHouses().size());
+				Building bldg = area.getBuildings().get(index);
 
 				move(bldg.position);
 			}
@@ -158,7 +158,7 @@ public class PolicemanComputer extends Policeman{
 		this.isCheckingSuspectRegion = true;
 	}
 
-	public void checkoutHighway(Highway highway){
+	public void checkoutHighway(Road road){
 		// to check out a highway
 
 		//first stop patroling
@@ -166,8 +166,8 @@ public class PolicemanComputer extends Policeman{
 			stopPatrol();
 
 		// choose two random points in the highway 
-		Point firstPoint = randomPointInRect(highway.getRect());
-		Point secondPoint = randomPointInRect(highway.getRect());
+		Point firstPoint = randomPointInRect(road.getRect());
+		Point secondPoint = randomPointInRect(road.getRect());
 
 		// add the points to the array
 		nextPoints.add(firstPoint);

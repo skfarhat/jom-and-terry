@@ -136,12 +136,14 @@ public class AreaPick extends Menu {
 			try {areaImage = new Image (imagePath);}
 			catch (SlickException e) {areaImage = null;}
 
+			// used to get the path for the area
+			// but also for the level of the area
 			final int index = i; 
 			menuButtons[i] =  new MenuButton(sbg.getContainer(), areaImage, x, y) {
 				@Override
 				public void performAction() {
 					if (unlocked)
-						enterPlay(cityTMXPaths[index-1]);
+						enterPlay(index, cityTMXPaths[index-1]);
 				}
 			}
 			;
@@ -150,10 +152,10 @@ public class AreaPick extends Menu {
 		this.setButtons(menuButtons);
 	}
 
-	public void enterPlay(String cityPath){
+	public void enterPlay(int level, String cityPath){
 		AudioGame.playAsSound("button-21.ogg");
-		Area area = new Area(cityPath);
-		Play.getInstance().setArea(area);
+		Play.getInstance().set(level, cityPath);
+//		Play.getInstance().reset();
 		sbg.enterState(Globals.PLAY);
 	}
 

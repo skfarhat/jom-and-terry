@@ -156,7 +156,7 @@ public class NewAccountView extends Menu {
 		String username = usernameTextField.getText(); 
 
 		// initialize account
-		Account account = new Account(username);
+		Account account = new Account(username, isRobber);
 
 		// create account 
 		createSuccess = account.create();

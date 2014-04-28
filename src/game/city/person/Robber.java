@@ -1,6 +1,7 @@
 package game.city.person;
 
 import game.Globals;
+import game.city.building.Area;
 import game.city.building.Building;
 import game.states.Savable;
 
@@ -20,7 +21,6 @@ public class Robber extends Person implements Savable{
 	// TODO: see what to do with this
 	Random rand = new Random(); 
 
-//	private String playerSpriteSheet = "res/SpriteSheets/robber-2.png";
 	private static String playerSpriteSheet = "res/SpriteSheets/robber-spritesheet.png";
 	public boolean isCaught = false;
 
@@ -28,34 +28,22 @@ public class Robber extends Person implements Savable{
 
 	protected float score; 
 	protected Integer money;  
-
-	// =================================================================================================== 
+ 
 	// ENVIRONMENT AROUND 
 	public Building nearByBldg;													
-
-	// ===================================================================================================
-//	// TODO: the following 2 should be 'constants'
-//	// Animations
-//	Animation currentAnimation = null; 
-//	static Animation rightWalkAnimation = null;
-//	static Animation leftWalkAnimation = null;
-//	static Animation downWalkAnimation = null;
-//	static Animation upWalkAnimation = null;
-
 
 	/**
 	 * 
 	 * @param isUser used to indicate if the user has chosen to play with the robber or the police.
 	 * @throws SlickException
 	 */
-	public Robber() throws SlickException {
+	public Robber(Area area) throws SlickException {
 
 		// TODO: set name and velocity somewhere else
-		super("Robber", Globals.ROBBER_VELOCITY);
+		super(area, "Robber", Globals.ROBBER_VELOCITY);
 
 		super.initSpriteSheet(playerSpriteSheet, 4, 4);
 		// set the Sprite Sheet
-//		initSpriteSheet();
 
 		// set initial position
 		this.position = new Point(0,0);
@@ -121,8 +109,6 @@ public class Robber extends Person implements Savable{
 	
 		currentAnimation.start();  
 	}
-
-
 
 	// ====================================================================================================
 	// GETTERS/SETTERS
