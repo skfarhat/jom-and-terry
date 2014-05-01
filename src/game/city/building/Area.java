@@ -28,6 +28,7 @@ public class Area implements Savable{
 
 	// TODO: make the loops only one loop
 	private TiledMap areaTileMap;
+	private CityMap cityMap; 
 	private Line[] mapBounds;
 	private Gate exitGate = null; 
 	private int numberOfRobbedBuildings = 0; 
@@ -80,6 +81,7 @@ public class Area implements Savable{
 		this.level = level; 
 		
 		try{
+			cityMap = new CityMap(areaMapPath);
 			initMap(areaMapPath);
 
 			boolean userIsRobber = Game.getInstance().getAccount().getIsRobber();
@@ -87,8 +89,9 @@ public class Area implements Savable{
 			
 			robber = (userIsRobber)? new RobberUser(this): new RobberComputer(this);	// Create Robber
 			policeOffice = new PoliceOffice(this, robber, userIsPolice);				// Create Police Office		
-			camera = new Camera(getAreaTileMap());										// Create Camera
+//			camera = new Camera(getAreaTileMap());										// Create Camera
 			
+			camera = new Camera(cityMap);
 			
 			/*
 			 * Set the robber for all the security guards

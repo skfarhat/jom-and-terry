@@ -143,13 +143,13 @@ public class RobberUser extends Robber implements Movable {
 		this.nearByBldg = null;
 
 		// Check if trying to pass through gates
-		for (Gate gate : Play.getInstance().getArea().getGates()) {
+		for (Gate gate : area.getGates()) {
 			if (gate.intersects(this.rect))
 				return !gate.passThrough(this);
 		}
 
 		// Collision with boundaries
-		Line[] boundLines = Play.getInstance().getArea().getMapBounds();
+		Line[] boundLines = area.getMapBounds();
 		for (Line line : boundLines) {
 			if (line.intersects(this.rect))
 				return true;

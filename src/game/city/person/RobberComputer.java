@@ -12,8 +12,9 @@ import javax.swing.Timer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.util.pathfinding.Mover;
 
-public class RobberComputer extends Robber {
+public class RobberComputer extends Robber implements Mover {
 
 	private boolean goingToRob = false; 
 	private Point destPoint; 
@@ -21,11 +22,11 @@ public class RobberComputer extends Robber {
 	private Timer fleeingTimer; 
 	private Building buildingToRob = null;
 	private boolean willFleePolice = true;
-	
+
 	public RobberComputer(Area area) throws SlickException {
 		super(area);
 
-		
+
 		fleeingTimer = new Timer(3000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -124,7 +125,7 @@ public class RobberComputer extends Robber {
 				else
 					moveUp();
 			}
-	
+
 
 			Vector2f differenceVector = new Vector2f(
 					this.position.getX() - this.destPoint.getX(),
@@ -142,7 +143,7 @@ public class RobberComputer extends Robber {
 				}
 			}
 		}
-		
+
 		Policeman policeman = canSeePolice();
 		if (policeman != null && willFleePolice)
 			fleePoliceman(policeman);
@@ -166,7 +167,7 @@ public class RobberComputer extends Robber {
 		Vector2f direction = new Vector2f(
 				this.position.getX() - police.position.getX(),
 				this.position.getY() - police.position.getY());
-		
+
 		float deltaX = 0 ,  deltaY = 0;
 
 		// he is closer horizontally to the policeman

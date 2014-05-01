@@ -84,7 +84,8 @@ public class PoliceOffice implements Savable {
 			policeForceArray.add(police);
 		}
 
-		selectedPoliceman = policeForceArray.get(0);	// selected policeman is the  first on the list
+		if (policeForceArray.size()>0)
+			selectedPoliceman = policeForceArray.get(0);	// selected policeman is the  first on the list
 
 		// Initialize the Emergency calling sound
 		try {
@@ -259,12 +260,12 @@ public class PoliceOffice implements Savable {
 				// mouse coordinates
 				final float x = input.getMouseX() + camera.getCameraX();
 				final float y = input.getMouseY() + camera.getCameraY(); 
-				
+
 				// check if the mouse position intersects with any building
 				boolean intersects = false; 
 				for (Building bldg: area.getBuildings())
 					intersects = intersects || Globals.rectContainsPoint(bldg.getRect(), x, y, Globals.GATHER_SELECTION_ERROR);
-				
+
 				// gather only if the mouse position does not intersect with any building
 				if (!intersects)
 					gatherAll(new Point(x,y));

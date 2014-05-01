@@ -2,6 +2,7 @@ package game.city;
 
 import game.Game;
 import game.Globals;
+import game.city.building.CityMap;
 import game.city.person.Person;
 import game.menu.PlayerLog;
 
@@ -14,7 +15,8 @@ public class Camera {
 
 	protected boolean isScrolling = false; 
 	/** the map used for our scene */
-	protected TiledMap map;
+//	protected TiledMap map;
+	protected CityMap map;
 
 	/** the number of tiles in x-direction (width) */
 	protected int numTilesX;
@@ -54,7 +56,7 @@ public class Camera {
 	 * @param gc the GameContainer, used for getting the size of the GameCanvas
 	 * @param map the TiledMap used for the current scene
 	 */
-	public Camera(TiledMap map) {
+	public Camera(CityMap map) {
 		this.map = map;
 
 		this.numTilesX = map.getWidth();
