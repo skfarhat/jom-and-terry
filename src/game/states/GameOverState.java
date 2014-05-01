@@ -28,20 +28,21 @@ public class GameOverState extends BasicGameState {
 
 	public GameOverState() {
 	}
-	
+
 	public void set(boolean userIsRobber, boolean youWin){
+		System.out.println("userIsRobber: " + userIsRobber + " youWin: " + youWin);
 		try{
 			if (youWin)
 				this.gameOverImage = new Image((userIsRobber)?RobberWin: PoliceWin);
 			else
 				this.gameOverImage = new Image((userIsRobber)?RobberGameOver: PoliceGameOver);
-	
+
 		}
 		catch (Exception exc){
 			exc.printStackTrace();
 		}
 	}
-	
+
 	public GameOverState(boolean userIsRobber, boolean youWin) {
 		try{
 			if (youWin)
@@ -53,7 +54,7 @@ public class GameOverState extends BasicGameState {
 			exc.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg)
 			throws SlickException {
@@ -61,13 +62,14 @@ public class GameOverState extends BasicGameState {
 
 
 	}
-	
+
 	@Override
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g)
 			throws SlickException {
 		g.setColor(Color.white);
 
-		g.drawImage(this.gameOverImage, 0, 0);
+		if (gameOverImage!=null)
+			g.drawImage(this.gameOverImage, 0, 0);
 	}
 
 	@Override

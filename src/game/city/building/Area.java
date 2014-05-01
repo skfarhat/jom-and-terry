@@ -7,6 +7,7 @@ import game.city.person.PoliceOffice;
 import game.city.person.Robber;
 import game.city.person.RobberComputer;
 import game.city.person.RobberUser;
+import game.city.person.SecurityGuard;
 import game.city.road.Highway;
 import game.city.road.Road;
 import game.states.Savable;
@@ -21,7 +22,7 @@ import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.tiled.TiledMap;
-
+import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
 public class Area implements Savable{
 
@@ -36,7 +37,12 @@ public class Area implements Savable{
 
 	protected Robber robber; 
 	protected PoliceOffice policeOffice; 
-
+	
+	/**
+	 * Array containing all the security guards created in the current area
+	 */
+	private ArrayList<SecurityGuard> securityGuards = new ArrayList<>(10);
+	
 	/**
 	 * An array containing all the buildings created in the current area
 	 */
@@ -50,7 +56,6 @@ public class Area implements Savable{
 	 */
 	private ArrayList<Shop> shops = new ArrayList<>(10); 
 	/**
-	 * ArrayList containing all the created houses
 	 */
 	private ArrayList<House> houses = new ArrayList<>(10);
 	/**
@@ -73,23 +78,26 @@ public class Area implements Savable{
 	 */
 	public Area(int level, String areaMapPath) {
 		this.level = level; 
+		
 		try{
 			initMap(areaMapPath);
 
-
-			// Create Robber
 			boolean userIsRobber = Game.getInstance().getAccount().getIsRobber();
-			if (userIsRobber)
-				robber = new RobberUser(this);
-			else
-				robber = new RobberComputer(this);
-
-			// Create Police Office		
 			boolean userIsPolice = !userIsRobber;
-			this.policeOffice = new PoliceOffice(this, robber, userIsPolice);
-
-			// Create Camera
-			camera = new Camera(getAreaTileMap());
+			
+			robber = (userIsRobber)? new RobberUser(this): new RobberComputer(this);	// Create Robber
+			policeOffice = new PoliceOffice(this, robber, userIsPolice);				// Create Police Office		
+			camera = new Camera(getAreaTileMap());										// Create Camera
+			
+			
+			/*
+			 * Set the robber for all the security guards
+			 * Can't pass robber in the constructor of Security Guards because they are created befrore the robber is
+			 * along with all the buildings (see initMap())
+			 */
+			for (Bank bank: banks)
+				for (SecurityGuard sg : bank.getSecurityGuards())
+					sg.setRobber(robber);
 		}
 		catch (Exception exc){
 			exc.printStackTrace();
@@ -114,11 +122,18 @@ public class Area implements Savable{
 
 		mapBounds = new Line[] { line1, line2, line3, line4 };
 
-		int bldgID = 0;
 		// HOUSES
 		// ========================================================================================
 		int housesObjectCount = areaTileMap.getObjectCount(Globals.HOUSE_OBJECT_INDEX);
-
+		int banksObjectCount = areaTileMap.getObjectCount(Globals.BANK_OBJECT_INDEX);
+		int shopsObjectCount = areaTileMap.getObjectCount(Globals.SHOP_OBJECT_INDEX);
+		int highwayObjectCount = areaTileMap.getObjectCount(Globals.HIGHWAY_OBJECT_INDEX);
+		int gatesObjectCount = areaTileMap.getObjectCount(Globals.GATES_OBJECT_INDEX);
+		int roadsObjectCount = areaTileMap.getObjectCount(Globals.ROAD_OBJECT_INDEX);
+		 
+		Game.getInstance().totalCount = housesObjectCount + banksObjectCount + shopsObjectCount + highwayObjectCount + gatesObjectCount + roadsObjectCount;  
+		int bldgID = 0;
+		
 		// create all Houses
 		for (int objectIndex = 0; objectIndex < housesObjectCount; objectIndex++) {
 			int x = areaTileMap.getObjectX(Globals.HOUSE_OBJECT_INDEX, objectIndex);
@@ -138,12 +153,13 @@ public class Area implements Savable{
 			houses.add(house);
 			buildings.add(house);
 
+			Game.getInstance().count++; 
 			bldgID++;
 		}
 
 		// BANKS
 		// ========================================================================================
-		int banksObjectCount = areaTileMap.getObjectCount(Globals.BANK_OBJECT_INDEX);
+
 
 		// create all Banks
 		for (int objectIndex = 0; objectIndex < banksObjectCount; objectIndex++) {
@@ -166,10 +182,15 @@ public class Area implements Savable{
 			banks.add(bank);
 			buildings.add(bank);
 
+			
+			// add the bank's security guards to the securityGuards array
+			securityGuards.addAll(bank.getSecurityGuards());
+			
 			bldgID++;
+			Game.getInstance().count++;
 		}
 
-		int shopsObjectCount = areaTileMap.getObjectCount(Globals.SHOP_OBJECT_INDEX);
+
 		// create all Banks
 		for (int objectIndex = 0; objectIndex < shopsObjectCount; objectIndex++) {
 			int x = areaTileMap.getObjectX(Globals.SHOP_OBJECT_INDEX, objectIndex);
@@ -190,11 +211,11 @@ public class Area implements Savable{
 			buildings.add(shop);
 
 			bldgID++;
+			Game.getInstance().count++;
 		}
 
 		// HIGHWAY
 		// ========================================================================================
-		int highwayObjectCount = areaTileMap.getObjectCount(Globals.HIGHWAY_OBJECT_INDEX);
 
 		for (int objectIndex = 0; objectIndex < highwayObjectCount; objectIndex++) {
 			int x = areaTileMap.getObjectX(Globals.HIGHWAY_OBJECT_INDEX, objectIndex);
@@ -210,11 +231,13 @@ public class Area implements Savable{
 
 			Highway highway = new Highway(this, position, rect);
 			highways.add(highway);
+			
+			Game.getInstance().count++; 
 		}
 
 		// GATES
 		// ==========================================================================================
-		int gatesObjectCount = areaTileMap.getObjectCount(Globals.GATES_OBJECT_INDEX);
+
 
 		for (int objectIndex = 0; objectIndex < gatesObjectCount; objectIndex++) {
 			int x = areaTileMap.getObjectX(Globals.GATES_OBJECT_INDEX, objectIndex);
@@ -230,19 +253,18 @@ public class Area implements Savable{
 			Gate gate = new Gate(position, rect);
 
 			gates.add(gate);
+			
+			Game.getInstance().count++;
 		}
 
 		// randomly choose a gate as the exit game
 
 		int randIndex = new Random(System.currentTimeMillis()).nextInt(gates.size()); 
-		this.exitGate = gates.get(randIndex);
+		exitGate = gates.get(randIndex);
 
 
 
 		// ROAD
-		// ==========================================================================================
-		int roadsObjectCount = areaTileMap.getObjectCount(Globals.ROAD_OBJECT_INDEX);
-
 		for (int objectIndex = 0; objectIndex < roadsObjectCount; objectIndex++) {
 			int x = areaTileMap.getObjectX(Globals.ROAD_OBJECT_INDEX, objectIndex);
 			int y = areaTileMap.getObjectY(Globals.ROAD_OBJECT_INDEX, objectIndex);
@@ -257,6 +279,7 @@ public class Area implements Savable{
 			Road road = new Road(this, position, rect); 
 
 			roads.add(road);
+			Game.getInstance().count++;
 		}
 	}
 
@@ -302,6 +325,9 @@ public class Area implements Savable{
 		return roads;
 	}
 
+	public ArrayList<SecurityGuard> getSecurityGuards() {
+		return securityGuards;
+	}
 	public ArrayList<House> getHouses() {
 		return houses;
 	}

@@ -18,9 +18,9 @@ import org.newdawn.slick.geom.Rectangle;
  * 
  */
 public class Road {
-	
+
 	protected Area area; 
-	
+
 	/**
 	 * Indicates whether the road is lighted.
 	 */
@@ -52,7 +52,8 @@ public class Road {
 	public Road(Area area, Point position, Rectangle rect) {
 		// set the position
 		this.position = position; 
-
+		this.area = area; 
+		
 		// set the rectangle
 		this.rect = rect;
 
@@ -69,11 +70,10 @@ public class Road {
 		displayRoadInfoTimer.setRepeats(false);
 	}
 
-
 	public void callPolice(){
 		area.getPoliceOffice().callPolice(this);
 	}
-	
+
 	public void drawRoadInfo(){
 		if (showRoadInfo)
 			roadInfo.draw(position.getX(), position.getY()- RoadInfo.ROAD_INFO_HEIGHT);

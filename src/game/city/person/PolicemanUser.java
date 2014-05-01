@@ -3,7 +3,6 @@ package game.city.person;
 import game.Globals;
 import game.city.building.Area;
 import game.city.building.Building;
-import game.states.Play;
 
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
@@ -26,6 +25,15 @@ public class PolicemanUser extends Policeman implements Movable{
 			double velocity) throws SlickException {
 		super(area, robber, position, name, velocity);
 
+		this.userIsPolice = true;
+		
+		// keep changing the position of the policemen until he doesn't collide with anything
+		while (collides()){
+			this.position.setX(Globals.random.nextInt(800));
+			this.position.setY(Globals.random.nextInt(800));
+			this.rect.setX(position.getX());
+			this.rect.setY(position.getY());
+		}
 		stop(); 
 	}
 
@@ -33,22 +41,22 @@ public class PolicemanUser extends Policeman implements Movable{
 	public void processInput(Input input) {
 		// ARROWS: UP DOWN LEFT RIGHT
 
-		if (input.isKeyDown(Input.KEY_RIGHT)) {
-			moveRight();
-		} else if (input.isKeyDown(Input.KEY_LEFT)) {
-			moveLeft();
-		} else if (input.isKeyDown(Input.KEY_UP)) {
-			moveUp();
-		} else if (input.isKeyDown(Input.KEY_DOWN)) {
-			moveDown();
-		} else if (input.isKeyPressed(Input.KEY_SPACE)){
-			System.out.println("here");
-			if (!isGathering)
-				robberArrested = arrestRobber(robber);
-		}
-		else {
-			stop();
-		}		
+		if (!isGathering)
+			if (input.isKeyDown(Input.KEY_RIGHT)) {
+				moveRight();
+			} else if (input.isKeyDown(Input.KEY_LEFT)) {
+				moveLeft();
+			} else if (input.isKeyDown(Input.KEY_UP)) {
+				moveUp();
+			} else if (input.isKeyDown(Input.KEY_DOWN)) {
+				moveDown();
+			} else if (input.isKeyPressed(Input.KEY_SPACE)){
+				if (!isGathering)
+					robberArrested = arrestRobber(robber);
+			}
+			else {
+				stop();
+			}		
 	}
 
 	public void gather(Circle region){
@@ -141,7 +149,7 @@ public class PolicemanUser extends Policeman implements Movable{
 
 
 		// Collision with boundaries
-		Line[] boundLines = Play.getInstance().getArea().getMapBounds();
+		Line[] boundLines = area.getMapBounds();
 		for (Line line : boundLines) {
 			if (line.intersects(this.rect))
 				return true;

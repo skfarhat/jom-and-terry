@@ -25,7 +25,7 @@ import org.newdawn.slick.geom.Vector2f;
  * @author sami
  * 
  */
-public class Policeman extends Person implements Savable{
+public abstract class Policeman extends Person implements Savable{
 
 	static Random rand = new Random(System.currentTimeMillis()); 
 	private static String policeSpriteSheet 			= "res/Spritesheets/Police.png";
@@ -132,7 +132,6 @@ public class Policeman extends Person implements Savable{
 	public Image getImage() {
 		return image;
 	}
-
 	public float getScore() {
 		return score;
 	}
@@ -159,10 +158,12 @@ public class Policeman extends Person implements Savable{
 				+ Math.pow(this.position.getY()-this.robber.position.getY(), 2.0)
 				);
 
-		System.out.println("the distance is " + distance);
+		
 		// arrest only if he is less than some distance away
 		if (distance < Globals.ARREST_DISTANCE)
 		{
+			// if userIsPolice = true then arrest implies youWin
+			// otherwise it implies you lose
 			Play.getInstance().gameOver(userIsPolice);
 			return true;			
 		}

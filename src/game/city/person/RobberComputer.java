@@ -18,12 +18,24 @@ public class RobberComputer extends Robber {
 	private boolean goingToRob = false; 
 	private Point destPoint; 
 	private Timer robbingTimer; 
-
+	private Timer fleeingTimer; 
 	private Building buildingToRob = null;
-
+	private boolean willFleePolice = true;
+	
 	public RobberComputer(Area area) throws SlickException {
 		super(area);
 
+		
+		fleeingTimer = new Timer(3000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (Globals.random.nextInt(10) < 5)
+					willFleePolice = false;
+				else 
+					willFleePolice = true; 
+			}
+		});
+		fleeingTimer.start();
 		// Start the robbing
 		startRobbing(); 
 	}
@@ -57,28 +69,32 @@ public class RobberComputer extends Robber {
 		robbingTimer.start(); 
 	}
 
-	public boolean moveAndRob(Building bldg){
+	public boolean moveAndRob(Building bldgToRob){
 		// If null return false
-		if (bldg == null)
+		if (bldgToRob == null)
 			return false;
 
 		this.goingToRob = true; 
 
 		// If is in robbing distance directly rob
-		if (bldg.isInRobbingDistance(this.rect))
-			return  rob(bldg); 
+		if (bldgToRob.isInRobbingDistance(this.rect))
+			return  rob(bldgToRob); 
 
 		// set the building to rob
-		this.buildingToRob =bldg;
+		this.buildingToRob =bldgToRob;
 
-		// move
-		move(bldg.position);
+		// Move the robber to the building to rob 
+		Point bldgPos = new Point(
+				bldgToRob.position.getX() - this.rect.getWidth(),
+				bldgToRob.position.getY() - this.rect.getHeight());
+		move(bldgPos);
 
 		return true; 
 
 	}
 
 	public void draw(boolean showRobber) {
+		showRobber = true;
 		super.draw(showRobber);
 
 		if (isMoving) {
@@ -108,6 +124,7 @@ public class RobberComputer extends Robber {
 				else
 					moveUp();
 			}
+	
 
 			Vector2f differenceVector = new Vector2f(
 					this.position.getX() - this.destPoint.getX(),
@@ -125,6 +142,10 @@ public class RobberComputer extends Robber {
 				}
 			}
 		}
+		
+		Policeman policeman = canSeePolice();
+		if (policeman != null && willFleePolice)
+			fleePoliceman(policeman);
 	}
 
 	public void move(Point destPoint)
@@ -140,8 +161,12 @@ public class RobberComputer extends Robber {
 
 	}	
 
-	public void fleePoliceman(Vector2f direction)
+	public void fleePoliceman(Policeman police)
 	{
+		Vector2f direction = new Vector2f(
+				this.position.getX() - police.position.getX(),
+				this.position.getY() - police.position.getY());
+		
 		float deltaX = 0 ,  deltaY = 0;
 
 		// he is closer horizontally to the policeman
@@ -165,8 +190,9 @@ public class RobberComputer extends Robber {
 		// If less than 50.0f for some police return true
 		for (Policeman policeman : area.getPoliceOffice().getPoliceForceArray())
 		{
-			float distance = (float)  Math.sqrt(Math.pow(policeman.position.getX()-this.position.getX(), 2.0) 
-					+ Math.pow(policeman.position.getY()-this.position.getY(), 2.0));
+			float distance = (float)  Math.sqrt(
+					Math.pow(policeman.position.getX()-this.position.getX(), 2.0) +
+					Math.pow(policeman.position.getY()-this.position.getY(), 2.0));
 
 			if (distance < Globals.ROBBER_VISION_DISTANCE)
 				return policeman;

@@ -3,7 +3,6 @@ package game.menu;
 import game.AudioGame;
 import game.Game;
 import game.Globals;
-import game.city.building.Area;
 import game.states.Play;
 
 import org.newdawn.slick.GameContainer;
@@ -27,6 +26,7 @@ public class AreaPick extends Menu {
 	private final String AREA_3_LOCKED_IMAGE_PATH = "res/city/area/area3-locked.png";
 	private final String AREA_4_LOCKED_IMAGE_PATH = "res/city/area/area4-locked.png";
 	private final String AREA_5_LOCKED_IMAGE_PATH = "res/city/area/area5-locked.png";
+	
 
 	// area image paths
 	final String areaImagePaths[] = {
@@ -62,7 +62,7 @@ public class AreaPick extends Menu {
 	public void init(GameContainer arg0, StateBasedGame arg1)
 			throws SlickException {	
 		sbg = (StateBasedGame) Game.getInstance();
-		//		initButtons();
+
 	}
 
 	@Override
@@ -155,8 +155,8 @@ public class AreaPick extends Menu {
 	public void enterPlay(int level, String cityPath){
 		AudioGame.playAsSound("button-21.ogg");
 		Play.getInstance().set(level, cityPath);
-//		Play.getInstance().reset();
 		sbg.enterState(Globals.PLAY);
+
 	}
 
 }

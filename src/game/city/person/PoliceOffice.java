@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import javax.swing.Timer;
+
 import org.json.simple.JSONObject;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
@@ -28,10 +30,10 @@ import org.newdawn.slick.util.ResourceLoader;
 
 @SuppressWarnings("unchecked")
 
-public class PoliceOffice implements Savable{
+public class PoliceOffice implements Savable {
 
 	final Random rand = new Random(System.currentTimeMillis());
-		
+
 	private static final String EMERGENCY_SOUND = "res/Sounds/Emergency.ogg" ;
 
 	private Integer numberOfPolicemen = 0;  
@@ -43,17 +45,19 @@ public class PoliceOffice implements Savable{
 	protected static int gatherCount = 0; 
 	public static Integer robberVisibleCount = 0; 
 
+	private boolean isGameOver = false;
+
 	private Area area; 
 	private Robber robber;
 	private Policeman selectedPoliceman; 
-	
+
 	public PoliceOffice(Area area, Robber robber, boolean userIsPolice) throws SlickException {
 
 		PoliceOffice.userIsPolice = userIsPolice; 
 
 		this.area = area; 
 		this.robber = robber; 
-		
+
 		policeForceArray = new ArrayList<>(numberOfPolicemen);
 		numberOfPolicemen = area.getBuildings().size()/5;			// 1 policeman for 5 buildings
 
@@ -64,6 +68,7 @@ public class PoliceOffice implements Savable{
 			// random first position for the policeman 
 			final int x = rand.nextInt(800);
 			final int y = rand.nextInt(800);
+
 			final Point position = new Point(x,y);
 			final String policeName = "Police-1";
 
@@ -75,12 +80,12 @@ public class PoliceOffice implements Savable{
 			else
 				police = new PolicemanComputer(area, robber, position, policeName, Globals.POLICEMAN_VELOCITY);
 
-			// Add Policeman to the Policeman
+			// Add Policeman to the array
 			policeForceArray.add(police);
 		}
-		
+
 		selectedPoliceman = policeForceArray.get(0);	// selected policeman is the  first on the list
-		
+
 		// Initialize the Emergency calling sound
 		try {
 			sound = AudioLoader.getStreamingAudio("OGG", ResourceLoader.getResource(EMERGENCY_SOUND));
@@ -93,6 +98,12 @@ public class PoliceOffice implements Savable{
 	 * Draw all the policemen
 	 */
 	public void draw(){
+		if (isGameOver)
+		{
+			Play.getInstance().gameOver(false);
+			return; 
+		}
+
 		for (Policeman policeman : policeForceArray){
 			policeman.draw();
 		}
@@ -141,16 +152,26 @@ public class PoliceOffice implements Savable{
 	}
 
 	public void gatherAll(Point position){
-		final float regionRadius = 25.0f; 
+
+
+		// gather all the policemen at the position
 		for (Policeman police: policeForceArray){	
-			((PolicemanUser) police).gather(new Circle(position.getX(), position.getY(), regionRadius));
+			((PolicemanUser) police).gather(new Circle(position.getX(), position.getY(), Globals.GATHER_RADIUS));
 		}
+
 		gatherCount++;
-			
-		if (gatherCount==3){
-			
-			// TODO: Make clearer and comment
-			new Thread((new Runnable() {
+
+		/*
+		 * When the user uses the 'G' button 3 times gathering the police at one spot
+		 * wait for all the policemen to arrive to the desired location and give them 3 seconds to capture the robber.
+		 * If time is up, Game Over and the Police have lost
+		 */
+		if (gatherCount==3){		
+			/*
+			 * Need a loop to wait for all the Policemen to arrive but can't have it blocking the main thread
+			 * so we create a new one. Once all the policemen arrive, start a timer that ends the game with Game Over after 3 seconds
+			 */
+			Thread t = new Thread((new Runnable() {
 				@Override
 				public void run() {
 					boolean notArrived = false;
@@ -161,17 +182,29 @@ public class PoliceOffice implements Savable{
 						}
 					}
 					while(notArrived);
-					
-					
+
+
 					if (!robber.isCaught){
-						// you lose
-						Play.getInstance().gameOver(false);
+						// you lose after 3 sec
+						Timer timer = new Timer(3000, new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								isGameOver = true; 
+							}
+						});
+
+						timer.setRepeats(false);
+						timer.start(); 
 					}
-					
+
 				}
-			})).start();;
-		}
-		
+			}));
+
+			t.start();
+		}	
+	}
+
+	public void gameOver(){
+		Play.getInstance().gameOver(false);
 	}
 
 	public void stopPolicemenPatrols(){
@@ -223,10 +256,18 @@ public class PoliceOffice implements Savable{
 			if (userIsPolice){
 				Camera camera = area.getCamera();
 
-				float x = input.getMouseX() + camera.getCameraX();
-				float y = input.getMouseY() + camera.getCameraY(); 
-
-				gatherAll(new Point(x,y));
+				// mouse coordinates
+				final float x = input.getMouseX() + camera.getCameraX();
+				final float y = input.getMouseY() + camera.getCameraY(); 
+				
+				// check if the mouse position intersects with any building
+				boolean intersects = false; 
+				for (Building bldg: area.getBuildings())
+					intersects = intersects || Globals.rectContainsPoint(bldg.getRect(), x, y, Globals.GATHER_SELECTION_ERROR);
+				
+				// gather only if the mouse position does not intersect with any building
+				if (!intersects)
+					gatherAll(new Point(x,y));
 			}
 		}
 	}
@@ -287,19 +328,19 @@ public class PoliceOffice implements Savable{
 	public Policeman getSelectedPoliceman() {
 		return selectedPoliceman;
 	}
-	
+
 	public void setSelectedPoliceman(Policeman selectedPoliceman) {
-		
+
 		// deselect the previously selected policemen 
 		((PolicemanUser)this.selectedPoliceman).setSelected(false);
-		
+
 		// set the new selected policeman to the passed one
 		this.selectedPoliceman = selectedPoliceman;
 
 		// make the new policeman selected
 		((PolicemanUser)this.selectedPoliceman).setSelected(true);
 	}
-	
+
 	public void setArea(Area area){
 		for (Policeman policeman: policeForceArray){
 			policeman.setArea(area);
@@ -348,5 +389,7 @@ public class PoliceOffice implements Savable{
 
 		}
 	}
+
+
 
 }

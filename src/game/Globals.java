@@ -1,6 +1,12 @@
 package game;
 
+import java.util.Random;
+import org.newdawn.slick.geom.Rectangle;
+
 public final class Globals {
+	
+	public static final Random random = new Random(System.currentTimeMillis());
+	
 	public static final String gamename = "Jom & Terry";
 	
 	public static final int MAIN_MENU = 0;
@@ -22,8 +28,8 @@ public final class Globals {
 	public static final String SAVE_DIRECTORY_PATH		= "Save/";
 	
 	// Robber
-	public static final float ROBBER_VISION_DISTANCE = 400.0f; 
-	public static final float ARREST_DISTANCE = 50.0f;  
+	public static final float ROBBER_VISION_DISTANCE = 150.0f; 
+  
 
 	// Velocity
 	public static final float VELOCITY_MULTIPLIER = 0.02f; 
@@ -47,6 +53,15 @@ public final class Globals {
 	// For policeman
 	// for when the user is policeman and wants to select other policemen using the mouse
 	public static final float SELECTION_ERROR = 50.0f;		
+	public static final float GATHER_RADIUS= 25.0f;
+	public static final float ARREST_DISTANCE = 50.0f;
+	public static final float GATHER_SELECTION_ERROR= 30.0f;
+	
+	// Security Guards
+	public static float SECURITY_GUARD_ARREST_DISTANCE = 15.0f;
+	public static float SECURITY_GUARD_VISION_DISTANCE = 130.0f;
+	public static float SECURITY_GUARD_CHASE_DISTANCE = 70.0f;					// distance for which the security guard starts following the robber
+	public static float SECURITY_GUARD_MAX_DISTANCE_FROM_BLDG = 120.0f;			// maximum distance the security guard takes from his guarded bldg
 	
 	// Camera
 	public static final float CAMERA_SCROLL_SPEED= 2.0f;
@@ -62,7 +77,6 @@ public final class Globals {
 	public static final String SHOP 		= "Shop";
 	public static final String BANK 		= "Bank";
 	public static final String AREA			= "Area";
-//	public static final String BUILDINGS 	= "Buildings";
 	
 	public static final String ROBBER 		= "Robber";
 	public static final String POLICE_OFFICE= "PoliceOffice";
@@ -95,4 +109,29 @@ public final class Globals {
 	public static final String  CITY_3 = 	"res/city/City3.tmx";
 	public static final String  CITY_4 = 	"res/city/City4.tmx";
 	public static final String  CITY_5 = 	"res/city/City5.tmx";
+	
+	
+	
+	// Global functions
+	/**
+	 * 
+	 * @param rect 
+	 * @param x
+	 * @param y
+	 * @param error
+	 * @return
+	 */
+	public static final boolean rectContainsPoint(Rectangle rect, float x, float y, float error){
+		
+		// small rectangle created the test collision 
+		Rectangle tempRect = new Rectangle(
+				x - error / 2,  
+				y - error / 2, 
+				error,
+				error);
+		
+		
+		return tempRect.intersects(rect);
+	}
+	
 }

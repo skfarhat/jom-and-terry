@@ -50,7 +50,6 @@ public class Play extends BasicGameState implements Savable {
 	private Area area;
 	private Integer gameTime = 0;
 	
-	
 	/**
 	 * Main character can either be police or robber
 	 */
@@ -86,14 +85,6 @@ public class Play extends BasicGameState implements Savable {
 		//---------------------------------------------------------------------------------
 		// Create Robber
 		userIsRobber = Game.getInstance().getAccount().getIsRobber();
-//		if (userIsRobber)
-//			robber = new RobberUser(area);
-//		else
-//			robber = new RobberComputer(area);
-//		//---------------------------------------------------------------------------------
-//		// Create Police Office		
-//		boolean userIsPolice = !userIsRobber;
-//		this.policeOffice = new PoliceOffice(area, this.robber, userIsPolice);
 		//---------------------------------------------------------------------------------
 		
 		setMainCharacter();
@@ -101,7 +92,7 @@ public class Play extends BasicGameState implements Savable {
 		area.getCamera().setPerson(mainCharacter);
 
 		// Initialize Security Guards
-		initSecurityGuards(); 
+//		initSecurityGuards(); 
 
 		if (isResumingGame) {
 			HashMap<Object, Object> resumeGame = Game.getInstance()
@@ -112,19 +103,6 @@ public class Play extends BasicGameState implements Savable {
 		}
 
 		startGameTimer(); // Start timer
-	}
-
-	// TODO: Remove
-	/**
-	 * Method needs to be called after the initMap method to make sure the banks
-	 * array has already been filled
-	 * 
-	 * @throws SlickException
-	 */
-	private final void initSecurityGuards() throws SlickException {
-		for (SecurityGuard sg : SecurityGuard.securityGuards) {
-			sg.setRobber(getRobber());
-		}
 	}
 
 	public void setMainCharacter() {
@@ -229,9 +207,7 @@ public class Play extends BasicGameState implements Savable {
 		getPoliceOffice().draw();
 
 		// Draw Security Guards
-		SecurityGuard sg;
-		for (int i = 0; i < SecurityGuard.securityGuards.size(); i++) {
-			sg = SecurityGuard.securityGuards.get(i);
+		for (SecurityGuard sg : area.getSecurityGuards()){			
 			sg.draw();
 		}
 
@@ -390,13 +366,6 @@ public class Play extends BasicGameState implements Savable {
 	}
 
 
-	// GETTERS/SETTERS
-	//================================================================================================================================
-
-	public Person getMainCharacter() {
-		return mainCharacter;
-	}
-
 	private void startGameTimer() {
 		gameTimer = new Timer(1000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -405,7 +374,6 @@ public class Play extends BasicGameState implements Savable {
 		});
 		gameTimer.start();
 	}
-
 	public void levelUp() {
 
 		// return if already entered this function
@@ -416,7 +384,6 @@ public class Play extends BasicGameState implements Savable {
 		isLevelUp = true;
 		gameOver(true);
 	}
-
 	public void gameOver(boolean youWin) {
 
 		if (isGameOver)
@@ -438,6 +405,10 @@ public class Play extends BasicGameState implements Savable {
 		isGameOver = true;
 	}
 
+	// GETTERS/SETTERS
+	//================================================================================================================================
+
+
 	public void showFlag(int flagId) {
 		if (flagId < flagsShown.length && flagId >= 0)
 			flagsShown[flagId] = true;
@@ -454,23 +425,18 @@ public class Play extends BasicGameState implements Savable {
 	public PoliceOffice getPoliceOffice(){
 		return area.getPoliceOffice();
 	}
-
 	public void setResumingGame(boolean isResumingGame) {
 		this.isResumingGame = isResumingGame;
 	}
-
 	public boolean isResumingGame() {
 		return isResumingGame;
 	}
-
 	public void setArea(Area area) {
 		this.area = area;
 	}
-
 	public Area getArea() {
 		return area;
 	}
-
 	/**
 	 * Play class will have ID 1 This method returns 1
 	 */
@@ -478,10 +444,13 @@ public class Play extends BasicGameState implements Savable {
 	public int getID() {
 		return Globals.PLAY;
 	}
-
+	public Person getMainCharacter() {
+		return mainCharacter;
+	}
+	
+	
 	// SAVABLE
 	// ================================================================================================================================
-
 	@Override
 	public JSONObject save() {
 
@@ -507,7 +476,6 @@ public class Play extends BasicGameState implements Savable {
 
 		return map;
 	}
-
 	@Override
 	public void load(Object loadObj) {
 

@@ -36,6 +36,8 @@ public class PolicemanComputer extends Policeman{
 			String name, double velocity)
 					throws SlickException {
 		super(area, robber, position, name, velocity);
+		
+		this.userIsPolice = false; 
 	}
 
 	public void startPatrol()

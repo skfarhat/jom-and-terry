@@ -5,7 +5,6 @@ import game.city.building.Bank;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.Timer;
@@ -23,14 +22,9 @@ import org.newdawn.slick.geom.Vector2f;
  * 
  */
 public class SecurityGuard extends Person {
-	
+
 	private String sgImgPath = "res/Security Guard.png";
 
-	/**
-	 * An array containing all the security guards
-	 */
-	public static ArrayList<SecurityGuard> securityGuards = new ArrayList<>(10);
-	
 	private Point destinationPoint;
 	private Image image;
 	private boolean isFollowingRobber = false;
@@ -39,16 +33,12 @@ public class SecurityGuard extends Person {
 	public Vector2f direction; // direction in which the Security is moving
 
 	private Robber robber; 
-	// Vision Attribute
-	// TODO: Move to Globals
-	private float visionDistance = 130.0f;
-	private float chaseDistance = 70.0f;
 
 	// =========================================================================================================
 	// PATROL
 	private Timer patrolTimer;
 	private boolean isPatrolling = false;
-
+	private boolean policeCalled = false; 
 	// edges of the bank to be guarded
 	private Point topLeftEdge, topRightEdge, bottomRightEdge, bottomLeftEdge;
 
@@ -61,7 +51,6 @@ public class SecurityGuard extends Person {
 	 * The bank the Security Guard is responsible for guarding
 	 */
 	Bank guardedBank = null;
-	
 
 	/**
 	 * Creates a security guard.
@@ -83,7 +72,7 @@ public class SecurityGuard extends Person {
 
 		spriteWidth = this.image.getWidth(); 
 		spriteHeight= this.image.getHeight(); 
-		
+
 		// Set the rectangle of the player
 		this.rect = new Rectangle(position.getX(), position.getY(), spriteWidth,
 				spriteHeight);
@@ -95,7 +84,7 @@ public class SecurityGuard extends Person {
 		// SG by the Bank is changed (right edge aw shi)
 		// because the SG patrols around the bank, so would need to change the order 
 
-		
+
 		// NOTE: Remember that the position of the image is at the top right edge, so we shoouldn't add for getMaxY() or getMaxX()
 		this.currentEdge = topLeftEdge = new Point(
 				guardedBank.getRect().getMinX() - this.rect.getWidth(),
@@ -109,15 +98,15 @@ public class SecurityGuard extends Person {
 		bottomLeftEdge = new Point(
 				guardedBank.getRect().getMinX() - this.rect.getWidth(),
 				guardedBank.getRect().getMaxY());
-		
+
 		this.position = new Point(currentEdge.getX(), currentEdge.getY()); 
-		
+
 		this.destinationPoint = position;
 
 		this.startRoundPatrol();
-		
+
 		// add the created security guard to the security guards array
-		securityGuards.add(this);
+		//		securityGuards.add(this);
 	}
 
 	public void setRobber(Robber robber) {
@@ -136,7 +125,7 @@ public class SecurityGuard extends Person {
 	}
 
 	public void draw() {
-		
+
 		// if SG is moving, change xPos and yPos
 		if (isMoving) {
 
@@ -180,7 +169,7 @@ public class SecurityGuard extends Person {
 			public void actionPerformed(ActionEvent e) {
 
 				Point tempDestPoint = new Point(0, 0); 
-				
+
 				// if the SG is already moving don't interrupt him
 				// wait until he reaches his position
 				if (isMoving)
@@ -229,7 +218,7 @@ public class SecurityGuard extends Person {
 				float x = currentEdge.getX();
 				float y = currentEdge.getY();
 
-				
+
 				//FIXME: wrong
 				Point nextPoint = (new Random().nextBoolean()) ? new Point(x
 						* -1, y) : new Point(x, y * -1);
@@ -244,33 +233,37 @@ public class SecurityGuard extends Person {
 	//====================================================================================================
 
 	public void lookForRobber(){
-		float distance = (float)  Math.sqrt(Math.pow(this.position.getX()-robber.position.getX(), 2.0) + Math.pow(this.position.getY()-robber.position.getY(), 2.0));
-
-		float distanceToBank = (float) Math.sqrt(Math.pow(this.position.getX()-guardedBank.getRect().getCenterX(), 2.0) 
+		final float distanceToRobber = (float)  Math.sqrt(Math.pow(this.position.getX()-robber.position.getX(), 2.0) + Math.pow(this.position.getY()-robber.position.getY(), 2.0));
+		final float distanceToBank = (float) Math.sqrt(Math.pow(this.position.getX()-guardedBank.getRect().getCenterX(), 2.0) 
 				+ Math.pow(this.position.getY()-guardedBank.getRect().getCenterY(), 2.0));
-		if (distance < 2.0f && !robber.isCaught)
+
+
+		if (distanceToRobber < Globals.SECURITY_GUARD_ARREST_DISTANCE && !robber.isCaught)
 		{
 			// the Robber has been caught
 			// send a message to signal game over
 			arrestRobber(robber);
 		}
 
-		// TODO: recheck the boolean
-		if (distance < chaseDistance && distanceToBank < 200.0f )
-		{
+		/*
+		 * If the robber is near the security guard and the latter is not very far from the guarded bldg
+		 */
+		if (distanceToRobber < Globals.SECURITY_GUARD_CHASE_DISTANCE
+				&& distanceToBank < Globals.SECURITY_GUARD_MAX_DISTANCE_FROM_BLDG)
 			followRobber();
-			return;
-		}
-		if (distance < visionDistance)
+		else
+			this.isFollowingRobber = false; 
+
+		/*
+		 * If the security guard can see the robber, and he hasn't already called the police then call them
+		 */
+		if (distanceToRobber < Globals.SECURITY_GUARD_VISION_DISTANCE && !policeCalled)
 		{
-			// TODO: implement
-			Point center = new Point(this.position.getX(), this.position.getY()); 
+			Point center = new Point(this.position.getX(), this.position.getY());
 			callPolice(center, 800.0f);
 		}
-		else
-		{
-			this.isFollowingRobber  = false; 
-		}
+		else if (distanceToRobber > Globals.SECURITY_GUARD_VISION_DISTANCE)
+			policeCalled = false; 
 	}
 
 	public void followRobber(){
@@ -286,13 +279,14 @@ public class SecurityGuard extends Person {
 	 * @return
 	 */
 	public void callPolice(Point center, float error) {
+		policeCalled = true; 
 		guardedBank.callPolice();
 	}
 
 	public boolean arrestRobber(Robber robber) {
 		robber.isCaught = true;
 		// FIXME: 
-//		Play.getInstance().gameOver();
+		//		Play.getInstance().gameOver();
 		return true;
 	}
 }
