@@ -38,12 +38,12 @@ public class Area implements Savable{
 
 	protected Robber robber; 
 	protected PoliceOffice policeOffice; 
-	
+
 	/**
 	 * Array containing all the security guards created in the current area
 	 */
 	private ArrayList<SecurityGuard> securityGuards = new ArrayList<>(10);
-	
+
 	/**
 	 * An array containing all the buildings created in the current area
 	 */
@@ -79,20 +79,20 @@ public class Area implements Savable{
 	 */
 	public Area(int level, String areaMapPath) {
 		this.level = level; 
-		
+
 		try{
 			cityMap = new CityMap(areaMapPath);
 			initMap(areaMapPath);
 
 			boolean userIsRobber = Game.getInstance().getAccount().getIsRobber();
 			boolean userIsPolice = !userIsRobber;
-			
+
 			robber = (userIsRobber)? new RobberUser(this): new RobberComputer(this);	// Create Robber
 			policeOffice = new PoliceOffice(this, robber, userIsPolice);				// Create Police Office		
-//			camera = new Camera(getAreaTileMap());										// Create Camera
-			
+			//			camera = new Camera(getAreaTileMap());										// Create Camera
+
 			camera = new Camera(cityMap);
-			
+
 			/*
 			 * Set the robber for all the security guards
 			 * Can't pass robber in the constructor of Security Guards because they are created befrore the robber is
@@ -133,10 +133,10 @@ public class Area implements Savable{
 		int highwayObjectCount = areaTileMap.getObjectCount(Globals.HIGHWAY_OBJECT_INDEX);
 		int gatesObjectCount = areaTileMap.getObjectCount(Globals.GATES_OBJECT_INDEX);
 		int roadsObjectCount = areaTileMap.getObjectCount(Globals.ROAD_OBJECT_INDEX);
-		 
+
 		Game.getInstance().totalCount = housesObjectCount + banksObjectCount + shopsObjectCount + highwayObjectCount + gatesObjectCount + roadsObjectCount;  
 		int bldgID = 0;
-		
+
 		// create all Houses
 		for (int objectIndex = 0; objectIndex < housesObjectCount; objectIndex++) {
 			int x = areaTileMap.getObjectX(Globals.HOUSE_OBJECT_INDEX, objectIndex);
@@ -185,10 +185,10 @@ public class Area implements Savable{
 			banks.add(bank);
 			buildings.add(bank);
 
-			
+
 			// add the bank's security guards to the securityGuards array
 			securityGuards.addAll(bank.getSecurityGuards());
-			
+
 			bldgID++;
 			Game.getInstance().count++;
 		}
@@ -234,7 +234,7 @@ public class Area implements Savable{
 
 			Highway highway = new Highway(this, position, rect);
 			highways.add(highway);
-			
+
 			Game.getInstance().count++; 
 		}
 
@@ -256,7 +256,7 @@ public class Area implements Savable{
 			Gate gate = new Gate(position, rect);
 
 			gates.add(gate);
-			
+
 			Game.getInstance().count++;
 		}
 
@@ -352,7 +352,9 @@ public class Area implements Savable{
 	public Camera getCamera() {
 		return camera;
 	}	
-
+	public CityMap getCityMap() {
+		return cityMap;
+	}
 	@Override
 	public JSONObject save() {
 		JSONObject bldgObjects = new JSONObject();

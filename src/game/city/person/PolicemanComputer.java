@@ -67,7 +67,7 @@ public class PolicemanComputer extends Policeman implements Mover {
 	public void draw() {
 
 		// draw the computer police only when he is visible to the robber
-//		if (robber.canSeePoliceman(this))
+		if (robber.canSeePoliceman(this))
 			super.draw();
 
 		// if there are points for the policeman to check

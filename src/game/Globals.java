@@ -100,6 +100,8 @@ public final class Globals {
 	public static final int HIGHWAY_OBJECT_INDEX 	= 3;
 	public static final int GATES_OBJECT_INDEX 		= 4;
 	public static final int ROAD_OBJECT_INDEX 		= 5;
+	public static final int ROBBER_COLL_OBJECT_INDEX 	= 6;
+	public static final int POLICE_COLL_OBJECT_INDEX 	= 7;
 	
 	public static final int CITY_COUNT = 5; 
 	

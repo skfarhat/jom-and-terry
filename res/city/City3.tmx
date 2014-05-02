@@ -1,61 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="150" height="60" tilewidth="16" tileheight="16">
  <tileset firstgid="1" name="house" tilewidth="16" tileheight="16">
-  <image source="./images/bank1.png" width="73" height="92"/>
+  <image source="images/bank1.png" width="73" height="92"/>
  </tileset>
  <tileset firstgid="21" name="bank" tilewidth="16" tileheight="16">
-  <image source="./images/bank2.png" width="191" height="111"/>
+  <image source="images/bank2.png" width="191" height="111"/>
  </tileset>
  <tileset firstgid="87" name="road_east" tilewidth="16" tileheight="16">
-  <image source="./images/road_east.png" width="100" height="100"/>
+  <image source="images/road_east.png" width="100" height="100"/>
  </tileset>
  <tileset firstgid="123" name="road_north" tilewidth="16" tileheight="16">
-  <image source="./images/road_up.png" width="100" height="100"/>
+  <image source="images/road_up.png" width="100" height="100"/>
  </tileset>
  <tileset firstgid="159" name="tileset2" tilewidth="16" tileheight="16">
-  <image source="./images/tileset2.png" width="1024" height="720"/>
+  <image source="images/tileset2.png" width="1024" height="720"/>
  </tileset>
  <tileset firstgid="3039" name="tileset1" tilewidth="16" tileheight="16">
-  <image source="./images/tileset1.png" width="512" height="512"/>
+  <image source="images/tileset1.png" width="512" height="512"/>
  </tileset>
  <tileset firstgid="4063" name="tileset3" tilewidth="16" tileheight="16">
-  <image source="./images/tileset3.png" width="1408" height="704"/>
+  <image source="images/tileset3.png" width="1408" height="704"/>
  </tileset>
  <tileset firstgid="7935" name="terrain" tilewidth="16" tileheight="16">
-  <image source="./images/terrain.png" width="3010" height="2260"/>
+  <image source="images/terrain.png" width="3010" height="2260"/>
  </tileset>
  <tileset firstgid="34443" name="bank1-highlighted" tilewidth="16" tileheight="16">
-  <image source="./images/bank1-highlighted.png" width="73" height="92"/>
+  <image source="images/bank1-highlighted.png" width="73" height="92"/>
  </tileset>
  <tileset firstgid="34463" name="scbw_tiles" tilewidth="16" tileheight="16" margin="1">
-  <image source="./images/scbw_tiles.png" trans="ff00ff" width="918" height="678"/>
+  <image source="images/scbw_tiles.png" trans="ff00ff" width="918" height="678"/>
  </tileset>
  <tileset firstgid="36857" name="5123zs" tilewidth="16" tileheight="16" margin="1">
-  <image source="./images/5123zs.png" trans="ff00ff" width="512" height="512"/>
+  <image source="images/5123zs.png" trans="ff00ff" width="512" height="512"/>
  </tileset>
  <tileset firstgid="37818" name="water" tilewidth="16" tileheight="16" margin="1">
-  <image source="./images/water.png" trans="ff00ff" width="256" height="256"/>
+  <image source="images/water.png" trans="ff00ff" width="256" height="256"/>
  </tileset>
  <tileset firstgid="38043" name="banca_euro" tilewidth="16" tileheight="16" margin="1">
-  <image source="./images/banca_euro.png" width="200" height="242"/>
+  <image source="images/banca_euro.png" width="200" height="242"/>
  </tileset>
  <tileset firstgid="38223" name="road1_straight_border" tilewidth="16" tileheight="16" margin="1">
-  <image source="./images/road1_straight_border.png" width="256" height="256"/>
+  <image source="images/road1_straight_border.png" width="256" height="256"/>
  </tileset>
  <tileset firstgid="38448" name="cxe4y" tilewidth="16" tileheight="16" margin="1">
-  <image source="./images/cxe4y.jpg" width="1944" height="1296"/>
+  <image source="images/cxe4y.jpg" width="1944" height="1296"/>
  </tileset>
  <tileset firstgid="48128" name="Lamp Post" tilewidth="16" tileheight="16" margin="1">
-  <image source="./images/Lamp Post.png" width="38" height="100"/>
+  <image source="images/Lamp Post.png" width="38" height="100"/>
  </tileset>
  <tileset firstgid="48140" name="cxe4y-small" tilewidth="16" tileheight="16" margin="1">
-  <image source="./images/cxe4y-small.jpg" width="1000" height="667"/>
+  <image source="images/cxe4y-small.jpg" width="1944" height="1296"/>
  </tileset>
- <tileset firstgid="50682" name="open-gate-hi" tilewidth="16" tileheight="16" margin="1">
-  <image source="./images/open-gate-hi.png" width="100" height="40"/>
+ <tileset firstgid="57820" name="open-gate-hi" tilewidth="16" tileheight="16" margin="1">
+  <image source="images/open-gate-hi.png" width="100" height="40"/>
  </tileset>
- <tileset firstgid="50694" name="open-gate-hi 2" tilewidth="16" tileheight="16" margin="1">
-  <image source="./images/open-gate-hi 2.png" width="40" height="100"/>
+ <tileset firstgid="57832" name="open-gate-hi 2" tilewidth="16" tileheight="16" margin="1">
+  <image source="images/open-gate-hi 2.png" width="40" height="100"/>
  </tileset>
  <layer name="Grass" width="150" height="60">
   <data encoding="base64" compression="gzip">
@@ -82,7 +82,7 @@
  </layer>
  <layer name="Banks" width="150" height="60">
   <data encoding="base64" compression="gzip">
-   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
+   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
   </data>
  </layer>
  <layer name="Shops" width="150" height="60">
@@ -95,45 +95,145 @@
    H4sIAAAAAAAAA+3OyQmAUBQEwQeup2/+8bmG4dwNQIUq6HtXAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwLesrWpLezrSma729hV/1y1VfRrSmKY0L29fwdMNJ9Z1wKCMAAA=
   </data>
  </layer>
- <objectgroup name="Houses" width="150" height="60">
-  <object name="House 1" x="96" y="80" width="64" height="80"/>
-  <object name="House 2" x="448" y="80" width="64" height="80"/>
-  <object name="House 3" x="640" y="80" width="64" height="80"/>
-  <object name="House 4" x="448" y="208" width="64" height="80"/>
-  <object name="House 5" x="640" y="208" width="64" height="80"/>
-  <object name="House 6" x="288" y="384" width="64" height="80"/>
-  <object name="House 7" x="288" y="80" width="64" height="80"/>
-  <object name="House 8" x="1616" y="656" width="64" height="64"/>
-  <object name="House 9" x="1680" y="656" width="64" height="64"/>
-  <object name="House 10" x="1744" y="656" width="64" height="64"/>
-  <object name="House 11" x="1808" y="656" width="64" height="64"/>
+ <objectgroup name="Houses" width="150" height="60" visible="0">
+  <object name="House 1" x="96" y="80" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="House 2" x="448" y="80" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="House 3" x="640" y="80" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="House 4" x="448" y="208" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="House 5" x="640" y="208" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="House 6" x="288" y="384" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="House 7" x="288" y="80" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="House 8" x="1616" y="656" width="64" height="64">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="House 9" x="1680" y="656" width="64" height="64">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="House 10" x="1744" y="656" width="64" height="64">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="House 11" x="1808" y="656" width="64" height="64">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
  </objectgroup>
- <objectgroup name="Banks" width="150" height="60">
-  <object name="Bank1" x="800" y="336" width="432" height="128"/>
-  <object name="Bank2" x="1968" y="96" width="160" height="208"/>
+ <objectgroup name="Banks" width="150" height="60" visible="0">
+  <object name="Bank1" x="800" y="336" width="432" height="128">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="Bank2" x="1968" y="96" width="160" height="208">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
  </objectgroup>
- <objectgroup name="Shops" width="150" height="60">
-  <object name="Shop1" x="448" y="384" width="112" height="80"/>
-  <object name="Shop2" x="800" y="80" width="64" height="48"/>
-  <object name="Shop4" x="1760" y="384" width="112" height="80"/>
-  <object name="Shop6" x="800" y="640" width="112" height="80"/>
-  <object name="Shop5" x="96" y="560" width="144" height="144"/>
-  <object name="Shop7" x="1616" y="368" width="128" height="96"/>
-  <object name="Shop8" x="448" y="544" width="176" height="96"/>
-  <object name="Shop 9" x="2288" y="128" width="112" height="128"/>
-  <object name="Shop 10" x="576" y="352" width="128" height="112"/>
-  <object name="Shop 11" x="1344" y="352" width="112" height="112"/>
-  <object name="Shop 12" x="800" y="544" width="80" height="80"/>
+ <objectgroup name="Shops" width="150" height="60" visible="0">
+  <object name="Shop1" x="448" y="384" width="112" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="Shop2" x="800" y="80" width="64" height="48">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="Shop4" x="1760" y="384" width="112" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="Shop6" x="800" y="640" width="112" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="Shop5" x="96" y="560" width="144" height="144">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="Shop7" x="1616" y="368" width="128" height="96">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="Shop8" x="448" y="544" width="176" height="96">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="Shop 9" x="2288" y="128" width="112" height="128">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="Shop 10" x="576" y="352" width="128" height="112">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="Shop 11" x="1344" y="352" width="112" height="112">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object name="Shop 12" x="800" y="544" width="80" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
   <object name="Shop 13" x="880" y="544" width="80" height="80"/>
   <object name="Shop 14" x="960" y="544" width="80" height="80"/>
  </objectgroup>
- <objectgroup name="Highway" width="150" height="60">
-  <object name="Highway" x="0" y="800" width="2400" height="144"/>
+ <objectgroup name="Highway" width="150" height="60" visible="0">
+  <object name="Highway" x="0" y="800" width="2400" height="144">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
  </objectgroup>
- <objectgroup name="Gates" width="150" height="60">
+ <objectgroup name="Gates" width="150" height="60" visible="0">
   <object name="Gate 1" x="2080" y="912" width="64" height="32"/>
  </objectgroup>
- <objectgroup name="Road" width="150" height="60">
+ <objectgroup name="Road" width="150" height="60" visible="0">
   <object name="Road 1" x="96" y="464" width="256" height="80"/>
   <object name="Road 2" x="448" y="464" width="256" height="80"/>
   <object name="Road 3" x="96" y="704" width="256" height="96"/>
@@ -162,43 +262,138 @@
   <object name="Road 26" x="1968" y="0" width="400" height="80"/>
   <object name="Road 27" x="2160" y="720" width="256" height="80"/>
  </objectgroup>
- <objectgroup name="Objects" width="150" height="60">
-  <object name="Object 1" x="1616" y="80" width="256" height="192"/>
-  <object name="Object 2" x="1200" y="544" width="208" height="176"/>
+ <objectgroup color="#a42631" name="Robber Collision" width="150" height="60" visible="0">
+  <object x="96" y="80" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="288" y="80" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="448" y="80" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="640" y="80" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="448" y="208" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="640" y="208" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="288" y="384" width="64" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="448" y="384" width="128" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="576" y="352" width="128" height="112">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="96" y="576" width="144" height="128">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="448" y="544" width="176" height="96">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="800" y="544" width="240" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="800" y="624" width="112" height="96">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="1200" y="544" width="208" height="176">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="800" y="336" width="448" height="128">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="800" y="80" width="64" height="48">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="1344" y="240" width="112" height="224">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="1616" y="368" width="128" height="96">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="1760" y="384" width="112" height="80">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="1968" y="80" width="160" height="224">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="2288" y="96" width="112" height="160">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="1616" y="656" width="256" height="64">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="640" y="288" width="64" height="64">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
+  <object x="448" y="288" width="64" height="64">
+   <properties>
+    <property name="Passable" value="false"/>
+   </properties>
+  </object>
  </objectgroup>
- <layer name="House 1- highlighted" width="150" height="60" visible="0">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3SSQ6CQABE0T59bwCRQcWJs1KH6IRo3kv+vhZVCgAA8Ku6WkqfhnSpZ6/hX4z50jVNafYrGlnypTXd0t2vaOSRL23pmV5+RSPvfOmTvmn3KwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATnIAOmbCJKCMAAA=
-  </data>
- </layer>
- <layer name="House 2- highlighted" width="150" height="60" visible="0">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3Suw6CUABEwfv1NIgoKOCLb2VbKpubkJCZ5PRbbCkAAAB7bVPKJXXp2hy9hrPo86VbuqfBr6hkzJce6Zkmv6KSOV9a0iu9/YpKPvnSN/3S6lcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPyxAblorvygjAAA
-  </data>
- </layer>
- <layer name="House 3- highlighted" width="150" height="60" visible="0">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3SSw6CQABEwTk9G1RUFJCPZ6Xv4CQmUJW8fS+6FAAAgN+0TSmXdE235t9rOIouX7qnR3r6FZX0+dIrvdPgV1Qy5ktT+qTZr6hkyZfWtKWvXwEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnM4OdjYvO6CMAAA=
-  </data>
- </layer>
- <layer name="House 4- highlighted" width="150" height="60" visible="0">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3SSw6CQABEwTk9G0QUEPDHWelDTKKQquTte9GlAAAAAAAAAMBxtE0pl9Sla/PrNZxFny/d0j0NfkUlY740pUea/YpKlnxpTc/08isqeedLn/RNm18BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAX9gBVBrS+6CMAAA=
-  </data>
- </layer>
- <layer name="House 5 -highlighted" width="150" height="60" visible="0">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3SSQ6CQABE0T59bwSVQcWJs1KHaEJC3kv+vhZVCgAAAAAAAACc16WW0qU+XevRaziLW750T0Ma/YpGpnxpTo/09CsaeeVLS3qnj1/RyDdf+qV/Wv0KAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAdrEBDKufqaCMAAA=
-  </data>
- </layer>
- <layer name="House 6- highlighted" width="150" height="60" visible="0">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3SSw6CQABEwTk9G0QUFPDHWekD4G4SElKVvH0vuhQAAAAAAAAAAAAAAAAAgH1tU8oldenaHL2Gs+jzpVu6p8GvqGTMlx7pmSa/opI5X1rSK739iko++dI3/dLqVwAAAAAAAAAAAAAAAAAAAAAAAPyxARLstvSgjAAA
-  </data>
- </layer>
- <layer name="House 7- highlighted" width="150" height="60" visible="0">
-  <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3SSQ6CQABE0T49G1EBwYHprNQhOiHB95K/r0WVAgAA/ItbU0qb7unRnL2Gq3jmS13q0+BXVPLKl8Y0pbdfUcknX/qmX5r9ikqWfGlNW9r9CgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACASg74KP/aoIwAAA==
-  </data>
- </layer>
+ <objectgroup color="#1214a4" name="Police Collision" width="150" height="60">
+  <object x="96" y="80" width="256" height="384"/>
+  <object x="448" y="80" width="256" height="384"/>
+  <object x="96" y="544" width="256" height="160"/>
+  <object x="448" y="544" width="256" height="160"/>
+  <object x="800" y="80" width="656" height="384"/>
+  <object x="800" y="544" width="1072" height="176"/>
+  <object x="1552" y="80" width="320" height="384"/>
+  <object x="1968" y="80" width="432" height="384"/>
+  <object x="1968" y="544" width="96" height="176"/>
+  <object x="2160" y="544" width="240" height="176"/>
+ </objectgroup>
 </map>

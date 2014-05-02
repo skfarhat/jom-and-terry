@@ -157,7 +157,7 @@ public class PoliceOffice implements Savable {
 
 		// gather all the policemen at the position
 		for (Policeman police: policeForceArray){	
-			((PolicemanUser) police).gather(new Circle(position.getX(), position.getY(), Globals.GATHER_RADIUS));
+			((PolicemanUser) police).gather1(new Circle(position.getX(), position.getY(), Globals.GATHER_RADIUS));
 		}
 
 		gatherCount++;

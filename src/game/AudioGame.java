@@ -35,7 +35,6 @@ public class AudioGame extends AudioImpl {
 
 		try{
 			for (File file: files){
-				System.out.println(file.getName());
 				String fileName = file.getName();
 				Audio oggStream = AudioLoader.getStreamingAudio("OGG", ResourceLoader.getResource(String.format("res/Sounds/%s", fileName)));
 				map.put(fileName, oggStream);
