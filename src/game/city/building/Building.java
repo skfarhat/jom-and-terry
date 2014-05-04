@@ -56,7 +56,7 @@ public abstract class Building extends Observable implements Savable{
 	protected Flag flag;
 	public Integer ID; 
 	public Integer money;
-	public Integer score; 
+	protected Integer score; 
 	public Point position; 
 	private Rectangle rect;
 	public float width, height;
@@ -159,6 +159,7 @@ public abstract class Building extends Observable implements Savable{
 
 					robber.addMoney(thisBuilding.money);		// add money to the robber
 					robber.addScore(thisBuilding.score);		// add score to the robber
+					area.getPoliceOffice().decreaseScoreBy(thisBuilding.score);// decrease the score of the police officers
 					thisBuilding.money = 0;						// set the money of the bank to zero 
 					robber.setRobbing(false);					// set the boolean is robbing to false
 					isCompletelyRobbed = true; 					// set the boolean is completely robbed to avoid robber re-robbing

@@ -149,7 +149,8 @@ public class PausedState extends BasicGameState {
 			@Override
 			public void performAction() {		
 
-				Game.getInstance().getAccount().save();
+				int playTime = Play.getInstance().getGameTime(); 
+				Game.getInstance().getAccount().saveWithResumeGame(playTime);
 				message = "Saved"; 
 			}
 		};

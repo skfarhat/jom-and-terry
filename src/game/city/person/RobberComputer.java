@@ -24,7 +24,7 @@ public class RobberComputer extends Robber implements Mover {
 	private Building buildingToRob = null;
 	private boolean willFleePolice = true;
 	private boolean robbedAllBuildings = false; 
-	
+
 	public RobberComputer(Area area) throws SlickException {
 		super(area);
 
@@ -59,7 +59,7 @@ public class RobberComputer extends Robber implements Mover {
 				if (!isRobbing && !goingToRob) 
 				{
 					Building bldgToRob = null; 
-					
+
 					do {
 						// get random number between 0-size
 						int randNum = Globals.random.nextInt(area.getBuildings().size()); 
@@ -68,9 +68,9 @@ public class RobberComputer extends Robber implements Mover {
 						bldgToRob = area.getBuildings().get(randNum);
 					}
 					while (bldgToRob.getIsCompletelyRobbed());
-					
+
 					moveAndRob(bldgToRob);
-						
+
 				}
 			}
 		});
@@ -156,7 +156,8 @@ public class RobberComputer extends Robber implements Mover {
 		}
 
 		Policeman policeman = canSeePolice();
-		if (policeman != null && willFleePolice)
+		if (policeman != null && willFleePolice 
+				&& Globals.distance(position, policeman.position) < Globals.ROBBER_FLEE_DISTANCE)
 			fleePoliceman(policeman);
 	}
 
@@ -215,7 +216,7 @@ public class RobberComputer extends Robber implements Mover {
 	}
 
 	public void exit(){
-		
+
 	}
 	// Movement without collisions
 	// ==============================================================================================================================

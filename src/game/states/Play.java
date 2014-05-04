@@ -19,8 +19,6 @@ import game.city.road.Road;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import javax.swing.Timer;
@@ -53,26 +51,21 @@ public class Play extends BasicGameState implements Savable {
 	}
 
 	private Area area;
-	private Integer gameTime = 0;
 
 	/**
 	 * Main character can either be police or robber
 	 */
 	private Person mainCharacter = null;
+
+	// Play State
 	public boolean userIsRobber;
 	private boolean isResumingGame = false;
 	private boolean isPausingGame = false;
 	private boolean isGameOver = false;
 	private boolean isLevelUp = false;
-
-	private int level = -1;    
-
 	private Timer gameTimer;  
-
-
-	public void setLevel(int level){
-		this.level = level;
-	}
+	private Integer gameTime = 0;
+	private int level = -1;    
 
 	public void start() throws SlickException {	
 		/*
@@ -149,7 +142,7 @@ public class Play extends BasicGameState implements Savable {
 
 		if (!isGameOver)
 			// save the game
-			Game.getInstance().getAccount().save();
+			Game.getInstance().getAccount().saveWithResumeGame(getGameTime());
 	}
 
 	public void pauseGame() {
@@ -295,6 +288,7 @@ public class Play extends BasicGameState implements Savable {
 		}
 	}
 
+	
 	private Building selectBuilding(Point pnt) {
 		// create a rectangle and use the intersect method to check whether
 		// the policeman rect intersects with the mouse click
@@ -310,7 +304,6 @@ public class Play extends BasicGameState implements Savable {
 		}
 		return null;
 	}
-
 	private Road selectRoad(Point pnt) {
 		// create a rectangle and use the intersect method to check whether
 		// the policeman rect intersects with the mouse click
@@ -326,7 +319,6 @@ public class Play extends BasicGameState implements Savable {
 		}
 		return null;
 	}
-
 	/**
 	 * @param destX
 	 *            x-position of the mouse input
@@ -351,7 +343,6 @@ public class Play extends BasicGameState implements Savable {
 		return null;
 	}
 
-
 	private void startGameTimer() {
 		gameTimer = new Timer(1000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -374,17 +365,17 @@ public class Play extends BasicGameState implements Savable {
 
 		if (isGameOver)
 			return; 
+		
+		Account account = Game.getInstance().getAccount(); 
 
-		if (youWin)
-		{
-			Account account = Game.getInstance().getAccount(); 
-
+		
+		if (youWin){
 			AudioGame.playAsSound("success.ogg");
 			account.setHighestLevelReached(area.getLevel()+1);
-			saveScore(getScore(), youWin, userIsRobber);
-			account.save();
 		}
-
+		account.saveScore(getGameTime(), getScore(), youWin, userIsRobber);
+		
+		
 		GameOverState gameOver = (GameOverState) Game.getInstance().getState(Globals.GAME_OVER);
 		gameOver.set(userIsRobber, youWin);
 
@@ -394,16 +385,8 @@ public class Play extends BasicGameState implements Savable {
 
 		isGameOver = true;
 	}
-	public void saveScore(int score, boolean youWin, boolean isRobber){
-		ArrayList<Score> pastScores = Game.getInstance().getAccount().getPastScores();
-		
-		Score score1 = new Score(new Date(), getScore(), youWin);
-		pastScores.add(score1);
-	}
 
-	// GETTERS/SETTERS
-	//================================================================================================================================
-
+	// Getters/Setters
 	public void showFlag(int flagId) {
 		if (flagId < flagsShown.length && flagId >= 0)
 			flagsShown[flagId] = true;
@@ -446,12 +429,19 @@ public class Play extends BasicGameState implements Savable {
 		if (userIsRobber)
 			score = (int) ((Robber) mainCharacter).getScore(); 
 		else 
-			score = (int) ((Policeman) mainCharacter).getScore();
-		
+			score = (int) getPoliceOffice().getScore(); 
+
 		return score; 
 	}
-	// SAVABLE
-	// ================================================================================================================================
+	public Integer getGameTime() {
+		return gameTime;
+	}
+	public void setLevel(int level){
+		this.level = level;
+	}
+	
+	
+	// Savable
 	@Override
 	public JSONObject save() {
 

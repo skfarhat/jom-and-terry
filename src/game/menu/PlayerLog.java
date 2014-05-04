@@ -175,7 +175,7 @@ public class PlayerLog  {
 		else {
 			Policeman policeman = (Policeman) person; 
 
-			String scoreString = String.format("Score: %d",(int) policeman.getScore());
+			String scoreString = String.format("Score: %d",(int) area.getPoliceOffice().getScore());
 			String timerString = String.format("%s", getTime(timer));
 
 			g.setColor(Color.white);

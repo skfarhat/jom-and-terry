@@ -73,7 +73,7 @@ public class StatsView extends Menu {
 			usernameStr = String.format("Username: %s", account.getUsername());								// username 
 			highscoreStr = String.format("Highscore: %d", account.getHighscore()); 							// highscore
 			highestLevelStr = String.format("Highest Level: %d", account.getHighestLevelReached());			// highest level reached 
-			timeSpentStr = String.format("Time Spent: %d", account.getTimePlaying());  				// time spent playing
+			timeSpentStr = String.format("Time Spent: %d", account.getTimeSpentPlaying());  				// time spent playing
 
 			
 			g.drawString(usernameStr, xStatPosition - font.getWidth(usernameStr)/2, yStatPosition + yMargin);			// username

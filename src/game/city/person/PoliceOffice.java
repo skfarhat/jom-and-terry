@@ -37,6 +37,7 @@ public class PoliceOffice implements Savable {
 	private static final String EMERGENCY_SOUND = "res/Sounds/Emergency.ogg" ;
 
 	private Integer numberOfPolicemen = 0;  
+	private Integer score = 0;  
 	public ArrayList<Policeman> policeForceArray;
 	private static Audio sound;
 	private static boolean isPlayingSound = false; 
@@ -62,7 +63,9 @@ public class PoliceOffice implements Savable {
 		policeForceArray = new ArrayList<>(numberOfPolicemen);
 		numberOfPolicemen = area.getBuildings().size()/5;			// 1 policeman for 5 buildings
 
-
+		// initially the police has maximum score, but it decreases as Robber robs buildings
+		score = area.getTotalPossibleScore();
+		
 		// Create Policemen 
 		for (int i=0; i< numberOfPolicemen; i++) {
 
@@ -357,14 +360,20 @@ public class PoliceOffice implements Savable {
 	public ArrayList<Policeman> getPoliceForceArray() {
 		return policeForceArray;
 	}
-
 	public int getGathersRemaining() {
 		return gathersRemaining;
 	}
 	public Policeman getSelectedPoliceman() {
 		return selectedPoliceman;
 	}
-
+	public Integer getScore() {
+		return score;
+	}
+	public void decreaseScoreBy(int score){
+		this.score -= score; 
+		if (this.score < 0)
+			this.score = 0; 
+	}
 	/// TODO: could add Play.getinstance.setMainCharacter() at the end of it
 	public void setSelectedPoliceman(Policeman selectedPoliceman) {
 
@@ -408,9 +417,10 @@ public class PoliceOffice implements Savable {
 		// save the number of policemen
 		policeOfficeObj.put(Globals.COUNT, policeForceArray.size());
 
+		policeOfficeObj.put(Globals.SCORE, score);
+		
 		return policeOfficeObj;
 	}
-
 	@Override
 	public void load(Object loadObj) {
 		HashMap<Object, Object> map = (HashMap<Object, Object> ) loadObj;
@@ -420,6 +430,8 @@ public class PoliceOffice implements Savable {
 
 		gathersRemaining = (int) map.get(Globals.GATHERS_REMAINING); 
 
+		score = (int) map.get(Globals.SCORE);
+		
 		for (Policeman policeman : policeForceArray){
 
 			// get the policeman map 

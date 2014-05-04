@@ -34,6 +34,7 @@ public class Area implements Savable{
 	private int numberOfRobbedBuildings = 0; 
 	protected int level; 
 
+	private int totalPossibleScore = 0; 
 	protected Camera camera;
 
 	protected Robber robber; 
@@ -82,7 +83,7 @@ public class Area implements Savable{
 
 		if (level <= 0 || cityMapPath == null)	// TODO: throw Exception
 			return; 
-		
+
 		try {
 			cityMap = new CityMap(cityMapPath);
 			initMap(cityMapPath);
@@ -96,7 +97,8 @@ public class Area implements Savable{
 
 			/*
 			 * Set the robber for all the security guards
-			 * Can't pass robber in the constructor of Security Guards because they are created befrore the robber is
+			 * Can't pass robber in the constructor of Security Guards 
+			 * because they are created befrore the robber is
 			 * along with all the buildings (see initMap())
 			 */
 			for (Bank bank: banks)
@@ -154,6 +156,9 @@ public class Area implements Savable{
 			// create new house. The house is added to the static houses array
 			House house = new House(bldgID, this, position, width, height, money);
 
+			// add the score possible from the house to the total possible score
+			totalPossibleScore+=house.score;
+
 			houses.add(house);
 			buildings.add(house);
 
@@ -181,6 +186,9 @@ public class Area implements Savable{
 
 			// Create new bank that is added to the static bank array
 			Bank bank = new Bank(bldgID, this, position, width, height, money);
+
+			// add the score possible from the bank to the total possible score
+			totalPossibleScore+=bank.score;
 
 			// add the bank to the banks array 
 			banks.add(bank);
@@ -210,6 +218,9 @@ public class Area implements Savable{
 
 			// Create new Shop that is added to the static shop array
 			Shop shop = new Shop(bldgID, this, position, width, height, money);
+
+			// add the score possible from the shop to the total possible score
+			totalPossibleScore+=shop.score;
 
 			shops.add(shop);
 			buildings.add(shop);
@@ -313,6 +324,7 @@ public class Area implements Savable{
 		numberOfRobbedBuildings = 0; 
 	}
 
+	// Getters/Setters
 	public Gate getExitGate() {
 		return exitGate;
 	}
@@ -352,7 +364,10 @@ public class Area implements Savable{
 	public CityMap getCityMap() {
 		return cityMap;
 	}
-
+	public int getTotalPossibleScore() {
+		return totalPossibleScore;
+	}
+	// Savable
 	@Override
 	public JSONObject save() {
 		JSONObject saveObject = new JSONObject(); 
@@ -369,22 +384,21 @@ public class Area implements Savable{
 			JSONObject bldgObject = bldg.save(); 
 			bldgObjects.put(bldg.ID, bldgObject);
 		}
-		
+
 		saveObject.put(Globals.BUILDINGS, bldgObjects);
 		saveObject.put(Globals.ROBBER, robberObj);
 		saveObject.put(Globals.POLICE_OFFICE, policeOfficeObj);
-		
+
 		// Save: Level
 		saveObject.put(Globals.LEVEL, getLevel());
 		return saveObject; 
 	}
-
 	@Override
 	public void load(Object loadObj) {
 		HashMap<Object, Object> map = (HashMap<Object, Object>) loadObj;
 		HashMap<Object, Object> bldgsMap = (HashMap<Object, Object>) map.get(Globals.BUILDINGS);
-		
-		
+
+
 		// LOAD: Robber
 		Object robberObj = map.get(Globals.ROBBER);
 		getRobber().load(robberObj);
@@ -392,7 +406,7 @@ public class Area implements Savable{
 		// LOAD: PoliceOffice
 		Object policeOfficeObj = map.get(Globals.POLICE_OFFICE);
 		getPoliceOffice().load(policeOfficeObj);
-		
+
 		numberOfRobbedBuildings = 0; 
 		for (Building bldg: buildings){
 			HashMap<Object, Object> bldgMap = (HashMap<Object, Object> ) bldgsMap.get(""+ bldg.ID);

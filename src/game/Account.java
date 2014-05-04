@@ -4,11 +4,15 @@ import game.states.Play;
 import game.states.Score;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.json.simple.JSONObject;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SuppressWarnings("unchecked")
@@ -23,7 +27,7 @@ public class Account {
 	public static final String HIGHSCORE 				= "highscore"; 
 	public static final String LEVEL_REACHED			= "highestLevelReached"; 
 	public static final String USERNAME 				= "username"; 
-	public static final String TIME_PLAYING				= "timePlaying";
+	public static final String TIME_PLAYING				= "timeSpentPlaying";
 	public static final String SCORES					= "scores";
 	public static final String IS_ROBBER				= "isRobber";
 	public static final String PAST_SCORES				= "pastScores";
@@ -33,7 +37,7 @@ public class Account {
 	private String username;
 	private Integer highscore = 0;
 	private Integer highestLevelReached = 1; 
-	private Integer timePlaying = 0; 
+	private Integer timeSpentPlaying = 0; 
 	private Boolean isRobber = true;
 	private ArrayList<Score> pastScores = null; 
 	private HashMap<Object, Object> resumeGame = null; 
@@ -60,7 +64,7 @@ public class Account {
 			HashMap<String, Object> map = new HashMap<>();
 			map.put(HIGHSCORE, highscore.toString());
 			map.put(LEVEL_REACHED, highestLevelReached.toString());
-			map.put(TIME_PLAYING, timePlaying.toString());
+			map.put(TIME_PLAYING, timeSpentPlaying.toString());
 			map.put(IS_ROBBER, isRobber.toString());
 			map.put(USERNAME, username);
 			map.put(PAST_SCORES, pastScores);
@@ -85,7 +89,7 @@ public class Account {
 
 			mainObj.put(HIGHSCORE, highscore.toString());
 			mainObj.put(LEVEL_REACHED, highestLevelReached.toString());
-			mainObj.put(TIME_PLAYING, timePlaying.toString());
+			mainObj.put(TIME_PLAYING, timeSpentPlaying.toString());
 			mainObj.put(IS_ROBBER, isRobber.toString());
 			mainObj.put(USERNAME, username);
 			mainObj.put(PAST_SCORES, pastScores); 
@@ -98,21 +102,21 @@ public class Account {
 
 	}
 
-	public void save(){
+	public void save(Integer playTime){
 		try {
 
 			final File accountFile = new File(SAVE_DIRECTORY_PATH + username + ".json");
 			ObjectMapper mapper = new ObjectMapper(); 
 			JSONObject mainObj = new JSONObject(); 
 
-			JSONObject resumeObj = Play.getInstance().save();
+			timeSpentPlaying+= playTime;
+
 			mainObj.put(HIGHSCORE, highscore.toString());
 			mainObj.put(LEVEL_REACHED, highestLevelReached.toString());
-			mainObj.put(TIME_PLAYING, timePlaying.toString());
+			mainObj.put(TIME_PLAYING, timeSpentPlaying.toString());
 			mainObj.put(IS_ROBBER, isRobber.toString());
 			mainObj.put(USERNAME, username);
-			mainObj.put(PAST_SCORES, pastScores);
-			mainObj.put(RESUME_GAME, resumeObj);		// Resume 
+			mainObj.put(PAST_SCORES, pastScores);		 
 
 			mapper.writeValue(accountFile, mainObj);
 		}
@@ -120,6 +124,41 @@ public class Account {
 			exc.printStackTrace();
 		}
 
+	}
+
+	public void saveWithResumeGame(Integer playTime){
+		final File accountFile = new File(SAVE_DIRECTORY_PATH + username + ".json");
+		ObjectMapper mapper = new ObjectMapper(); 
+		JSONObject mainObj = new JSONObject(); 
+
+		timeSpentPlaying+= playTime; 
+
+		JSONObject resumeObj = Play.getInstance().save();
+		mainObj.put(HIGHSCORE, highscore.toString());
+		mainObj.put(LEVEL_REACHED, highestLevelReached.toString());
+		mainObj.put(TIME_PLAYING, timeSpentPlaying);
+		mainObj.put(IS_ROBBER, isRobber.toString());
+		mainObj.put(USERNAME, username);
+		mainObj.put(PAST_SCORES, pastScores);
+		mainObj.put(RESUME_GAME, resumeObj);		 
+
+		try {
+			mapper.writeValue(accountFile, mainObj);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void saveScore(int gameTime, int score, boolean youWin, boolean isRobber) {
+		ArrayList<Score> pastScores = Game.getInstance().getAccount().getPastScores();
+
+		if (score > highscore)
+		{
+			highscore = score; 
+		}
+		Score score1 = new Score(new Date(), score, youWin);
+		pastScores.add(score1);
+		save(gameTime); 
 	}
 
 	public static Account load(String username) {
@@ -130,7 +169,7 @@ public class Account {
 
 			// read JSON from a file 
 			Account account = mapper.readValue(accountFile, Account.class);
-			
+
 			return account;
 		}
 		catch (Exception exc){
@@ -140,6 +179,9 @@ public class Account {
 	}
 
 	// Getters
+	public Integer getTimeSpentPlaying() {
+		return timeSpentPlaying;
+	}
 	public String getUsername() {
 		return username;
 	}
@@ -148,9 +190,6 @@ public class Account {
 	}
 	public Integer getHighestLevelReached() {
 		return highestLevelReached;
-	}
-	public Integer getTimePlaying() {
-		return timePlaying;
 	}
 	public Boolean getIsRobber() {
 		return isRobber;
@@ -177,13 +216,16 @@ public class Account {
 	public void setHighscore(Integer highscore) {
 		this.highscore = highscore;
 	}
+	public void setTimeSpentPlaying(Integer timeSpentPlaying) {
+		this.timeSpentPlaying = timeSpentPlaying;
+	}
 	/**
-	 * Override toString() method to print the filed attributes of the Account class
+	 *  * Override toString() method to print the filed attributes of the Account class
 	 */
 	@Override
 	public String toString() {
 		String str = String.format("Username:%s\nHighscore:%d\nHighestLevelReached:%d\nTimePlaying:%d\nIsRobber:%b",
-				username, highscore, highestLevelReached, timePlaying, isRobber);
+				username, highscore, highestLevelReached, timeSpentPlaying, isRobber);
 		return str; 
 	}
 }

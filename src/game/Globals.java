@@ -32,6 +32,7 @@ public final class Globals {
 	// Robber
 	public static final float 	ROBBER_VISION_DISTANCE = 500.0f; 
 	public static final int 	ROBBER_ROBBING_INTERVAL = 4000; // 4 seconds 
+	public static final float 	ROBBER_FLEE_DISTANCE= 200.0f; // 4 seconds 
 
 	// Velocity
 	public static final float VELOCITY_MULTIPLIER = 0.02f; 
@@ -80,7 +81,7 @@ public final class Globals {
 	public static final int WHISTLE_DURATION = 500; //4 sec
 	public static final float WHISTLE_HEAR_DISTANCE = 400.0f; // distance needed to hear the whistle in pixels
 	
-	public static final float POLICEMAN_VISION_DISTANCE = 100.0f; 
+	public static final float POLICEMAN_VISION_DISTANCE = 500.0f; 
 	public static final String POLICEMAN_SCORE = "Score";
 	public static final String POLICEMAN_POSITION_X= "Position_X";
 	public static final String POLICEMAN_POSITION_Y= "Position_Y";

@@ -33,7 +33,7 @@ public abstract class Policeman extends Person implements Savable, Mover{
 	//=================================================================
 	private Image image;
 
-	protected float score = 0; 
+//	protected float score = 0; 
 	protected Point destPoint; 
  
 	protected Building nearByBldg; 
@@ -133,9 +133,6 @@ public abstract class Policeman extends Person implements Savable, Mover{
 	public Image getImage() {
 		return image;
 	}
-	public float getScore() {
-		return score;
-	}
 
 	public void draw() {
 		// draw the image at the positon of the policeman
@@ -189,7 +186,7 @@ public abstract class Policeman extends Person implements Savable, Mover{
 		HashMap<String, Object> map = new HashMap<>();
 
 		map.put(Globals.ID, this.ID);
-		map.put(Globals.POLICEMAN_SCORE, this.score);							// put score
+//		map.put(Globals.POLICEMAN_SCORE, this.score);							// put score
 		map.put(Globals.POLICEMAN_POSITION_X, this.position.getX());			// put position x
 		map.put(Globals.POLICEMAN_POSITION_Y, this.position.getY());			// put position y
 
@@ -213,7 +210,7 @@ public abstract class Policeman extends Person implements Savable, Mover{
 		rect.setX(x);
 		rect.setY(y);
 		
-		score = (float) (double) map.get(Globals.POLICEMAN_SCORE);
+//		score = (float) (double) map.get(Globals.POLICEMAN_SCORE);
 	}
 
 }
