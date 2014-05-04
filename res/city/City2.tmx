@@ -173,4 +173,31 @@
   <object x="336" y="320" width="128" height="272"/>
   <object x="1280" y="368" width="144" height="240"/>
  </objectgroup>
+ <objectgroup color="#a40b00" name="Robber Collision" width="100" height="100">
+  <object x="0" y="1120" width="288" height="480"/>
+  <object x="288" y="1472" width="176" height="128"/>
+  <object x="0" y="848" width="288" height="80"/>
+  <object x="0" y="768" width="288" height="64"/>
+  <object x="464" y="560" width="1136" height="32"/>
+  <object x="464" y="672" width="1136" height="16"/>
+  <object x="1456" y="832" width="80" height="176"/>
+  <object x="832" y="496" width="96" height="48"/>
+  <object x="960" y="384" width="64" height="160"/>
+  <object x="720" y="48" width="336" height="80"/>
+  <object x="1296" y="0" width="304" height="128"/>
+  <object x="112" y="256" width="64" height="176"/>
+  <object x="176" y="368" width="112" height="64"/>
+ </objectgroup>
+ <objectgroup color="#0100a4" name="Police Collision" width="100" height="100" visible="0">
+  <object x="464" y="320" width="832" height="720"/>
+  <object x="464" y="1168" width="832" height="176"/>
+  <object x="1424" y="1168" width="176" height="176"/>
+  <object x="0" y="720" width="336" height="784"/>
+  <object x="0" y="0" width="336" height="592"/>
+  <object x="336" y="0" width="784" height="176"/>
+  <object x="1248" y="0" width="352" height="176"/>
+  <object x="1424" y="320" width="176" height="720"/>
+  <object x="0" y="1472" width="1296" height="128"/>
+  <object x="1424" y="1472" width="176" height="128"/>
+ </objectgroup>
 </map>

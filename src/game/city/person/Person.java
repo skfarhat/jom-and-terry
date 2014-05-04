@@ -1,5 +1,7 @@
 package game.city.person;
 
+import java.util.Observable;
+
 import game.city.building.Area;
 
 import org.newdawn.slick.Animation;
@@ -15,7 +17,7 @@ import org.newdawn.slick.geom.Rectangle;
  * @author sami
  * 
  */
-public abstract class Person {
+public abstract class Person extends Observable{
 	public static Integer PersonCount = 0 ; 
 	public Integer ID; 
 	public String name;

@@ -69,7 +69,7 @@ public class Bank extends Building {
 		obj.put(Globals.ID, this.ID);
 		obj.put(Globals.TYPE, "Bank");
 		obj.put(Globals.MONEY, this.money);
-		obj.put(Globals.NUMBER_SECURITY_GUARDS, this.numberOfSecurityGuards);
+		obj.put(Globals.NB_SECURITY_GUARDS, this.numberOfSecurityGuards);
 		obj.put(Globals.ROBBED, getIsCompletelyRobbed());
 		obj.put(Globals.FLAG, this.getFlag().flagID);
 		
@@ -80,10 +80,12 @@ public class Bank extends Building {
 	public void load(Object loadObj) {
 		HashMap<Object, Object> map = (HashMap<Object, Object>) loadObj;
 		
-		this.money = (int) map.get(Globals.MONEY); 
-		this.numberOfSecurityGuards = (int) map.get(Globals.NUMBER_SECURITY_GUARDS);
-		this.setCompletelyRobbed((Boolean) map.get(Globals.ROBBED));
-		this.getFlag().flagID = (int) map.get(Globals.FLAG); 
+		money = (int) map.get(Globals.MONEY); 
+		numberOfSecurityGuards = (int) map.get(Globals.NB_SECURITY_GUARDS);
+		setCompletelyRobbed((Boolean) map.get(Globals.ROBBED));
+
+		int flagId = (int) map.get(Globals.FLAG);
+		flag = new Flag(flagId); 
 		
 	}
 

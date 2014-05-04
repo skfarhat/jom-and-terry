@@ -2,6 +2,7 @@ package game.city.person;
 
 import game.Globals;
 import game.city.building.Area;
+import game.city.building.Building;
 import game.states.Play;
 import game.states.Savable;
 
@@ -15,7 +16,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.util.pathfinding.Mover;
 
 @SuppressWarnings("unchecked")
 
@@ -25,7 +26,7 @@ import org.newdawn.slick.geom.Vector2f;
  * @author sami
  * 
  */
-public abstract class Policeman extends Person implements Savable{
+public abstract class Policeman extends Person implements Savable, Mover{
 
 	static Random rand = new Random(System.currentTimeMillis()); 
 	private static String policeSpriteSheet 			= "res/Spritesheets/Police.png";
@@ -34,8 +35,8 @@ public abstract class Policeman extends Person implements Savable{
 
 	protected float score = 0; 
 	protected Point destPoint; 
-
-	public Vector2f direction; 
+ 
+	protected Building nearByBldg; 
 	//=================================================================
 	// Behavior
 	protected boolean userIsPolice; 
@@ -203,9 +204,16 @@ public abstract class Policeman extends Person implements Savable{
 
 		HashMap<Object, Object> map = (HashMap<Object, Object>) loadObj;
 
-		this.position.setX((float) (double) map.get(Globals.POLICEMAN_POSITION_X));
-		this.position.setY((float) (double) map.get(Globals.POLICEMAN_POSITION_Y));
-		this.score = (float) (double) map.get(Globals.POLICEMAN_SCORE);
+		final float x = (float) (double)map.get(Globals.POLICEMAN_POSITION_X);
+		final float y = (float) (double)map.get(Globals.POLICEMAN_POSITION_Y);
+		
+		position.setX(x);
+		position.setY(y);
+		
+		rect.setX(x);
+		rect.setY(y);
+		
+		score = (float) (double) map.get(Globals.POLICEMAN_SCORE);
 	}
 
 }

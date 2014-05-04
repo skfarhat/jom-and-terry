@@ -3,6 +3,7 @@ package game.city.person;
 import game.Globals;
 import game.city.building.Area;
 import game.city.building.Building;
+import game.city.building.Gate;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,7 +23,8 @@ public class RobberComputer extends Robber implements Mover {
 	private Timer fleeingTimer; 
 	private Building buildingToRob = null;
 	private boolean willFleePolice = true;
-
+	private boolean robbedAllBuildings = false; 
+	
 	public RobberComputer(Area area) throws SlickException {
 		super(area);
 
@@ -43,25 +45,32 @@ public class RobberComputer extends Robber implements Mover {
 
 	public void startRobbing() {
 
-		robbingTimer = new Timer(10000, new ActionListener() {
+		robbingTimer = new Timer(Globals.ROBBER_ROBBING_INTERVAL, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
+				// if all of the buildings are already robbed
+				if (area.getNumberOfRobbedBuildings() == area.getBuildings().size()){
+					robbedAllBuildings = true; 
+					Gate exitGate = area.getExitGate(); 
+					move(exitGate.getPosition());
+				}
 				// if the robber is not robbing a building
 				if (!isRobbing && !goingToRob) 
 				{
-					// get random number between 0-size
-					int randNum = rand.nextInt(area.getBuildings().size()); 
+					Building bldgToRob = null; 
+					
+					do {
+						// get random number between 0-size
+						int randNum = Globals.random.nextInt(area.getBuildings().size()); 
 
-					// get building at the random index
-					final Building bldg = area.getBuildings().get(randNum);
-
-					// if the bldg is not completely robbed 
-					if (!bldg.getIsCompletelyRobbed()){
-						// go to the building 
-						moveAndRob(bldg);
-
+						// get building at the random index
+						bldgToRob = area.getBuildings().get(randNum);
 					}
+					while (bldgToRob.getIsCompletelyRobbed());
+					
+					moveAndRob(bldgToRob);
+						
 				}
 			}
 		});
@@ -75,11 +84,11 @@ public class RobberComputer extends Robber implements Mover {
 		if (bldgToRob == null)
 			return false;
 
-		this.goingToRob = true; 
+		goingToRob = true; 
 
 		// If is in robbing distance directly rob
 		if (bldgToRob.isInRobbingDistance(this.rect))
-			return  rob(bldgToRob); 
+			return rob(bldgToRob); 
 
 		// set the building to rob
 		this.buildingToRob =bldgToRob;
@@ -95,7 +104,6 @@ public class RobberComputer extends Robber implements Mover {
 	}
 
 	public void draw(boolean showRobber) {
-		showRobber = true;
 		super.draw(showRobber);
 
 		if (isMoving) {
@@ -141,6 +149,9 @@ public class RobberComputer extends Robber implements Mover {
 					rob(buildingToRob);
 					buildingToRob = null;
 				}
+				if (robbedAllBuildings){
+					area.getExitGate().passThrough(this);
+				}
 			}
 		}
 
@@ -153,9 +164,6 @@ public class RobberComputer extends Robber implements Mover {
 	{
 		// set the Destination Point
 		this.destPoint = destPoint; 
-
-		// set the direction of the policeman
-		//		this.vectorDirection = new Vector2f(destPoint.getX()  - this.position.getX(), destPoint.getY() - this.position.getY());
 
 		// set the boolean is moving to true
 		this.isMoving = true; 
@@ -206,6 +214,9 @@ public class RobberComputer extends Robber implements Mover {
 		robbingTimer.stop();
 	}
 
+	public void exit(){
+		
+	}
 	// Movement without collisions
 	// ==============================================================================================================================
 	public boolean moveRight() {

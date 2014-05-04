@@ -46,13 +46,6 @@ public class AreaPick extends Menu {
 			AREA_5_LOCKED_IMAGE_PATH
 	}; 
 
-	final String cityTMXPaths[] = {
-			Globals.CITY_1,
-			Globals.CITY_2,
-			Globals.CITY_3,
-			Globals.CITY_4,
-			Globals.CITY_5
-	};
 
 	public AreaPick(int state, StateBasedGame sbg){
 		super();
@@ -143,7 +136,7 @@ public class AreaPick extends Menu {
 				@Override
 				public void performAction() {
 					if (unlocked)
-						enterPlay(index, cityTMXPaths[index-1]);
+						enterPlay(index, Globals.cityTMXPaths[index-1]);
 				}
 			}
 			;
@@ -154,9 +147,8 @@ public class AreaPick extends Menu {
 
 	public void enterPlay(int level, String cityPath){
 		AudioGame.playAsSound("button-21.ogg");
-		Play.getInstance().set(level, cityPath);
+		Play.getInstance().setLevel(level);
 		sbg.enterState(Globals.PLAY);
-
 	}
 
 }

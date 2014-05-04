@@ -1,10 +1,10 @@
 package game;
 
 import game.states.Play;
+import game.states.Score;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import org.json.simple.JSONObject;
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SuppressWarnings("unchecked")
 /**
- * @author Apple
+ * @author Sami
  * 
  */
 public class Account {
@@ -35,7 +35,7 @@ public class Account {
 	private Integer highestLevelReached = 1; 
 	private Integer timePlaying = 0; 
 	private Boolean isRobber = true;
-	private ArrayList<HashMap<Date, Integer>> pastScores = null; 
+	private ArrayList<Score> pastScores = null; 
 	private HashMap<Object, Object> resumeGame = null; 
 
 
@@ -57,9 +57,6 @@ public class Account {
 			if (!accountFile.createNewFile())
 				return false; 
 
-			HashMap<Date, Integer> pastScoresMap = new HashMap<>();
-			pastScores.add(pastScoresMap);
-
 			HashMap<String, Object> map = new HashMap<>();
 			map.put(HIGHSCORE, highscore.toString());
 			map.put(LEVEL_REACHED, highestLevelReached.toString());
@@ -78,6 +75,27 @@ public class Account {
 			exc.printStackTrace();
 			return false; 
 		}
+	}
+	public void removeResumeGame(){
+		try {
+
+			final File accountFile = new File(SAVE_DIRECTORY_PATH + username + ".json");
+			ObjectMapper mapper = new ObjectMapper(); 
+			JSONObject mainObj = new JSONObject(); 
+
+			mainObj.put(HIGHSCORE, highscore.toString());
+			mainObj.put(LEVEL_REACHED, highestLevelReached.toString());
+			mainObj.put(TIME_PLAYING, timePlaying.toString());
+			mainObj.put(IS_ROBBER, isRobber.toString());
+			mainObj.put(USERNAME, username);
+			mainObj.put(PAST_SCORES, pastScores); 
+
+			mapper.writeValue(accountFile, mainObj);
+		}
+		catch (Exception exc){
+			exc.printStackTrace();
+		}
+
 	}
 
 	public void save(){
@@ -112,13 +130,8 @@ public class Account {
 
 			// read JSON from a file 
 			Account account = mapper.readValue(accountFile, Account.class);
-
-			if (account == null){
-				return null; 
-			}
-			else{				
-				return account; 
-			}
+			
+			return account;
 		}
 		catch (Exception exc){
 			exc.printStackTrace();
@@ -142,14 +155,15 @@ public class Account {
 	public Boolean getIsRobber() {
 		return isRobber;
 	}
-	public ArrayList<HashMap<Date, Integer>> getPastScores() {
+	public ArrayList<Score> getPastScores() {
 		return pastScores;
 	}
 	public HashMap<Object, Object> getResumeGame() {
 		return resumeGame;
 	}
-
-	
+	public void setResumeGame(HashMap<Object, Object> resumeGame) {
+		this.resumeGame = resumeGame;
+	}
 	public void setHighestLevelReached(Integer highestLevelReached) {
 		if (highestLevelReached > this.highestLevelReached)
 			this.highestLevelReached = highestLevelReached;			
@@ -157,7 +171,12 @@ public class Account {
 	public void setIsRobber(Boolean isRobber) {
 		this.isRobber = isRobber;
 	}
-
+	public void setPastScores(ArrayList<Score> pastScores) {
+		this.pastScores = pastScores;
+	}
+	public void setHighscore(Integer highscore) {
+		this.highscore = highscore;
+	}
 	/**
 	 * Override toString() method to print the filed attributes of the Account class
 	 */

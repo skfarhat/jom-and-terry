@@ -61,9 +61,12 @@ public class House extends Building {
 	public void load(Object loadObj) {
 		HashMap<Object, Object> map = (HashMap<Object, Object>) loadObj;
 		
+
+		int flagId = (int) map.get(Globals.FLAG);
+		flag = new Flag(flagId);
+		
 		this.money = (int) map.get(Globals.MONEY); 
-		this.setCompletelyRobbed((Boolean) map.get(Globals.ROBBED));
-		this.getFlag().flagID = (int) map.get(Globals.FLAG); 
+		this.setCompletelyRobbed((Boolean) map.get(Globals.ROBBED)); 
 	}
 
 }

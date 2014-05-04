@@ -1,14 +1,12 @@
 package game.city.person;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import game.Game;
 import game.Globals;
 import game.city.building.Area;
 import game.city.building.Building;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
@@ -16,7 +14,6 @@ import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.util.pathfinding.AStarPathFinder;
 import org.newdawn.slick.util.pathfinding.Mover;
 import org.newdawn.slick.util.pathfinding.Path;
@@ -32,11 +29,11 @@ public class PolicemanUser extends Policeman implements Movable, Mover{
 	private boolean isGathering = false; 
 	private boolean isSelected = false;
 	private boolean robberArrested = false; 
-
-
-	Path pathToTarget;
+	
+	
+	private Path pathToTarget;
 	private Step nextStep; 
-	Step currentStep;
+	private Step currentStep;
 	private int pathToTargetIndex = 0;
 
 	public PolicemanUser(Area area, Robber robber, Point position, String name,
@@ -72,19 +69,22 @@ public class PolicemanUser extends Policeman implements Movable, Mover{
 				if (!isGathering)
 					robberArrested = arrestRobber(robber);
 			}
+			else if (input.isKeyPressed(Input.KEY_F)) {
+				if (nearByBldg != null) {
+					nearByBldg.nextFlag();
+				}
+			}
 			else {
 				stop();
 			}		
 	}
 
+	
+	// TODO: keep only one of the functions
 	public void gather(Circle region){
 		System.out.println("gather");
 		this.destPoint = randomPointInCircle(region);
 
-		this.direction = new Vector2f(
-				destPoint.getX()  - this.position.getX(), 
-				destPoint.getY() - this.position.getY()
-				);
 		this.isGathering = true;
 
 		// TODO: probably remove this
@@ -152,9 +152,10 @@ public class PolicemanUser extends Policeman implements Movable, Mover{
 	public void moveToNextStep() {
 
 		final int period = 80; 
+		final int interval = Globals.TILE_SIZE; 
+
 		final Timer timer = new Timer();
 		
-		final int interval = 16; 
 		final TimerTask timerTask = new TimerTask() {
 			int count = 0;	
 
@@ -175,25 +176,16 @@ public class PolicemanUser extends Policeman implements Movable, Mover{
 					else
 						timer.cancel();
 				}
-				
-				
-				int stepX = (nextStep.getX() - currentStep.getX()) * Globals.TILE_SIZE;
-				int stepY = (nextStep.getY() - currentStep.getY()) * Globals.TILE_SIZE;				
+							
+				int stepX = (nextStep.getX() - currentStep.getX()) * interval;
+				int stepY = (nextStep.getY() - currentStep.getY()) * interval;				
 	
-				
 				// compute delta of prev and next steps
 				float newX = position.getX() + stepX/interval; 
 				float newY = position.getY() + stepY/interval; 
 
 				position.setX(newX);
 				position.setY(newY);
-				
-//				// set position of the Mover to that of the nextStep
-//				position.setX(nextStep.getX() *Globals.TILE_SIZE);
-//				position.setY(nextStep.getY()* Globals.TILE_SIZE);
-				
-
-
 				
 				count++; 
 			}
@@ -367,23 +359,32 @@ public class PolicemanUser extends Policeman implements Movable, Mover{
 		// convert the position of the Player from pixels to 'Tile' position
 		// divide by the tile Size (in this case 16px)
 
-
+		
 		// Collision with boundaries
 		Line[] boundLines = area.getMapBounds();
 		for (Line line : boundLines) {
 			if (line.intersects(this.rect))
 				return true;
 		}
-
+	
+		nearByBldg = null; 
 		boolean isInCollision = false;
 		for (Building bldg: area.getBuildings()) {
-			if (this.rect.intersects(bldg.getRect())) {
+			if (rect.intersects(bldg.getRect())) {
 				isInCollision = true;
+				nearByBldg = bldg; 
 				bldg.setShowBuildingInfo(true);
 				break;
 			}
+			if (this.rect.intersects(bldg.robbingRegion)) {
+				this.nearByBldg = bldg;
+				bldg.setShowBuildingInfo(true);
+			}
 		}
-		return isInCollision;
+		final int x = (int)position.getX() / Globals.TILE_SIZE;
+		final int y = (int)position.getY() / Globals.TILE_SIZE;
+		
+		return area.getCityMap().blocked(this) || isInCollision; 
 	}
 
 	public boolean moveRight() {

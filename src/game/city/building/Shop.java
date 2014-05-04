@@ -60,8 +60,10 @@ public class Shop extends Building {
 		
 		this.money = (int) map.get(Globals.MONEY); 
 		this.setCompletelyRobbed((Boolean) map.get(Globals.ROBBED));
-		this.getFlag().flagID = (int) map.get(Globals.FLAG); 
-				
+		
+		int flagId = (int) map.get(Globals.FLAG);
+		flag = new Flag(flagId);
+	
 	}
 
 }

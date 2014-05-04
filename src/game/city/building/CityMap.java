@@ -1,37 +1,49 @@
 package game.city.building;
 
 import game.Globals;
+import game.city.person.Person;
+import game.city.person.Policeman;
+import game.city.person.Robber;
 
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.tiled.TiledMap;
+import org.newdawn.slick.util.pathfinding.Mover;
 import org.newdawn.slick.util.pathfinding.PathFindingContext;
 import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
 public class CityMap implements TileBasedMap {
 
+	enum TileBlock {
+		OPEN_TILE, 
+		POLICE_BLOCKED_TILE, 
+		ROBBER_BLOCKED_TILE, 
+		BLOCKED
+	}
 	private TiledMap map;
-	private boolean[][] MAP;
+	private TileBlock[][] collisionMap;
 
 	private int HEIGHT; 
 	private int WIDTH; 
-	
-	public CityMap(String areaMapPath) throws SlickException {
 
-		map = new TiledMap(areaMapPath);
+	public CityMap(String areaMapPath) {
+
+		try {map = new TiledMap(areaMapPath);}
+		catch (SlickException e) {}
 		WIDTH 	= map.getWidth(); 
 		HEIGHT 	= map.getHeight();
-		
+
 		// double them 
-//		WIDTH *=1;
-//		HEIGHT *=1;
-		MAP = new boolean[WIDTH][HEIGHT];
-		
+		collisionMap = new TileBlock[WIDTH][HEIGHT];
+
 		initCollisionMap();
 
 	}
 
-	//	quality control
 	/*
+	 * QUALITY CONTROL
+	 * ---------------
+	 * 
 	 * sami.kfarhat@gmail.com
 	 * Offer: quality control consultant beirut
 	 * repor
@@ -53,15 +65,20 @@ public class CityMap implements TileBasedMap {
 	 * 25 working days 
 	 * at least 1 year
 	 *  
-	 * may 09  
-	 * 
+	 *  -------------------------
+	 * May 09
 	 */
 	public void initCollisionMap(){
 
-		// Collision only for Houses
-		int collisionObjectCount = map.getObjectCount(Globals.POLICE_COLL_OBJECT_INDEX);
+		// All open tiles initially 
+		for (int i=0; i< WIDTH; i++)
+			for (int j=0; j< HEIGHT; j++)
+				collisionMap[i][j] = TileBlock.OPEN_TILE; 
 
-		for (int objectIndex = 0; objectIndex < collisionObjectCount; objectIndex++) {
+
+		int policeCollisionObjects = map.getObjectCount(Globals.POLICE_COLL_OBJECT_INDEX);
+		// Police Blocked Tiles
+		for (int objectIndex = 0; objectIndex < policeCollisionObjects; objectIndex++) {
 			int x = map.getObjectX(Globals.POLICE_COLL_OBJECT_INDEX, objectIndex)
 					/ Globals.TILE_SIZE;
 			int y = map.getObjectY(Globals.POLICE_COLL_OBJECT_INDEX, objectIndex)
@@ -70,30 +87,118 @@ public class CityMap implements TileBasedMap {
 					objectIndex) / Globals.TILE_SIZE;
 			int height = map.getObjectHeight(Globals.POLICE_COLL_OBJECT_INDEX,
 					objectIndex) / Globals.TILE_SIZE;
-			//			int x = map.getObjectX(Globals.POLICE_COLL_OBJECT_INDEX, objectIndex);
-			//			int y = map.getObjectY(Globals.POLICE_COLL_OBJECT_INDEX, objectIndex);
-			//			int width = map.getObjectWidth(Globals.POLICE_COLL_OBJECT_INDEX,
-			//					objectIndex) / Globals.TILE_SIZE;
-			//			int height = map.getObjectHeight(Globals.POLICE_COLL_OBJECT_INDEX,
-			//					objectIndex) / Globals.TILE_SIZE;
 
 			for (int i = 0; i < width; i++)
 				for (int j = 0; j < height; j++)
-					MAP[x + i][y + j] = true;
-
+					collisionMap[x + i][y + j] = TileBlock.POLICE_BLOCKED_TILE;
 		}
 
-		for (int y = 0; y < HEIGHT; y++) {
-			for (int x = 0; x < WIDTH; x++) {
-				System.out.print((MAP[x][y])?"1":"0");
+		int robberCollisionObjects = map.getObjectCount(Globals.ROBBER_COLL_OBJECT_INDEX);
+		for (int objectIndex = 0; objectIndex < robberCollisionObjects; objectIndex++) {
+			int x = map.getObjectX(Globals.ROBBER_COLL_OBJECT_INDEX, objectIndex)
+					/ Globals.TILE_SIZE;
+			int y = map.getObjectY(Globals.ROBBER_COLL_OBJECT_INDEX, objectIndex)
+					/ Globals.TILE_SIZE;
+			int width = map.getObjectWidth(Globals.ROBBER_COLL_OBJECT_INDEX,
+					objectIndex) / Globals.TILE_SIZE;
+			int height = map.getObjectHeight(Globals.ROBBER_COLL_OBJECT_INDEX,
+					objectIndex) / Globals.TILE_SIZE;
+
+			for (int i = 0; i < width; i++)
+				for (int j = 0; j < height; j++){
+
+					if (collisionMap[x + i][y + j] == TileBlock.POLICE_BLOCKED_TILE)
+						collisionMap[x + i][y + j] = TileBlock.BLOCKED;
+				}
+		}
+
+//		printMap();
+	}
+
+	public void printMap(){ 
+		for (int j=0; j< HEIGHT ; j++){
+			for (int i=0; i< WIDTH; i++){
+				TileBlock block = collisionMap[i][j]; 
+				if (block == TileBlock.BLOCKED)
+					System.out.print("x");
+				else if(block == TileBlock.POLICE_BLOCKED_TILE)
+					System.out.print("P");
+				else if(block == TileBlock.ROBBER_BLOCKED_TILE)
+					System.out.print("R");
+				else
+					System.out.print("0");
 			}
 			System.out.println();
 		}
 	}
-
+	
+	public boolean blocked(Mover mover) {
+		Person person = (Person) mover; 
+		Rectangle rect = person.rect; 
+		int maxX = Math.round(rect.getMaxX()/Globals.TILE_SIZE);
+		int minX = Math.round(rect.getMinX()/Globals.TILE_SIZE); 
+		int maxY = Math.round(rect.getMaxY()/Globals.TILE_SIZE);
+		int minY = Math.round(rect.getMinY()/Globals.TILE_SIZE); 
+		
+		if (maxX >= getWidthInTiles())
+			maxX = getWidthInTiles()-1; 
+		if (maxY >= getHeightInTiles())
+			maxY = getHeightInTiles()-1;
+		if (maxY < 0)
+			maxY = 0;
+		if (maxX < 0)
+			maxX = 0; 
+		
+		// Check if map blocked (for both: Robber and Policeman) 
+		if (
+				collisionMap[maxX][minY] == TileBlock.BLOCKED 
+				|| collisionMap[maxX][maxY] == TileBlock.BLOCKED 
+				|| collisionMap[minX][maxY] == TileBlock.BLOCKED
+				|| collisionMap[minX][minY] == TileBlock.BLOCKED)
+			return true; 
+		
+		// Check if map blocked for Robber
+		if (mover instanceof Robber) {
+			if (
+					collisionMap[maxX][minY] == TileBlock.ROBBER_BLOCKED_TILE 
+					|| collisionMap[maxX][maxY] == TileBlock.ROBBER_BLOCKED_TILE 
+					|| collisionMap[minX][maxY] == TileBlock.ROBBER_BLOCKED_TILE
+					|| collisionMap[minX][minY] == TileBlock.ROBBER_BLOCKED_TILE)
+				return true;  
+		}
+		// Check if map blocked for Policeman
+		else if (mover instanceof Policeman) {
+			if (
+					collisionMap[maxX][minY] == TileBlock.POLICE_BLOCKED_TILE 
+					|| collisionMap[maxX][maxY] == TileBlock.POLICE_BLOCKED_TILE 
+					|| collisionMap[minX][maxY] == TileBlock.POLICE_BLOCKED_TILE
+					|| collisionMap[minX][minY] == TileBlock.POLICE_BLOCKED_TILE)
+				return true;  
+		}
+		
+		// if neither make it not-blocked
+		return false; 	
+	}
+	
 	@Override
 	public boolean blocked(PathFindingContext ctx, int x, int y) {
-		return MAP[x][y];
+		Mover mover = ctx.getMover(); 
+		if (mover instanceof Robber) {
+			if (collisionMap[x][y] == TileBlock.BLOCKED)
+				return true; 
+			if (collisionMap[x][y] == TileBlock.ROBBER_BLOCKED_TILE)
+				return true; 
+			else return false; 
+		}
+		else if (mover instanceof Policeman) {
+			if (collisionMap[x][y] == TileBlock.BLOCKED)
+				return true; 
+			if (collisionMap[x][y] == TileBlock.POLICE_BLOCKED_TILE)
+				return true; 
+			else return false; 
+		}
+		// if neither make it not-blocked
+		else return false; 
 	}
 
 	@Override

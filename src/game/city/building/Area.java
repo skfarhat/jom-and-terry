@@ -22,8 +22,8 @@ import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.tiled.TiledMap;
-import org.newdawn.slick.util.pathfinding.TileBasedMap;
 
+@SuppressWarnings("unchecked")
 public class Area implements Savable{
 
 	// TODO: make the loops only one loop
@@ -43,7 +43,6 @@ public class Area implements Savable{
 	 * Array containing all the security guards created in the current area
 	 */
 	private ArrayList<SecurityGuard> securityGuards = new ArrayList<>(10);
-
 	/**
 	 * An array containing all the buildings created in the current area
 	 */
@@ -75,23 +74,25 @@ public class Area implements Savable{
 	/**
 	 * Constructor
 	 * @param level
-	 * @param areaMapPath
+	 * @param cityMapPath
 	 */
-	public Area(int level, String areaMapPath) {
+	public Area(int level) {
 		this.level = level; 
+		final String cityMapPath = Globals.cityTMXPaths[level-1];	// (levels start at 1)
 
-		try{
-			cityMap = new CityMap(areaMapPath);
-			initMap(areaMapPath);
+		if (level <= 0 || cityMapPath == null)	// TODO: throw Exception
+			return; 
+		
+		try {
+			cityMap = new CityMap(cityMapPath);
+			initMap(cityMapPath);
 
 			boolean userIsRobber = Game.getInstance().getAccount().getIsRobber();
 			boolean userIsPolice = !userIsRobber;
 
 			robber = (userIsRobber)? new RobberUser(this): new RobberComputer(this);	// Create Robber
 			policeOffice = new PoliceOffice(this, robber, userIsPolice);				// Create Police Office		
-			//			camera = new Camera(getAreaTileMap());										// Create Camera
-
-			camera = new Camera(cityMap);
+			camera = new Camera(cityMap);												// Create Camera
 
 			/*
 			 * Set the robber for all the security guards
@@ -315,19 +316,15 @@ public class Area implements Savable{
 	public Gate getExitGate() {
 		return exitGate;
 	}
-
 	public ArrayList<Gate> getGates() {
 		return gates;
 	}
-
 	public ArrayList<Building> getBuildings() {
 		return buildings;
 	}
-
 	public ArrayList<Road> getRoads() {
 		return roads;
 	}
-
 	public ArrayList<SecurityGuard> getSecurityGuards() {
 		return securityGuards;
 	}
@@ -355,23 +352,53 @@ public class Area implements Savable{
 	public CityMap getCityMap() {
 		return cityMap;
 	}
+
 	@Override
 	public JSONObject save() {
+		JSONObject saveObject = new JSONObject(); 
+
+		// Save: Robber
+		JSONObject robberObj = getRobber().save();
+
+		// Save: Policemen
+		JSONObject policeOfficeObj = getPoliceOffice().save();
+
+		// Save: Buildings
 		JSONObject bldgObjects = new JSONObject();
 		for (Building bldg: buildings){
 			JSONObject bldgObject = bldg.save(); 
 			bldgObjects.put(bldg.ID, bldgObject);
 		}
-		return bldgObjects;
+		
+		saveObject.put(Globals.BUILDINGS, bldgObjects);
+		saveObject.put(Globals.ROBBER, robberObj);
+		saveObject.put(Globals.POLICE_OFFICE, policeOfficeObj);
+		
+		// Save: Level
+		saveObject.put(Globals.LEVEL, getLevel());
+		return saveObject; 
 	}
 
 	@Override
 	public void load(Object loadObj) {
 		HashMap<Object, Object> map = (HashMap<Object, Object>) loadObj;
+		HashMap<Object, Object> bldgsMap = (HashMap<Object, Object>) map.get(Globals.BUILDINGS);
+		
+		
+		// LOAD: Robber
+		Object robberObj = map.get(Globals.ROBBER);
+		getRobber().load(robberObj);
 
+		// LOAD: PoliceOffice
+		Object policeOfficeObj = map.get(Globals.POLICE_OFFICE);
+		getPoliceOffice().load(policeOfficeObj);
+		
+		numberOfRobbedBuildings = 0; 
 		for (Building bldg: buildings){
-			HashMap<Object, Object> bldgMap = (HashMap<Object, Object> ) map.get(""+ bldg.ID);
+			HashMap<Object, Object> bldgMap = (HashMap<Object, Object> ) bldgsMap.get(""+ bldg.ID);
 			bldg.load(bldgMap);
+			if (bldg.getIsCompletelyRobbed())
+				numberOfRobbedBuildings++;
 		}
 	}
 }

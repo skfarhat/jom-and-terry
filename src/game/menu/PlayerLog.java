@@ -23,10 +23,13 @@ public class PlayerLog  {
 	private final int SCORE_Y = 0;
 
 	private final int MONEY_X = 0;
-	private final int MONEY_Y = 30;
+	private final int MONEY_Y = 35;
 
 	private final int TIMER_X = 0;
-	private final int TIMER_Y = 55;
+	private final int TIMER_Y = 20;
+	
+	private final int GATHERS_X = 0;
+	private final int GATHERS_Y = 35;
 
 	private final int LOG_X = 0;
 	private final int LOG_Y = 60;
@@ -151,7 +154,7 @@ public class PlayerLog  {
 
 		final Area area = Play.getInstance().getArea(); 
 
-		if (Game.getInstance().getAccount().getIsRobber()){
+		if ((person instanceof Robber)){
 			Robber robber = (Robber) person; 
 			String scoreString = String.format("Score: %d", (int) robber.getScore());
 			String moneyString = String.format("$%d", robber.getMoney());
@@ -178,7 +181,15 @@ public class PlayerLog  {
 			g.setColor(Color.white);
 			g.drawImage(background, position.getX(), position.getY());
 			g.drawString(scoreString, position.getX() + SCORE_X, position.getY()+ SCORE_Y);
-			g.drawString(timerString, position.getX() + TIMER_X, position.getY()+ TIMER_Y); 
+			g.drawString(timerString, position.getX() + TIMER_X, position.getY()+ TIMER_Y);
+			g.drawString(
+					String.format("Gathers:%d", area.getPoliceOffice().getGathersRemaining()),
+					position.getX() + GATHERS_X, position.getY()+ GATHERS_Y);
+			g.drawString(
+					String.format("Robbed: %d/%d",
+							area.getNumberOfRobbedBuildings(),
+							area.getBuildings().size()),
+							position.getX() + ROBBED_BLDGS_X, position.getY() + ROBBED_BLDGS_Y);
 			g.drawString(logText,position.getX() + LOG_X, position.getY()+ LOG_Y);
 		}
 
@@ -211,6 +222,8 @@ public class PlayerLog  {
 	}
 	public void setPerson(Person person) {
 		this.person = person;
+		try {background = new Image((person instanceof Robber)? BACKGROUND_PATH_ROBBER: BACKGROUND_PATH_COP);}
+		catch (SlickException e) {e.printStackTrace();}
 	}
 	public void clickButton() {
 		for (MenuButton b : buttons) {

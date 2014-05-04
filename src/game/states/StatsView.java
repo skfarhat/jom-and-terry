@@ -29,6 +29,7 @@ public class StatsView extends Menu {
 	private String highscoreStr;
 	private String highestLevelStr;
 	private String usernameStr;
+	private static final String PAST_SCORES = "Past Scores";
 
 
 	public StatsView(int state, StateBasedGame sbg){
@@ -74,13 +75,19 @@ public class StatsView extends Menu {
 			highestLevelStr = String.format("Highest Level: %d", account.getHighestLevelReached());			// highest level reached 
 			timeSpentStr = String.format("Time Spent: %d", account.getTimePlaying());  				// time spent playing
 
-			//TODO previous scores	
-
+			
 			g.drawString(usernameStr, xStatPosition - font.getWidth(usernameStr)/2, yStatPosition + yMargin);			// username
 			g.drawString(highscoreStr, xStatPosition - font.getWidth(highscoreStr)/2, yStatPosition + yMargin*2);		// highscore
 			g.drawString(highestLevelStr, xStatPosition - font.getWidth(highestLevelStr)/2, yStatPosition + yMargin*3);	// highest level
 			g.drawString(timeSpentStr, xStatPosition - font.getWidth(timeSpentStr)/2, yStatPosition + yMargin*4);		// time spent playing
+			
+			
+			g.drawString(PAST_SCORES , xStatPosition - font.getWidth(PAST_SCORES)/2, yStatPosition + yMargin*6);		// time spent playing
 
+			for (int i=0 ; i < account.getPastScores().size(); i++) {
+				Score score = account.getPastScores().get(i);
+				g.drawString(score.toString(), xStatPosition - font.getWidth(score.toString())/2, yStatPosition + yMargin*(i+7));	
+			}
 		}
 	}
 	@Override

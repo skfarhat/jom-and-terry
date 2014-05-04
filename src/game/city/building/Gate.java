@@ -36,4 +36,7 @@ public class Gate {
 			return false; 
 		}
 	}
+	public Point getPosition() {
+		return position;
+	}
 }

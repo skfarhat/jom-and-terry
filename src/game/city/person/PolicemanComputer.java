@@ -17,7 +17,6 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.util.pathfinding.Mover;
 
 public class PolicemanComputer extends Policeman implements Mover {
@@ -27,7 +26,7 @@ public class PolicemanComputer extends Policeman implements Mover {
 	protected boolean isPatrolling = false;
 	protected boolean isFollowingRobber = false;
 	protected boolean isCheckingSuspectRegion = false;
-
+	protected Whistle lastWhistleHeard;  
 	/**
 	 * Array that stores the points the Policeman should visit. Each time one is
 	 * visited it is removed from the ArrayList
@@ -63,9 +62,22 @@ public class PolicemanComputer extends Policeman implements Mover {
 		this.isPatrolling = false;
 	}
 
+	public void heardWhistle(Whistle whistle){
+		if (whistle !=null && whistle != lastWhistleHeard)
+			if (whistle.canBeHeard){
+				lastWhistleHeard = whistle;
+				if(Globals.distance(whistle.position, position) < Globals.WHISTLE_HEAR_DISTANCE){
+					Circle region = new Circle (whistle.position.getX(), whistle.position.getY(), 50.0f); 
+					checkoutRegion(region);
+				}
+			}
+	}
+
 	@Override
 	public void draw() {
-
+		// check if heard whistle
+		heardWhistle(robber.getWhistle());
+		
 		// draw the computer police only when he is visible to the robber
 		if (robber.canSeePoliceman(this))
 			super.draw();
@@ -146,22 +158,22 @@ public class PolicemanComputer extends Policeman implements Mover {
 	}
 
 	public void checkoutRegion(Circle region) {
-		// to check out a region
 
 		// first stop patroling
 		if (isPatrolling)
 			stopPatrol();
 
+		if (suspectRegion == region)
+			return; 
+
 		// TODO: might be useless
 		setSuspectRegion(region);
-
+		isCheckingSuspectRegion = true;		
+		
 		// get a random point inside the region
 		Point randPoint = randomPointInCircle(suspectRegion);
 
 		nextPoints.add(randPoint);
-
-		// set flag for isCheckingRegion
-		this.isCheckingSuspectRegion = true;
 	}
 
 	public void checkoutHighway(Road road) {
@@ -227,50 +239,7 @@ public class PolicemanComputer extends Policeman implements Mover {
 	public void move(Point destPoint) {
 		this.destPoint = destPoint;
 
-		this.direction = new Vector2f(destPoint.getX() - this.position.getX(),
-				destPoint.getY() - this.position.getY());
-
 		this.isMoving = true;
 	}
 
-	
-	
-	Vector2f target; 
-	int currentStep = 0; 
-	
-//	// Mover
-//	// Find a path between you and the pixel coordinate target "target"
-//	public void setTarget(Vector2f target) {
-//		this.target = target;
-//		fitTargettoGrid();
-//		findPath();
-//		currentStep = 0;
-//	}
-//
-//	// Convert pixel coordinates of "target" to grid coordinates.
-//	public void fitTargettoGrid() {
-//		int currentTileX = (int) (target.x / Globals.TILE_SIZE);
-//		int currentTileY = (int) (target.y / Globals.TILE_SIZE);
-//		target = new Vector2f(currentTileX, currentTileY);
-//	}
-
-//	// Fit your own coordinates to grid coordinates.
-//	public void findGridPosition() {
-//		int currentTileX = (int) (parent.getMoveSystem().pos.x / Globals.TILE_SIZE);
-//		int currentTileY = (int) (parent.getMoveSystem().pos.y / Globals.TILE_SIZE);
-//		
-//		gridPosition = new Vector2f(currentTileX, currentTileY);
-//	}
-//
-//	// Find a path from you to the target.
-//	public void findPath() {
-//		findGridPosition();
-//
-//		pathtoTarget = pathfinder.findPath((Mover) this,
-//				(int) gridPosition.getX(), (int) gridPosition.getY(),
-//				(int) target.getX(), (int) target.getY());
-//		if (pathtoTarget == null) {
-//			System.out.println("ITS NULL");
-//		}
-//	}
 }

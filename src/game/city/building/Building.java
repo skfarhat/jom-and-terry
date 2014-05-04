@@ -53,16 +53,12 @@ public abstract class Building extends Observable implements Savable{
 	//==============================================================================================================================
 
 	public Rectangle robbingRegion; 
-
-	private Flag flag;
-
+	protected Flag flag;
 	public Integer ID; 
 	public Integer money;
 	public Integer score; 
-
 	public Point position; 
 	private Rectangle rect;
-
 	public float width, height;
 
 
@@ -75,25 +71,20 @@ public abstract class Building extends Observable implements Savable{
 	 * @param money
 	 */
 	public Building(int ID, final Area area, Point position, float width, float height, Integer money) {
-
 		this.ID = ID; 
-
 		this.area = area; 
-
 		this.rect = new Rectangle(position.getX(), position.getY(), width, height);
-
 		this.position = position; 
-
 		this.width = width; 
 		this.height = height; 
 		this.money = money;
 		this.score = money/100; 
 
+		// TODO: Remove
 		// Initially the building is not highlighted
-		this.isHighlighted = false;
-
-		// Flag
-		this.flag = new Flag();
+		isHighlighted = false;
+		
+		flag = new Flag();
 
 		// Initialize the timer for showing the building information 
 		displayBuildingInfoTimer = new Timer(Globals.BUILDING_INFO_DISPLAY_TIMER, new ActionListener() {
@@ -105,16 +96,14 @@ public abstract class Building extends Observable implements Savable{
 		displayBuildingInfoTimer.setRepeats(false);
 
 		// Initialize the building info
-		this.bldgInfo = new BuildingInfo(this);
+		bldgInfo = new BuildingInfo(this);
 
 
 		robbingRegion = new Rectangle(
-				this.position.getX() - Globals.BUILDING_ROBBING_DISTANCE,
-				this.position.getY() - Globals.BUILDING_ROBBING_DISTANCE, 
-				this.rect.getWidth() + 2 * Globals.BUILDING_ROBBING_DISTANCE, 
-				this.rect.getHeight()+ 2 * Globals.BUILDING_ROBBING_DISTANCE);
-
-		//		buildings.add(this);
+				position.getX() - Globals.BUILDING_ROBBING_DISTANCE,
+				position.getY() - Globals.BUILDING_ROBBING_DISTANCE, 
+				rect.getWidth() + 2 * Globals.BUILDING_ROBBING_DISTANCE, 
+				rect.getHeight()+ 2 * Globals.BUILDING_ROBBING_DISTANCE);
 	}
 
 	public void rob(final Robber robber){
@@ -134,7 +123,6 @@ public abstract class Building extends Observable implements Savable{
 				// make sure the robber is in robbing distance of the building
 				if (!isInRobbingDistance(robber.rect))
 				{
-					System.out.println("Not in robbing distance");
 					robbedPercent = 0.0f; 
 
 					// set the boolean is robbing to false
@@ -183,14 +171,15 @@ public abstract class Building extends Observable implements Savable{
 					area.incrementNumberOfRobbedBuildings();
 					robbingTimer.stop();						// stop the robbing timer
 				}
+				
+				
 
 			}
 		});
-
-		// start the timer
 		robbingTimer.start();
+		
 		AudioGame.play("Glass-Smash.ogg");
-		setBeingRobbed(true); 
+		setBeingRobbed(true);
 	}
 
 	public void draw(boolean showFlag){
@@ -211,10 +200,10 @@ public abstract class Building extends Observable implements Savable{
 		flag.nextFlag();
 	}
 
-	
 	public void callPolice(){
 		area.getPoliceOffice().callPolice(this);
 	}
+
 	// GETTERS/SETTERS
 	//==============================================================================================================================
 	/**
@@ -235,21 +224,17 @@ public abstract class Building extends Observable implements Savable{
 		}
 
 	}
-
 	public void setBeingRobbed(boolean isBeingRobbed) {
 		this.isBeingRobbed = isBeingRobbed;
 		setChanged();
 		notifyObservers();
 	}
-
 	public ArrayList<Occupant> getOccupants() {
 		return occupants;
 	}
-
 	public boolean getIsCompletelyRobbed(){
 		return isCompletelyRobbed; 
 	}
-
 	public String getType(){
 		if (this.getClass().equals(House.class)){
 			return "House"; 
@@ -273,11 +258,10 @@ public abstract class Building extends Observable implements Savable{
 				temprect.intersects(rect);
 	}
 	protected void setCompletelyRobbed(boolean isCompletelyRobbed) {
-		this.isCompletelyRobbed = isCompletelyRobbed;
+		this.isCompletelyRobbed = this.isBeingRobbed =  isCompletelyRobbed;
 		if (isCompletelyRobbed)
 			this.bldgInfo.getFillingBar().update(1.0f);
 	}
-
 	public Rectangle getRect() {
 		return rect;
 	}
@@ -287,6 +271,7 @@ public abstract class Building extends Observable implements Savable{
 	public Area getArea() {
 		return area;
 	}
+	
 	// FLAG
 	// ==============================================================================================================================
 
@@ -303,4 +288,5 @@ public abstract class Building extends Observable implements Savable{
 		flag = null; 
 	}
 
+	
 }

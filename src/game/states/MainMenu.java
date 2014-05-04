@@ -61,6 +61,7 @@ public class MainMenu extends Menu
 			b.render(g);
 		}
 	}
+	
 	@Override
 	public void enter(GameContainer container, StateBasedGame game)
 			throws SlickException {
@@ -109,7 +110,7 @@ public class MainMenu extends Menu
 
 
 
-		boolean canResume = Game.getInstance().getAccount().getResumeGame()!=null; 
+		final boolean canResume = Game.getInstance().getAccount().getResumeGame()!=null; 
 		Image resumeGameImage = (canResume)? resumeGameButtonImage : resumeGameButtonDisabledImage;
 		
 
@@ -133,6 +134,11 @@ public class MainMenu extends Menu
 			@Override
 			public void performAction() {
 				AudioGame.playAsSound("button-21.ogg");
+				if (canResume)
+				{
+					Game.getInstance().getAccount().setResumeGame(null);
+					Game.getInstance().getAccount().removeResumeGame();
+				}
 				gameContainer.enterState(Globals.AREA_PICK);
 			}
 		};

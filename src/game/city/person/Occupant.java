@@ -15,6 +15,7 @@ public class Occupant implements Observer{
 	// 5-15 sec
 	private static int VACATION_TIME_INITIAL_DELAY		= 5000;
 	private static int VACATION_TIME_INTERVAL 	 		= 15000;
+	private static int VACATION_PROBABILITY 	 		= 50;
 		
 	private Building building;
 	
@@ -33,8 +34,8 @@ public class Occupant implements Observer{
 		// At the beginning 30% are on vacation
 		Random rand = new Random(); 
 
-		// initially before starting the timer
-		if (rand.nextInt(10) <= 3)
+		// initially before starting the timer (50%-->vacation)
+		if (rand.nextInt(100) <= VACATION_PROBABILITY)
 			goingOnVacation();
 		
 		

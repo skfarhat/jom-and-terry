@@ -42,7 +42,8 @@ public class PoliceOffice implements Savable {
 	private static boolean isPlayingSound = false; 
 	private static boolean userIsPolice; 
 
-	protected static int gatherCount = 0; 
+	private int policemanSelectionIndex = 0; 
+	protected int gathersRemaining = Globals.POLICE_OFFICE_GATHER_COUNT; 
 	public static Integer robberVisibleCount = 0; 
 
 	private boolean isGameOver = false;
@@ -127,8 +128,9 @@ public class PoliceOffice implements Savable {
 
 		else {
 			// notify on the log
-			String message = String.format("%s being robbed!", bldg.getType());
-			PlayerLog.setLogText(message);
+			String message = String.format("%s being \nrobbed!", bldg.getType());
+//			PlayerLog.setLogText(message);
+			area.getCamera().getPlayerDialog().show(message);
 		}
 
 		playSound();
@@ -160,14 +162,14 @@ public class PoliceOffice implements Savable {
 			((PolicemanUser) police).gather1(new Circle(position.getX(), position.getY(), Globals.GATHER_RADIUS));
 		}
 
-		gatherCount++;
+		gathersRemaining--;
 
 		/*
 		 * When the user uses the 'G' button 3 times gathering the police at one spot
 		 * wait for all the policemen to arrive to the desired location and give them 3 seconds to capture the robber.
 		 * If time is up, Game Over and the Police have lost
 		 */
-		if (gatherCount==3){		
+		if (gathersRemaining==0){		
 			/*
 			 * Need a loop to wait for all the Policemen to arrive but can't have it blocking the main thread
 			 * so we create a new one. Once all the policemen arrive, start a timer that ends the game with Game Over after 3 seconds
@@ -184,7 +186,6 @@ public class PoliceOffice implements Savable {
 					}
 					while(notArrived);
 
-
 					if (!robber.isCaught){
 						// you lose after 3 sec
 						Timer timer = new Timer(3000, new ActionListener() {
@@ -196,7 +197,6 @@ public class PoliceOffice implements Savable {
 						timer.setRepeats(false);
 						timer.start(); 
 					}
-
 				}
 			}));
 
@@ -233,10 +233,9 @@ public class PoliceOffice implements Savable {
 	}
 
 	public void processInput(Input input){
-
-		// TODO: Remove this from here
-		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
-			if (userIsPolice){
+		if (userIsPolice){
+			// TODO: Remove this from here
+			if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON)) {
 
 				System.out.println("here in process input of police");
 				int destX = input.getMouseX();
@@ -251,10 +250,10 @@ public class PoliceOffice implements Savable {
 				// display info for this building
 				if (bldg != null) 
 					bldg.setShowBuildingInfo(true);
+
 			}
-		}
-		else if (input.isKeyPressed(Input.KEY_G)) {
-			if (userIsPolice){
+			else if (input.isKeyPressed(Input.KEY_G)) {
+
 				Camera camera = area.getCamera();
 
 				// mouse coordinates
@@ -269,6 +268,39 @@ public class PoliceOffice implements Savable {
 				// gather only if the mouse position does not intersect with any building
 				if (!intersects)
 					gatherAll(new Point(x,y));
+			}
+			else if (input.isKeyPressed(Input.KEY_Q)) {
+
+				// if there is only once policeman return 
+				if (getPoliceForceArray().size() <= 1)
+					return; 
+
+				policemanSelectionIndex++;
+
+				// if we exceeded the size of the array set it to 0 
+				if (policemanSelectionIndex >= getPoliceForceArray().size())
+					policemanSelectionIndex=0; 
+
+				Policeman newSelectedPoliceman = getPoliceForceArray().get(policemanSelectionIndex);
+
+				/*
+				 * The user can select policeman by mouse, or by iterating through them using Q. 
+				 * If the user changes the selected policeman by mouse, then it can happen that pressing Q will select the already
+				 * selected Policeman. While this is not such a bad issue, we prefer to avoid it by incrementing policemanSelectionIndex
+				 * twice in that specific case
+				 */ 				
+				if (newSelectedPoliceman == selectedPoliceman)
+					if (policemanSelectionIndex+1 >= getPoliceForceArray().size())
+						policemanSelectionIndex = 0; 
+					else
+						policemanSelectionIndex++; 
+
+				// get the new policeman to select
+				newSelectedPoliceman = getPoliceForceArray().get(policemanSelectionIndex);
+
+				// select the new policeman
+				setSelectedPoliceman(newSelectedPoliceman);
+				Play.getInstance().setMainCharacter();
 			}
 		}
 	}
@@ -326,15 +358,20 @@ public class PoliceOffice implements Savable {
 		return policeForceArray;
 	}
 
+	public int getGathersRemaining() {
+		return gathersRemaining;
+	}
 	public Policeman getSelectedPoliceman() {
 		return selectedPoliceman;
 	}
 
+	/// TODO: could add Play.getinstance.setMainCharacter() at the end of it
 	public void setSelectedPoliceman(Policeman selectedPoliceman) {
 
 		// deselect the previously selected policemen 
 		((PolicemanUser)this.selectedPoliceman).setSelected(false);
-
+		((PolicemanUser)this.selectedPoliceman).stop();
+		
 		// set the new selected policeman to the passed one
 		this.selectedPoliceman = selectedPoliceman;
 
@@ -365,6 +402,9 @@ public class PoliceOffice implements Savable {
 		// save all the policemen
 		policeOfficeObj.put(Globals.POLICEMEN, policemenObj);
 
+		// save the number of gathers remaining
+		policeOfficeObj.put(Globals.GATHERS_REMAINING, gathersRemaining);
+
 		// save the number of policemen
 		policeOfficeObj.put(Globals.COUNT, policeForceArray.size());
 
@@ -375,10 +415,10 @@ public class PoliceOffice implements Savable {
 	public void load(Object loadObj) {
 		HashMap<Object, Object> map = (HashMap<Object, Object> ) loadObj;
 
-
 		// get the Policemen map <ID, PolicemanObj>
 		HashMap<Object, Object> policemenMap = (HashMap<Object, Object>) map.get(Globals.POLICEMEN);
-		System.out.println("PolicemenMap: " + policemenMap);
+
+		gathersRemaining = (int) map.get(Globals.GATHERS_REMAINING); 
 
 		for (Policeman policeman : policeForceArray){
 
@@ -390,7 +430,5 @@ public class PoliceOffice implements Savable {
 
 		}
 	}
-
-
 
 }

@@ -82,7 +82,7 @@
  </layer>
  <layer name="Banks" width="150" height="60">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3Y10tWcRzH8V8L2gOaatDUhpY5Sk0r2zvbe+/xn9hFkHZV2RLaZrnNetTHVa6clZVa2g7aA1rvLiR44jG9yOL0ecOLc3P4woHP1TFGKaWUUkoppVRzCt9nzF6ssxmzHhuwEZuwGVuwFduwHTuwE7uwG3tszm8fjDDmEA4jCkdwFMdwHCcQHfHnvk393SpsxlTiJm7hNqpwB3dxD9WoQS3u4wHqUG9zfvckmzmF0ziDsziH84jBBcRqV5ZtQboxYViIRViMJViKZViOFViJVViNNViLdenO78axmXgkIBFJSEYKUnEZadqVZctlG3m4huvIRwEKUYRi3EAJSlGGclSgspFd2dhMOjKQCTuykI0c5CJPu7JsoRnGTMYUTMU0TMcMzMQszMYczMU8zMcChGU4v5vPZgpQiCIU4wZKUIoylGtXli2FbaTiMtJwBVdhQzoykAk7spCNHOQir5Fd3WQzt3AbVbiDu7iHatSgVruybL6ZxvjBH2MxDgEIRBDGIxghmICJmIRQTM50freOzdTjIR7hMZ7gKZ7hOV5oV5btLNs4h/OIwQXE4iIuIQ7xSEAikpCMFKQ2squXbOYVXuMN3uId3uMDPuKTdmXZhtqNcYcHhmE4RmAkPOGFURgNb4yBD3zhZ3d+9zOb+YKv+PZjP5HGtEJrtEFbtItssc9ULVjDf9Eo9nEER3EMx3EC0faf7zQId3g6qz2b6YCO6ITO6IKu6Ibu6KFdWTLHjbhkGeMKN/TP+nVTzdlVTzbTC73RB33RDy5whRv6a1eWzHEj+9lSBCJxoJFdhTdhVwPYzEAMwmAMwVC4wwPDMFy7+m9z3F5Td+XJZrwwCqPhjTHwgS/84K9d/ff9bkeOBbCZQARhPIIRggmYiEkI1a6UUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKqX++75CLp+ygjAAA
+   H4sIAAAAAAAAA+3Y2UsVcQBH8SkTMnMJLC0T1KwUyqwUSlvs79OHHvRNWxW0TYPSNiHbA9usoNUUXDILWrQFXDr3QbiIcO8EF+N6PnDe5jczD1/mYYJAkiRJkhRG3dHE3bupIQia6RgdpxN0kk7RaWqh1obEPV/JqY3NtNMZOkvn6DxdoA7qpIvuSiFdYjOXqYu66QpdpWt0nW5Qj7tSSDfZTC/dott0h+7SPbpPD+ihu1JIfWzmET2mJ/SUnlE/PacX9NJdKaRXbOY1vaG39I7e0wB9oEEaclcKaZjNjNAojdFHGqdPNEGf6Yu7Ukhf2cw3+k4/aJKm6Cf9ot/0x10ppGk2M0OzNBfZT2MQrKCVlEKrKLVxqd9SiRDvf9H6Ra6LdXY1m0mjNZROaymDMimLsmmdu0pK//q/PbKzWGdz2Mx62kC5lEcbaRPl02YqcFdJKZ5dRTYUXV1Ui33H5hWymSIqpi1UQltpG22nUipzV8tafdSO4t3VDjazk8ppF1XQbtpDe6mSqtzVshdrRwvtYzP7qZpq6AAdpEN0mGrpiLuSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJEmSJOm/9xcXj9rFoIwAAA==
   </data>
  </layer>
  <layer name="Shops" width="150" height="60">
@@ -262,7 +262,7 @@
   <object name="Road 26" x="1968" y="0" width="400" height="80"/>
   <object name="Road 27" x="2160" y="720" width="256" height="80"/>
  </objectgroup>
- <objectgroup color="#a42631" name="Robber Collision" width="150" height="60" visible="0">
+ <objectgroup color="#a42631" name="Robber Collision" width="150" height="60">
   <object x="96" y="80" width="64" height="80">
    <properties>
     <property name="Passable" value="false"/>

@@ -4,13 +4,13 @@ import game.Globals;
 import game.city.building.Area;
 import game.city.building.Building;
 import game.city.building.Gate;
-import game.states.Play;
 
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Line;
 
-public class RobberUser extends Robber implements Movable {
+public class RobberUser extends Robber implements Movable { 
+	
 
 	public RobberUser(Area area) throws SlickException {
 		super(area);
@@ -22,6 +22,7 @@ public class RobberUser extends Robber implements Movable {
 		boolean keyPressed = false; 
 		if (input.isKeyDown(Input.KEY_RIGHT)) {
 			moveRight();
+			
 			keyPressed = true; 
 		} else if (input.isKeyDown(Input.KEY_LEFT)) {
 			moveLeft();
@@ -41,6 +42,10 @@ public class RobberUser extends Robber implements Movable {
 			if (nearByBldg != null) {
 				nearByBldg.nextFlag();
 			}
+			keyPressed = true; 
+		}
+		else if(input.isKeyPressed(Input.KEY_W)) {
+			whistle();
 			keyPressed = true; 
 		}
 		if (!keyPressed)
@@ -168,6 +173,14 @@ public class RobberUser extends Robber implements Movable {
 				bldg.setShowBuildingInfo(true);
 			}
 		}
-		return isInCollision;
+//		final int x = (int)position.getX() / Globals.TILE_SIZE;
+//		final int y = (int)position.getY() / Globals.TILE_SIZE;
+		return area.getCityMap().blocked(this) || isInCollision;
 	}
+
+	public void whistle(){
+		whistle = new Whistle(position);	
+	}
+
+
 }

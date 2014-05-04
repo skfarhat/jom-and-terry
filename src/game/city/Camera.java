@@ -4,18 +4,18 @@ import game.Game;
 import game.Globals;
 import game.city.building.CityMap;
 import game.city.person.Person;
+import game.menu.PlayerDialog;
 import game.menu.PlayerLog;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Shape;
-import org.newdawn.slick.tiled.TiledMap;
 
 public class Camera {
 
 	protected boolean isScrolling = false; 
 	/** the map used for our scene */
-//	protected TiledMap map;
+	//	protected TiledMap map;
 	protected CityMap map;
 
 	/** the number of tiles in x-direction (width) */
@@ -48,6 +48,9 @@ public class Camera {
 	/** Information about the player's money and score */
 	private PlayerLog playerLog;
 
+	/** Shows messages to the player and then fades away */
+	private PlayerDialog playerDialog;
+	
 	private Person person; 
 
 	/**
@@ -68,8 +71,11 @@ public class Camera {
 		this.mapWidth = this.numTilesX * this.tileWidth;
 		this.mapHeight = this.numTilesY * this.tileHeight;
 
-		Point position = new Point(Globals.APP_WIDTH-150, 0);
-		this.playerLog = new PlayerLog(person, position);
+		Point playerLogPosition = new Point(Globals.APP_WIDTH-150, 0);
+		playerLog = new PlayerLog(person, playerLogPosition);
+		
+		Point playerDialogPosition = new Point(Globals.APP_WIDTH-150, 160);
+		playerDialog = new PlayerDialog(person, playerDialogPosition);
 	}
 
 	/**
@@ -111,7 +117,6 @@ public class Camera {
 	public void centerOn(Shape shape) {
 		this.centerOn(shape.getCenterX(), shape.getCenterY());
 	}
-
 
 	public void mouseScroll() {
 		final float error = 50.0f; 
@@ -158,7 +163,8 @@ public class Camera {
 
 
 		// Draw the money the Robber has
-		this.playerLog.draw(playTimer);
+		playerLog.draw(playTimer);
+		playerDialog.draw();
 		this.translateGraphics();
 	}
 	/**
@@ -215,6 +221,9 @@ public class Camera {
 		return cameraY;
 	}
 
+	public PlayerDialog getPlayerDialog() {
+		return playerDialog;
+	}
 	public PlayerLog getPlayerLog() {
 		return playerLog;
 	}

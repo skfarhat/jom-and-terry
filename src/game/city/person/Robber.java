@@ -6,31 +6,28 @@ import game.city.building.Building;
 import game.states.Savable;
 
 import java.util.HashMap;
-import java.util.Random;
 
 import org.json.simple.JSONObject;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.util.pathfinding.Mover;
 
 @SuppressWarnings("unchecked")
 
-public class Robber extends Person implements Savable{
-
-	// TODO: see what to do with this
-	Random rand = new Random(); 
+public class Robber extends Person implements Savable, Mover{
 
 	private static String playerSpriteSheet = "res/SpriteSheets/robber-spritesheet.png";
 	public boolean isCaught = false;
 
 	protected boolean isRobbing = false; 
-
+	protected Whistle whistle; 
 	protected float score; 
 	protected Integer money;  
  
 	// ENVIRONMENT AROUND 
-	public Building nearByBldg;													
+	protected Building nearByBldg;													
 
 	/**
 	 * 
@@ -39,7 +36,7 @@ public class Robber extends Person implements Savable{
 	 */
 	public Robber(Area area) throws SlickException {
 
-		// TODO: set name and velocity somewhere else
+		// TODO: set name
 		super(area, "Robber", Globals.ROBBER_VELOCITY);
 
 		super.initSpriteSheet(playerSpriteSheet, 4, 4);
@@ -68,7 +65,7 @@ public class Robber extends Person implements Savable{
 
 
 		int duration = 100;
-		System.out.println("spritesheet +" + spriteSheet);
+		
 		currentAnimation =  rightWalkAnimation = new Animation(this.spriteSheet,
 				0,//first column
 				rightWalkRow,//first row
@@ -111,16 +108,16 @@ public class Robber extends Person implements Savable{
 	}
 
 	// ====================================================================================================
-	// GETTERS/SETTERS
-
+	// GETTERS/SETTERS	
+	public Whistle getWhistle() {
+		return whistle;
+	}
 	public Integer getMoney() {
 		return money;
 	}
-
 	public float getScore() {
 		return score;
 	}
-
 	/**
 	 * Money is set to private for encapsulation
 	 * Other classes can only add to the amount the robber has
@@ -130,7 +127,6 @@ public class Robber extends Person implements Savable{
 		// 
 		this.money+=addedAmount;
 	}
-
 	/**
 	 * Increase the score by some amount
 	 * @param addedScore amount to add to the score of the robber
@@ -138,15 +134,12 @@ public class Robber extends Person implements Savable{
 	public void addScore(float addedScore){
 		this.score+=addedScore; 
 	}
-
 	public void setRobbing(boolean isRobbing) {
 		this.isRobbing = isRobbing;
 	}
 
-
 	// MOVEMENT
 	//=====================================================================================================
-	
 	public boolean canSeePoliceman(Policeman policeman){
 		
 		float distance = (float)  Math.sqrt(Math.pow(
@@ -176,7 +169,6 @@ public class Robber extends Person implements Savable{
 		// if there is no nearby building then the robber cannot rob anything
 		if (this.nearByBldg == null)
 		{
-			System.out.println("Near building is null cannot rob!");
 			return false; 
 		}
 
@@ -185,7 +177,6 @@ public class Robber extends Person implements Savable{
 
 		return true;
 	}
-
 	public boolean rob(Building bldg){
 
 		if (bldg == null)
@@ -219,7 +210,6 @@ public class Robber extends Person implements Savable{
 		
 		return object; 
 	}
-
 	public void load(Object loadObj){
 		assert (loadObj!=null): "Object to load is null";
 		
@@ -228,8 +218,15 @@ public class Robber extends Person implements Savable{
 		this.money = (Integer) map.get(Globals.ROBBER_MONEY);
 		this.score = (float) (double)map.get(Globals.ROBBER_SCORE);
 		
-		this.position.setX((float) (double)map.get(Globals.ROBBER_POSITION_X));
-		this.position.setY((float) (double)map.get(Globals.ROBBER_POSITION_Y));
+		final float x = (float) (double)map.get(Globals.ROBBER_POSITION_X);
+		final float y = (float) (double)map.get(Globals.ROBBER_POSITION_Y);
+		
+		position.setX(x);
+		position.setY(y);
+		
+		rect.setX(x);
+		rect.setY(y);
+		
 		
 	}
 }
