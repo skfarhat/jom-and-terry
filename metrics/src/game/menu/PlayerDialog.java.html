@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.5">
+<TITLE>game.menu.PlayerDialog (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">PlayerDialog.java</font>
+</td>
+<td align="right" colspan="2" width="33%">&nbsp;</td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<FONT ID="LN">1   </FONT><A NAME="1"></A><FONT ID="Package">package</FONT> game.menu;
+<FONT ID="LN">2   </FONT><A NAME="2"></A>
+<FONT ID="LN">3   </FONT><A NAME="3"></A><FONT ID="Import">import</FONT> java.awt.event.ActionEvent;
+<FONT ID="LN">4   </FONT><A NAME="4"></A><FONT ID="Import">import</FONT> java.awt.event.ActionListener;
+<FONT ID="LN">5   </FONT><A NAME="5"></A>
+<FONT ID="LN">6   </FONT><A NAME="6"></A><FONT ID="Import">import</FONT> javax.swing.Timer;
+<FONT ID="LN">7   </FONT><A NAME="7"></A>
+<FONT ID="LN">8   </FONT><A NAME="8"></A><FONT ID="Import">import</FONT> <A HREF="../../game/Game.java.html">game.Game</A>;
+<FONT ID="LN">9   </FONT><A NAME="9"></A><FONT ID="Import">import</FONT> <A HREF="../../game/Globals.java.html">game.Globals</A>;
+<FONT ID="LN">10  </FONT><A NAME="10"></A><FONT ID="Import">import</FONT> <A HREF="../../game/city/person/Person.java.html">game.city.person.Person</A>;
+<FONT ID="LN">11  </FONT><A NAME="11"></A><FONT ID="Import">import</FONT> game.city.person.Policeman;
+<FONT ID="LN">12  </FONT><A NAME="12"></A><FONT ID="Import">import</FONT> game.city.person.Robber;
+<FONT ID="LN">13  </FONT><A NAME="13"></A>
+<FONT ID="LN">14  </FONT><A NAME="14"></A><FONT ID="Import">import</FONT> org.newdawn.slick.Color;
+<FONT ID="LN">15  </FONT><A NAME="15"></A><FONT ID="Import">import</FONT> org.newdawn.slick.Graphics;
+<FONT ID="LN">16  </FONT><A NAME="16"></A><FONT ID="Import">import</FONT> org.newdawn.slick.Image;
+<FONT ID="LN">17  </FONT><A NAME="17"></A><FONT ID="Import">import</FONT> org.newdawn.slick.geom.Point;
+<FONT ID="LN">18  </FONT><A NAME="18"></A>
+<FONT ID="LN">19  </FONT><A NAME="19"></A><FONT ID="Public">public</FONT> <FONT ID="Class">class</FONT> PlayerDialog {
+<FONT ID="LN">20  </FONT><A NAME="20"></A>    <FONT ID="Private">private</FONT> Graphics g = Game.getInstance().getContainer().getGraphics();
+<FONT ID="LN">21  </FONT><A NAME="21"></A>    <FONT ID="Private">private</FONT> <FONT ID="Final">final</FONT> String BACKGROUND_IMAGE_PATH= <FONT ID="StringLiteral">"res/PlayerDialog.png"</FONT>;
+<FONT ID="LN">22  </FONT><A NAME="22"></A>    <FONT ID="Private">private</FONT> Point position; 
+<FONT ID="LN">23  </FONT><A NAME="23"></A>    <FONT ID="Private">private</FONT> <A HREF="../../game/city/person/Person.java.html">Person</A> person;
+<FONT ID="LN">24  </FONT><A NAME="24"></A>    <FONT ID="Private">private</FONT> Image background;
+<FONT ID="LN">25  </FONT><A NAME="25"></A>
+<FONT ID="LN">26  </FONT><A NAME="26"></A>    <FONT ID="Private">private</FONT> <FONT ID="Final">final</FONT> <FONT ID="Int">int</FONT> LOG_X = <FONT ID="IntegerLiteral">0</FONT>;
+<FONT ID="LN">27  </FONT><A NAME="27"></A>    <FONT ID="Private">private</FONT> <FONT ID="Final">final</FONT> <FONT ID="Int">int</FONT> LOG_Y = <FONT ID="IntegerLiteral">5</FONT>;
+<FONT ID="LN">28  </FONT><A NAME="28"></A>
+<FONT ID="LN">29  </FONT><A NAME="29"></A>    <FONT ID="Protected">protected</FONT> <FONT ID="Boolean">boolean</FONT> isShowing = <FONT ID="False">false</FONT>; 
+<FONT ID="LN">30  </FONT><A NAME="30"></A>    <FONT ID="Protected">protected</FONT> String message ;
+<FONT ID="LN">31  </FONT><A NAME="31"></A>
+<FONT ID="LN">32  </FONT><A NAME="32"></A>    Timer showTimer; 
+<FONT ID="LN">33  </FONT><A NAME="33"></A>    <FONT ID="Public">public</FONT> PlayerDialog(<A HREF="../../game/city/person/Person.java.html">Person</A> person, Point position) {
+<FONT ID="LN">34  </FONT><A NAME="34"></A>        <FONT ID="This">this</FONT>.person = person; 
+<FONT ID="LN">35  </FONT><A NAME="35"></A>        <FONT ID="This">this</FONT>.position = position;
+<FONT ID="LN">36  </FONT><A NAME="36"></A>
+<FONT ID="LN">37  </FONT><A NAME="37"></A>        <FONT ID="SingleLineComment">// Background Image
+<FONT ID="LN">38  </FONT><A NAME="38"></A></FONT>        <FONT ID="Try">try</FONT> { background = <FONT ID="New">new</FONT> Image(BACKGROUND_IMAGE_PATH);}
+<FONT ID="LN">39  </FONT><A NAME="39"></A>        <FONT ID="Catch">catch</FONT> (Exception exc) {exc.printStackTrace();}
+<FONT ID="LN">40  </FONT><A NAME="40"></A>    }
+<FONT ID="LN">41  </FONT><A NAME="41"></A>
+<FONT ID="LN">42  </FONT><A NAME="42"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> draw(){ 
+<FONT ID="LN">43  </FONT><A NAME="43"></A>        <FONT ID="If">if</FONT> (isShowing &amp;&amp; message !=<FONT ID="Null">null</FONT>){
+<FONT ID="LN">44  </FONT><A NAME="44"></A>            <FONT ID="If">if</FONT> ((person <FONT ID="InstanceOf">instanceof</FONT> Robber)){
+<FONT ID="LN">45  </FONT><A NAME="45"></A>                Robber robber = (Robber) person; 
+<FONT ID="LN">46  </FONT><A NAME="46"></A>
+<FONT ID="LN">47  </FONT><A NAME="47"></A>                g.setColor(Color.white);
+<FONT ID="LN">48  </FONT><A NAME="48"></A>                g.drawImage(background, position.getX(), position.getY());
+<FONT ID="LN">49  </FONT><A NAME="49"></A>                drawString(g, message, (<FONT ID="Int">int</FONT>) position.getX() + LOG_X, (<FONT ID="Int">int</FONT>) position.getY()+ LOG_Y);
+<FONT ID="LN">50  </FONT><A NAME="50"></A>            }
+<FONT ID="LN">51  </FONT><A NAME="51"></A>            <FONT ID="Else">else</FONT> {
+<FONT ID="LN">52  </FONT><A NAME="52"></A>                Policeman policeman = (Policeman) person; 
+<FONT ID="LN">53  </FONT><A NAME="53"></A>
+<FONT ID="LN">54  </FONT><A NAME="54"></A>                g.setColor(Color.white);
+<FONT ID="LN">55  </FONT><A NAME="55"></A>                g.drawImage(background, position.getX(), position.getY());
+<FONT ID="LN">56  </FONT><A NAME="56"></A>                drawString(g, message, (<FONT ID="Int">int</FONT>) position.getX() + LOG_X, (<FONT ID="Int">int</FONT>) position.getY()+ LOG_Y);
+<FONT ID="LN">57  </FONT><A NAME="57"></A>            }
+<FONT ID="LN">58  </FONT><A NAME="58"></A>        }
+<FONT ID="LN">59  </FONT><A NAME="59"></A>    }
+<FONT ID="LN">60  </FONT><A NAME="60"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> drawString(Graphics g, String text, <FONT ID="Int">int</FONT> x, <FONT ID="Int">int</FONT> y) {
+<FONT ID="LN">61  </FONT><A NAME="61"></A>        <FONT ID="For">for</FONT> (String line : text.split(<FONT ID="StringLiteral">"\n"</FONT>))
+<FONT ID="LN">62  </FONT><A NAME="62"></A>            g.drawString(line, x, y += g.getFont().getLineHeight());
+<FONT ID="LN">63  </FONT><A NAME="63"></A>    }
+<FONT ID="LN">64  </FONT><A NAME="64"></A>
+<FONT ID="LN">65  </FONT><A NAME="65"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> setMessage(String message) {
+<FONT ID="LN">66  </FONT><A NAME="66"></A>        <FONT ID="This">this</FONT>.message = message;
+<FONT ID="LN">67  </FONT><A NAME="67"></A>    }
+<FONT ID="LN">68  </FONT><A NAME="68"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> show(String message){
+<FONT ID="LN">69  </FONT><A NAME="69"></A>        <FONT ID="This">this</FONT>.message = message; 
+<FONT ID="LN">70  </FONT><A NAME="70"></A>        isShowing = <FONT ID="True">true</FONT>; 
+<FONT ID="LN">71  </FONT><A NAME="71"></A>
+<FONT ID="LN">72  </FONT><A NAME="72"></A>        <FONT ID="If">if</FONT> (showTimer !=<FONT ID="Null">null</FONT>)
+<FONT ID="LN">73  </FONT><A NAME="73"></A>            <FONT ID="If">if</FONT> (showTimer.isRunning())
+<FONT ID="LN">74  </FONT><A NAME="74"></A>                showTimer.stop();
+<FONT ID="LN">75  </FONT><A NAME="75"></A>
+<FONT ID="LN">76  </FONT><A NAME="76"></A>        showTimer = <FONT ID="New">new</FONT> Timer(Globals.DIALOG_SHOW_TIME, <FONT ID="New">new</FONT> ActionListener() {
+<FONT ID="LN">77  </FONT><A NAME="77"></A>
+<FONT ID="LN">78  </FONT><A NAME="78"></A>            @Override
+<FONT ID="LN">79  </FONT><A NAME="79"></A>            <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> actionPerformed(ActionEvent e) {
+<FONT ID="LN">80  </FONT><A NAME="80"></A>                isShowing = <FONT ID="False">false</FONT>;  
+<FONT ID="LN">81  </FONT><A NAME="81"></A>            }
+<FONT ID="LN">82  </FONT><A NAME="82"></A>        });
+<FONT ID="LN">83  </FONT><A NAME="83"></A>        showTimer.setRepeats(<FONT ID="False">false</FONT>);
+<FONT ID="LN">84  </FONT><A NAME="84"></A>        showTimer.start();
+<FONT ID="LN">85  </FONT><A NAME="85"></A>    }
+<FONT ID="LN">86  </FONT><A NAME="86"></A>
+<FONT ID="LN">87  </FONT><A NAME="87"></A>}
+<FONT ID="LN">88  </FONT><A NAME="88"></A></pre>
+</BODY>
+</HTML>

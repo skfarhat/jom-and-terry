@@ -1,6 +1,7 @@
 package game.city.building;
 
 import game.AudioGame;
+import game.Game;
 import game.Globals;
 import game.city.person.Occupant;
 import game.city.person.Robber;
@@ -83,7 +84,6 @@ public abstract class Building extends Observable implements Savable{
 		// TODO: Remove
 		// Initially the building is not highlighted
 		isHighlighted = false;
-		
 		flag = new Flag();
 
 		// Initialize the timer for showing the building information 
@@ -172,19 +172,19 @@ public abstract class Building extends Observable implements Savable{
 					area.incrementNumberOfRobbedBuildings();
 					robbingTimer.stop();						// stop the robbing timer
 				}
-				
-				
+
+
 
 			}
 		});
 		robbingTimer.start();
-		
+
 		AudioGame.play("Glass-Smash.ogg");
 		setBeingRobbed(true);
 	}
 
 	public void draw(boolean showFlag){
-
+		
 		// Draw the filling bar at the xPos of the building but a bit above
 		if (showBuildingInfo)
 			bldgInfo.draw(position.getX(), position.getY()- BuildingInfo.BUILDING_INFO_HEIGHT);
@@ -202,9 +202,29 @@ public abstract class Building extends Observable implements Savable{
 	}
 
 	public void callPolice(){
+		System.out.println("call police");
 		area.getPoliceOffice().callPolice(this);
 	}
 
+	/**
+	 * Get the nearest point accessible to the policeman next to this building
+	 * @return 
+	 */
+	public Point getNearestFreePoint() {
+		boolean b = true; 
+		Point p =null; 
+		while (b){
+
+			int x =  (int) (robbingRegion.getMinX() + Globals.random.nextInt((int) robbingRegion.getWidth()));
+			int y =  (int) (robbingRegion.getMinY() + Globals.random.nextInt((int) robbingRegion.getHeight()));; 
+
+			p = new Point(x,y);
+
+			b = rect.includes(x,y);
+
+		}
+		return p; 
+	}
 	// GETTERS/SETTERS
 	//==============================================================================================================================
 	/**
@@ -272,7 +292,7 @@ public abstract class Building extends Observable implements Savable{
 	public Area getArea() {
 		return area;
 	}
-	
+
 	// FLAG
 	// ==============================================================================================================================
 
@@ -289,5 +309,5 @@ public abstract class Building extends Observable implements Savable{
 		flag = null; 
 	}
 
-	
+
 }

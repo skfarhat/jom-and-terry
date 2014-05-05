@@ -1,7 +1,9 @@
 package game.city.person;
 
 import game.Globals;
+import game.city.building.Area;
 import game.city.building.Bank;
+import game.states.Play;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,9 +44,11 @@ public class SecurityGuard extends Person {
 	// edges of the bank to be guarded
 	private Point topLeftEdge, topRightEdge, bottomRightEdge, bottomLeftEdge;
 
-	// used to know at which edge the SG is currently
-	// we could use the position and compare to the edge, but positions are not always exact
-	// so this field is used to avoid interval comparing
+	/*
+	 used to know at which edge the SG is currently
+	 we could use the position and compare to the edge, but positions are not always exact
+	 so this field is used to avoid interval comparing
+	 */
 	private Point currentEdge;
 
 	/**
@@ -60,10 +64,11 @@ public class SecurityGuard extends Person {
 	 * @param name
 	 * @param velocity
 	 */
-	public SecurityGuard(Point position, String name,
+	public SecurityGuard(Area area, Point position, String name,
 			double velocity, Bank guardedBank) throws SlickException {
 		super(null, name, velocity);
 
+		this.area = area; 
 
 		this.guardedBank = guardedBank;
 
@@ -285,8 +290,9 @@ public class SecurityGuard extends Person {
 
 	public boolean arrestRobber(Robber robber) {
 		robber.isCaught = true;
-		// FIXME: 
-		//		Play.getInstance().gameOver();
+		boolean userIsPolice = area.getPoliceOffice().isUserIsPolice();
+		// FIXME: find the variable
+		Play.getInstance().gameOver(userIsPolice);
 		return true;
 	}
 }

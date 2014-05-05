@@ -1,5 +1,6 @@
 package game.city.person;
 
+import game.Game;
 import game.Globals;
 import game.city.building.Area;
 import game.city.building.Building;
@@ -10,14 +11,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.TimerTask;
 
 import javax.swing.Timer;
 
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Circle;
+import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.util.pathfinding.AStarPathFinder;
 import org.newdawn.slick.util.pathfinding.Mover;
+import org.newdawn.slick.util.pathfinding.Path;
+import org.newdawn.slick.util.pathfinding.Path.Step;
 
 public class PolicemanComputer extends Policeman implements Mover {
 
@@ -26,7 +32,18 @@ public class PolicemanComputer extends Policeman implements Mover {
 	protected boolean isPatrolling = false;
 	protected boolean isFollowingRobber = false;
 	protected boolean isCheckingSuspectRegion = false;
-	protected Whistle lastWhistleHeard;  
+
+	protected Whistle lastWhistleHeard;
+
+	/// 
+	private Path pathToTarget;
+	private Step nextStep; 
+	private Step currentStep;
+	private int pathToTargetIndex = 0;
+	Timer moveTimer; 
+
+	AStarPathFinder pathFinder = new AStarPathFinder(area.getCityMap() , Integer.MAX_VALUE, true);
+
 	/**
 	 * Array that stores the points the Policeman should visit. Each time one is
 	 * visited it is removed from the ArrayList
@@ -37,29 +54,50 @@ public class PolicemanComputer extends Policeman implements Mover {
 			String name, double velocity) throws SlickException {
 		super(area, robber, position, name, velocity);
 
+		
+		// keep changing the position of the policemen until he doesn't collide with anything
+		while (collides()){
+			this.position.setX(Globals.random.nextInt(800));
+			this.position.setY(Globals.random.nextInt(800));
+			this.rect.setX(position.getX());
+			this.rect.setY(position.getY());
+		}
+		
+		stop(); 
+		
 		this.userIsPolice = false;
 	}
 
 	public void startPatrol() {
-		isPatrolling = true;
+		isPatrolling = true; 
+		isFollowingRobber = false;
+
+		if (moveTimer !=null)
+		{			
+			moveTimer.stop();
+			moveTimer = null;
+		}
 
 		patrolTimer = new Timer(2000, new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
 				Integer index = (new Random()).nextInt(area.getHouses().size());
 				Building bldg = area.getBuildings().get(index);
-
-				move(bldg.position);
+				
+				Point pnt = bldg.getNearestFreePoint();
+				move(pnt);
 			}
 		});
+		//		patrolTimer.setRepeats(false);
 		patrolTimer.start();
+
 
 	}
 
 	public void stopPatrol() {
 		if (patrolTimer != null)
 			patrolTimer.stop();
-
-		this.isPatrolling = false;
+		isPatrolling = false;
 	}
 
 	public void heardWhistle(Whistle whistle){
@@ -76,82 +114,42 @@ public class PolicemanComputer extends Policeman implements Mover {
 	@Override
 	public void draw() {
 		// check if heard whistle
-		heardWhistle(robber.getWhistle());
-		
+//		heardWhistle(robber.getWhistle());
+
 		// draw the computer police only when he is visible to the robber
 		if (robber.canSeePoliceman(this))
 			super.draw();
 
-		// if there are points for the policeman to check
-		if (nextPoints.size() > 0) {
+//				//
+//				// if there are points for the policeman to check
+//				if (nextPoints.size() > 0) {
+//		
+//					// get the next point
+//					Point nextDestinationPoint = nextPoints.get(0);
+//		
+//					if (destPoint != nextDestinationPoint) {
+//						// move to the next destination point
+//						move(nextDestinationPoint);
+//		
+//						this.isCheckingSuspectRegion = true;
+//					}
+//				}
 
-			// get the next point
-			Point nextDestinationPoint = nextPoints.get(0);
-
-			if (destPoint != nextDestinationPoint) {
-				// move to the next destination point
-				move(nextDestinationPoint);
-
-				this.isCheckingSuspectRegion = true;
+		// Print: squares
+		if (pathToTarget != null)
+			for (int i=0; i < pathToTarget.getLength(); i++)
+			{
+				Step step = pathToTarget.getStep(i);
+				Rectangle rect = new Rectangle(
+						step.getX()*Globals.TILE_SIZE,  
+						step.getY()*Globals.TILE_SIZE,
+						10,10);
+				Game.getInstance().getContainer().getGraphics().draw(rect);
 			}
-		}
-
-		// if Policeman is moving, change xPos and yPos
-		if (isMoving) {
-			float speed = (float) (Globals.VELOCITY_MULTIPLIER * velocity);
-
-			float deltaX = this.position.getX() - this.destPoint.getX();
-			float deltaY = this.position.getY() - this.destPoint.getY();
-
-			// we want the policeman to go all the way horizontally then after
-			// arrivign to the correct xpos
-			// go all the way vertically, so we declare a variable
-			// movingHorizontally and we set it to true whenever the policeman
-			// is going horizontally
-			// if true, the second if statement is not satisfied and the yPos
-			// has to wait for the xPos to finish
-			boolean movingHorizontally = false;
-			if (Math.abs(deltaX) > 2.0f) {
-				float newX = (deltaX < 0) ? this.position.getX() + speed
-						: this.position.getX() + (-1) * speed;
-
-				this.position.setX(newX);
-
-				this.rect.setX(this.position.getX());
-
-				movingHorizontally = true;
-			}
-
-			// check on movingHorizontally done here
-			if (Math.abs(deltaY) > 2.0f && !movingHorizontally) {
-				float newY = (deltaY < 0) ? this.position.getY() + speed
-						: this.position.getY() + (-1) * speed;
-
-				this.position.setY(newY);
-
-				this.rect.setY(this.position.getY());
-			}
-
-			// 2.0f margin of error
-			if (Math.abs(this.position.getX() - this.destPoint.getX()) < 2.0f
-					&& Math.abs(this.position.getY() - this.destPoint.getY()) < 2.0f) {
-
-				this.isMoving = false;
-				if (isCheckingSuspectRegion) {
-					nextPoints.remove(0);
-
-					this.isCheckingSuspectRegion = false;
-
-					this.suspectRegion = null;
-				}
-			}
-		}
 
 		// if the Policeman is neither patrolling nor following the robber then
 		// he should patrol
-		if (!this.isPatrolling && !this.isFollowingRobber && !userIsPolice
-				&& !isCheckingSuspectRegion)
-			startPatrol();
+
 
 		// see if the Robber is visible
 		lookForRobber();
@@ -169,7 +167,7 @@ public class PolicemanComputer extends Policeman implements Mover {
 		// TODO: might be useless
 		setSuspectRegion(region);
 		isCheckingSuspectRegion = true;		
-		
+
 		// get a random point inside the region
 		Point randPoint = randomPointInCircle(suspectRegion);
 
@@ -214,7 +212,9 @@ public class PolicemanComputer extends Policeman implements Mover {
 				- this.robber.position.getX(), 2.0)
 				+ Math.pow(this.position.getY() - this.robber.position.getY(),
 						2.0));
-		if (distance < 2.0f && !robber.isCaught) {
+
+		//FIXME: make general the erorr 16.0f
+		if (distance < 16.0f && !robber.isCaught) {
 			// the Robber has been caught
 			// send a message to signal game over
 			arrestRobber(robber);
@@ -222,24 +222,158 @@ public class PolicemanComputer extends Policeman implements Mover {
 		if (distance < Globals.POLICEMAN_VISION_DISTANCE) {
 			followRobber();
 			return true;
-		} else {
-			this.isFollowingRobber = false;
+		} 
+		else {
+	
+			isFollowingRobber = false;
 
+			if (!isPatrolling){
+				startPatrol();
+			}
 		}
+
+		//		if (!this.isPatrolling && !this.isFollowingRobber && !isCheckingSuspectRegion)
+		//			startPatrol();
+
 		return false;
 	}
 
 	private void followRobber() {
-		this.isFollowingRobber = true;
-
+		if (patrolTimer !=null){
+			stopPatrol();
+		}
+			
+		isFollowingRobber = true;
+		isPatrolling = false;
+		isCheckingSuspectRegion = false; 
 		Play.getInstance().getRobber().addScore(0.1f);
-		this.move(robber.position);
+
+		move(robber.position);
 	}
 
-	public void move(Point destPoint) {
-		this.destPoint = destPoint;
+	public void move (final Point destPos){
+		// Timer Task declaration
+		final int period = 80; 
+		final int interval = Globals.TILE_SIZE; 
+		final PolicemanComputer thisPC = this;
 
-		this.isMoving = true;
+		final ActionListener moveActionListener = new ActionListener() {
+			int count = 0;	
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				// Source position (rounded)
+				int posX = (int) position.getX()/Globals.TILE_SIZE;
+				int posY = (int) position.getY()/Globals.TILE_SIZE;
+
+				// Target position (rounded)
+				int targetX = (int) destPos.getX()/Globals.TILE_SIZE;
+				int targetY = (int) destPos.getY()/Globals.TILE_SIZE;
+
+
+				pathToTarget = pathFinder.findPath((Mover) thisPC, posX, posY, targetX, targetY);
+				pathToTargetIndex = 0; 
+
+				if (pathToTarget == null)
+				{
+					moveTimer.stop();
+					moveTimer = null; 
+					return; 
+				}
+
+				// After here pathToTarget cannot be equal to null
+
+				if (pathToTargetIndex < pathToTarget.getLength()-1) {
+					currentStep = pathToTarget.getStep(pathToTargetIndex);
+					nextStep 	= pathToTarget.getStep(pathToTargetIndex+1);
+				}
+				else {
+					moveTimer.stop();
+					moveTimer = null;
+					return; 
+				}
+
+				if (count==interval){
+					count = 0; // reset count
+
+					// make sure there are more steps to get
+					if (pathToTargetIndex < pathToTarget.getLength() - 1){
+						pathToTargetIndex++;
+						currentStep = nextStep;
+						nextStep = pathToTarget.getStep(pathToTargetIndex);
+					}
+					// if there are no more steps cancel the timer
+					else{
+						moveTimer.stop();
+						moveTimer = null; 		
+						return; // Testing..
+					}
+				}
+
+				int stepX = (nextStep.getX() - currentStep.getX()) * interval;
+				int stepY = (nextStep.getY() - currentStep.getY()) * interval;				
+
+				// compute delta of prev and next steps
+				float newX = position.getX() + stepX/interval; 
+				float newY = position.getY() + stepY/interval; 				
+
+				position.setX(newX);
+				position.setY(newY);
+
+				count++; 
+			}				
+		};
+
+		// Get Path
+		if (moveTimer == null)
+		{
+			// Source position (rounded)
+			int posX = (int) position.getX()/Globals.TILE_SIZE;
+			int posY = (int) position.getY()/Globals.TILE_SIZE;
+
+			// Target position (rounded)
+			int targetX = (int) destPos.getX()/Globals.TILE_SIZE;
+			int targetY = (int) destPos.getY()/Globals.TILE_SIZE;
+
+			pathToTarget = pathFinder.findPath((Mover) this, posX, posY, targetX, targetY);
+			pathToTargetIndex = 0;
+			moveTimer = new Timer(period/interval, moveActionListener);
+			moveTimer.start();
+		}
+	}
+
+	
+	public boolean collides() {
+		// convert the position of the Player from pixels to 'Tile' position
+		// divide by the tile Size (in this case 16px)
+
+		
+		// Collision with boundaries
+		Line[] boundLines = area.getMapBounds();
+		for (Line line : boundLines) {
+			if (line.intersects(this.rect))
+				return true;
+		}
+	
+		nearByBldg = null; 
+		boolean isInCollision = false;
+		for (Building bldg: area.getBuildings()) {
+			if (rect.intersects(bldg.getRect())) {
+				isInCollision = true;
+				nearByBldg = bldg; 
+				bldg.setShowBuildingInfo(true);
+				break;
+			}
+			if (this.rect.intersects(bldg.robbingRegion)) {
+				this.nearByBldg = bldg;
+				bldg.setShowBuildingInfo(true);
+			}
+		}
+		final int x = (int)position.getX() / Globals.TILE_SIZE;
+		final int y = (int)position.getY() / Globals.TILE_SIZE;
+		
+		return area.getCityMap().blocked(this) || isInCollision; 
 	}
 
 }

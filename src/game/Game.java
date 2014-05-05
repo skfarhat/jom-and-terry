@@ -17,11 +17,11 @@ import org.newdawn.slick.state.StateBasedGame;
 
 public class Game extends StateBasedGame {
 
-	public static final Game game  = new Game(Globals.gamename);
+	private static final Game game  = new Game(Globals.gamename);
 
 	private Account account; 
-	public Integer totalCount = 0; 
-	public Integer count = 0; // used to count the number of objects that have been created
+//	public Integer totalCount = 0; 
+//	public Integer count = 0; // used to count the number of objects that have been created
 
 	public Account getAccount() {
 		return account;
@@ -85,6 +85,8 @@ public class Game extends StateBasedGame {
 	public static void main(String[] args) {
 
 		AppGameContainer container;
+		
+		// init all sound files
 		AudioGame.getInstance();
 
 		try {
@@ -99,11 +101,11 @@ public class Game extends StateBasedGame {
 
 	}
 
-	public float getPercentLoaded(){
-		if (totalCount==0)
-			return 0; 
-		float f = ((float)count/(float)totalCount)*100.0f;
-
-		return f; 
-	}
+//	public float getPercentLoaded(){
+//		if (totalCount==0)
+//			return 0; 
+//		float f = ((float)count/(float)totalCount)*100.0f;
+//
+//		return f; 
+//	}
 }

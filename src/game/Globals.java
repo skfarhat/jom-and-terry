@@ -36,7 +36,7 @@ public final class Globals {
 
 	// Velocity
 	public static final float VELOCITY_MULTIPLIER = 0.02f; 
-	public static final float ROBBER_VELOCITY = 130.0f;
+	public static final float ROBBER_VELOCITY = 200.0f;
 	public static final float POLICEMAN_VELOCITY = 115.0f;
 	public static final float SECURITY_GUARD_VELOCITY = 80.0f; 
 	
@@ -81,7 +81,7 @@ public final class Globals {
 	public static final int WHISTLE_DURATION = 500; //4 sec
 	public static final float WHISTLE_HEAR_DISTANCE = 400.0f; // distance needed to hear the whistle in pixels
 	
-	public static final float POLICEMAN_VISION_DISTANCE = 500.0f; 
+	public static final float POLICEMAN_VISION_DISTANCE = 300.0f; 
 	public static final String POLICEMAN_SCORE = "Score";
 	public static final String POLICEMAN_POSITION_X= "Position_X";
 	public static final String POLICEMAN_POSITION_Y= "Position_Y";
@@ -137,13 +137,8 @@ public final class Globals {
 			CITY_4,
 			CITY_5
 	};
-
-
-
 	
-	
-	// Global functions
-	
+	// Global functions	
 	public static final float distance (Point pnt1, Point pnt2){
 		float distance = (float) Math.sqrt(Math.pow(
 				pnt1.getX() - pnt2.getX(), 2.0)

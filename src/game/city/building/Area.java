@@ -136,8 +136,7 @@ public class Area implements Savable{
 		int highwayObjectCount = areaTileMap.getObjectCount(Globals.HIGHWAY_OBJECT_INDEX);
 		int gatesObjectCount = areaTileMap.getObjectCount(Globals.GATES_OBJECT_INDEX);
 		int roadsObjectCount = areaTileMap.getObjectCount(Globals.ROAD_OBJECT_INDEX);
-
-		Game.getInstance().totalCount = housesObjectCount + banksObjectCount + shopsObjectCount + highwayObjectCount + gatesObjectCount + roadsObjectCount;  
+  
 		int bldgID = 0;
 
 		// create all Houses
@@ -161,8 +160,7 @@ public class Area implements Savable{
 
 			houses.add(house);
 			buildings.add(house);
-
-			Game.getInstance().count++; 
+ 
 			bldgID++;
 		}
 
@@ -199,7 +197,6 @@ public class Area implements Savable{
 			securityGuards.addAll(bank.getSecurityGuards());
 
 			bldgID++;
-			Game.getInstance().count++;
 		}
 
 
@@ -226,7 +223,6 @@ public class Area implements Savable{
 			buildings.add(shop);
 
 			bldgID++;
-			Game.getInstance().count++;
 		}
 
 		// HIGHWAY
@@ -246,8 +242,7 @@ public class Area implements Savable{
 
 			Highway highway = new Highway(this, position, rect);
 			highways.add(highway);
-
-			Game.getInstance().count++; 
+ 
 		}
 
 		// GATES
@@ -269,7 +264,6 @@ public class Area implements Savable{
 
 			gates.add(gate);
 
-			Game.getInstance().count++;
 		}
 
 		// randomly choose a gate as the exit game
@@ -294,7 +288,6 @@ public class Area implements Savable{
 			Road road = new Road(this, position, rect); 
 
 			roads.add(road);
-			Game.getInstance().count++;
 		}
 	}
 

@@ -248,49 +248,6 @@ public class PolicemanUser extends Policeman implements Movable, Mover{
 	public void draw() {
 		super.draw();
 
-		// if Policeman is moving, change xPos and yPos
-		if (isGathering) {
-
-
-			////			if (Math.abs(deltaX) > 2.0f)
-			//			{
-			//				float newX = (deltaX<0)? this.position.getX()
-			//						+ speed: this.position.getX() + (-1)*speed;
-			//				this.position.setX(newX);
-			//				this.rect.setX(this.position.getX());
-			//				movingHorizontally = true; 
-			//			}
-			//			else {
-			////				position.setX(nextStep.getX()*Globals.TILE_SIZE);
-			////				rect.setX(position.getX());
-			////				
-			//				prevStep = nextStep; 
-			//				arrived = !(++pathToTargetIndex < pathToTarget.getLength());
-			//				if (!arrived)
-			//					nextStep = pathToTarget.getStep(pathToTargetIndex);
-			//				movingHorizontally = false; 
-			//			}
-			//			
-			//			if (Math.abs(deltaY) > 2.0f && !movingHorizontally){
-			//				float newY = (deltaY<0)? this.position.getY()
-			//						+ speed: this.position.getY() + (-1)*speed;
-			//				position.setY(newY);
-			//				rect.setY(this.position.getY());
-			//			}
-			//			else if (Math.abs(deltaY) < 2.0f ){
-			//				
-			////				position.setY(nextStep.getY()*Globals.TILE_SIZE);
-			////				rect.setY(position.getY());
-			//			
-			//				prevStep = nextStep;
-			//				arrived = !(++pathToTargetIndex < pathToTarget.getLength());
-			//				if (!arrived)
-			//					nextStep = pathToTarget.getStep(pathToTargetIndex);
-			//			}
-			//			
-
-
-		}
 		if (pathToTarget != null)
 			for (int i=0; i < pathToTarget.getLength(); i++)
 			{

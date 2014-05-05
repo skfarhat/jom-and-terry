@@ -55,7 +55,7 @@ public class Bank extends Building {
 		// Create the Security Guards
 		for (int i = 0; i < numberOfSecurityGuards; i++) {
 			// create a new security guard
-			SecurityGuard sg = new SecurityGuard(position, "SG",
+			SecurityGuard sg = new SecurityGuard(area, position, "SG",
 					Globals.SECURITY_GUARD_VELOCITY, this);
 
 			// add the security guard to the array

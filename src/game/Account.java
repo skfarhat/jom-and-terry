@@ -102,6 +102,10 @@ public class Account {
 
 	}
 
+	public boolean delete(){
+		final File accountFile = new File(SAVE_DIRECTORY_PATH + username + ".json");
+		return 	accountFile.delete();
+	}
 	public void save(Integer playTime){
 		try {
 

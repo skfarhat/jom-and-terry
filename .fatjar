@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Mon May 05 17:09:09 EEST 2014
+onejar.license.required=false
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=true
+jarname=Jom & Terry_fat.jar
+manifest.mergeall=true
+manifest.mainclass=game.Game
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=<inc|Jom & Terry/Save>;<inc|Jom & Terry/res>

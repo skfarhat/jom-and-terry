@@ -41,7 +41,7 @@ public class PoliceOffice implements Savable {
 	public ArrayList<Policeman> policeForceArray;
 	private static Audio sound;
 	private static boolean isPlayingSound = false; 
-	private static boolean userIsPolice; 
+	private boolean userIsPolice; 
 
 	private int policemanSelectionIndex = 0; 
 	protected int gathersRemaining = Globals.POLICE_OFFICE_GATHER_COUNT; 
@@ -55,7 +55,7 @@ public class PoliceOffice implements Savable {
 
 	public PoliceOffice(Area area, Robber robber, boolean userIsPolice) throws SlickException {
 
-		PoliceOffice.userIsPolice = userIsPolice; 
+		this.userIsPolice = userIsPolice; 
 
 		this.area = area; 
 		this.robber = robber; 
@@ -374,6 +374,11 @@ public class PoliceOffice implements Savable {
 		if (this.score < 0)
 			this.score = 0; 
 	}
+	public boolean isUserIsPolice() {
+		return userIsPolice;
+	}
+
+	
 	/// TODO: could add Play.getinstance.setMainCharacter() at the end of it
 	public void setSelectedPoliceman(Policeman selectedPoliceman) {
 
