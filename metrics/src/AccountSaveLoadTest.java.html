@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.5">
+<TITLE>AccountSaveLoadTest (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">AccountSaveLoadTest.java</font>
+</td>
+<td align="right" colspan="2" width="33%">&nbsp;</td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<FONT ID="LN">1   </FONT><A NAME="1"></A><FONT ID="Import">import</FONT> <FONT ID="Static">static</FONT> org.junit.Assert.*;
+<FONT ID="LN">2   </FONT><A NAME="2"></A><FONT ID="Import">import</FONT> game.Account;
+<FONT ID="LN">3   </FONT><A NAME="3"></A>
+<FONT ID="LN">4   </FONT><A NAME="4"></A><FONT ID="Import">import</FONT> org.junit.Test;
+<FONT ID="LN">5   </FONT><A NAME="5"></A>
+<FONT ID="LN">6   </FONT><A NAME="6"></A>
+<FONT ID="LN">7   </FONT><A NAME="7"></A><FONT ID="Public">public</FONT> <FONT ID="Class">class</FONT> AccountSaveLoadTest {
+<FONT ID="LN">8   </FONT><A NAME="8"></A>
+<FONT ID="LN">9   </FONT><A NAME="9"></A>    @Test
+<FONT ID="LN">10  </FONT><A NAME="10"></A>    <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> test() {
+<FONT ID="LN">11  </FONT><A NAME="11"></A>        <FONT ID="Final">final</FONT> String testUsername = <FONT ID="StringLiteral">"TestUsername"</FONT>;
+<FONT ID="LN">12  </FONT><A NAME="12"></A>        <FONT ID="Final">final</FONT> <FONT ID="Boolean">boolean</FONT> isRobber = <FONT ID="False">false</FONT>;
+<FONT ID="LN">13  </FONT><A NAME="13"></A>        
+<FONT ID="LN">14  </FONT><A NAME="14"></A>        Account account = <FONT ID="New">new</FONT> Account(testUsername, isRobber);
+<FONT ID="LN">15  </FONT><A NAME="15"></A>        assertTrue(account.create());
+<FONT ID="LN">16  </FONT><A NAME="16"></A>        account.setHighestLevelReached(<FONT ID="IntegerLiteral">3</FONT>);
+<FONT ID="LN">17  </FONT><A NAME="17"></A>        account.setHighscore(<FONT ID="IntegerLiteral">1500</FONT>);
+<FONT ID="LN">18  </FONT><A NAME="18"></A>        
+<FONT ID="LN">19  </FONT><A NAME="19"></A>        account.save(<FONT ID="IntegerLiteral">300</FONT>);
+<FONT ID="LN">20  </FONT><A NAME="20"></A>        Account loadedAccount = Account.load(testUsername);
+<FONT ID="LN">21  </FONT><A NAME="21"></A>        
+<FONT ID="LN">22  </FONT><A NAME="22"></A>        assertEquals(account.getHighestLevelReached(), loadedAccount.getHighestLevelReached());
+<FONT ID="LN">23  </FONT><A NAME="23"></A>        assertEquals(account.getHighscore(), loadedAccount.getHighscore());
+<FONT ID="LN">24  </FONT><A NAME="24"></A>
+<FONT ID="LN">25  </FONT><A NAME="25"></A>            
+<FONT ID="LN">26  </FONT><A NAME="26"></A>        assertTrue(account.delete());
+<FONT ID="LN">27  </FONT><A NAME="27"></A>    }
+<FONT ID="LN">28  </FONT><A NAME="28"></A>
+<FONT ID="LN">29  </FONT><A NAME="29"></A>}
+<FONT ID="LN">30  </FONT><A NAME="30"></A></pre>
+</BODY>
+</HTML>

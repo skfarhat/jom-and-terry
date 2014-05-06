@@ -34,11 +34,11 @@
 <FONT ID="LN">17  </FONT><A NAME="17"></A>
 <FONT ID="LN">18  </FONT><A NAME="18"></A><FONT ID="Public">public</FONT> <FONT ID="Class">class</FONT> Game <FONT ID="Extends">extends</FONT> StateBasedGame {
 <FONT ID="LN">19  </FONT><A NAME="19"></A>
-<FONT ID="LN">20  </FONT><A NAME="20"></A>    <FONT ID="Public">public</FONT> <FONT ID="Static">static</FONT> <FONT ID="Final">final</FONT> <A HREF="../game/Game.java.html">Game</A> game  = <FONT ID="New">new</FONT> <A HREF="../game/Game.java.html">Game</A>(Globals.gamename);
+<FONT ID="LN">20  </FONT><A NAME="20"></A>    <FONT ID="Private">private</FONT> <FONT ID="Static">static</FONT> <FONT ID="Final">final</FONT> <A HREF="../game/Game.java.html">Game</A> game  = <FONT ID="New">new</FONT> <A HREF="../game/Game.java.html">Game</A>(Globals.gamename);
 <FONT ID="LN">21  </FONT><A NAME="21"></A>
 <FONT ID="LN">22  </FONT><A NAME="22"></A>    <FONT ID="Private">private</FONT> Account account; 
-<FONT ID="LN">23  </FONT><A NAME="23"></A>    <FONT ID="Public">public</FONT> Integer totalCount = <FONT ID="IntegerLiteral">0</FONT>; 
-<FONT ID="LN">24  </FONT><A NAME="24"></A>    <FONT ID="Public">public</FONT> Integer count = <FONT ID="IntegerLiteral">0</FONT>; <FONT ID="SingleLineComment">// used to count the number of objects that have been created
+<FONT ID="LN">23  </FONT><A NAME="23"></A><FONT ID="SingleLineComment">//  public Integer totalCount = 0; 
+<FONT ID="LN">24  </FONT><A NAME="24"></A></FONT><FONT ID="SingleLineComment">//  public Integer count = 0; // used to count the number of objects that have been created
 <FONT ID="LN">25  </FONT><A NAME="25"></A></FONT>
 <FONT ID="LN">26  </FONT><A NAME="26"></A>    <FONT ID="Public">public</FONT> Account getAccount() {
 <FONT ID="LN">27  </FONT><A NAME="27"></A>        <FONT ID="Return">return</FONT> account;
@@ -102,27 +102,21 @@
 <FONT ID="LN">85  </FONT><A NAME="85"></A>    <FONT ID="Public">public</FONT> <FONT ID="Static">static</FONT> <FONT ID="Void">void</FONT> main(String[] args) {
 <FONT ID="LN">86  </FONT><A NAME="86"></A>
 <FONT ID="LN">87  </FONT><A NAME="87"></A>        AppGameContainer container;
-<FONT ID="LN">88  </FONT><A NAME="88"></A>        AudioGame.getInstance();
-<FONT ID="LN">89  </FONT><A NAME="89"></A>
-<FONT ID="LN">90  </FONT><A NAME="90"></A>        <FONT ID="Try">try</FONT> {
-<FONT ID="LN">91  </FONT><A NAME="91"></A>            <A HREF="../game/Game.java.html">Game</A> game = Game.getInstance();
-<FONT ID="LN">92  </FONT><A NAME="92"></A>            container = <FONT ID="New">new</FONT> AppGameContainer(game);
-<FONT ID="LN">93  </FONT><A NAME="93"></A>            container.setDisplayMode(Globals.APP_WIDTH,Globals.APP_HEIGHT,<FONT ID="False">false</FONT>);
-<FONT ID="LN">94  </FONT><A NAME="94"></A>            container.setTargetFrameRate(<FONT ID="IntegerLiteral">120</FONT>);
-<FONT ID="LN">95  </FONT><A NAME="95"></A>            container.start();
-<FONT ID="LN">96  </FONT><A NAME="96"></A>        } <FONT ID="Catch">catch</FONT> (SlickException e) {
-<FONT ID="LN">97  </FONT><A NAME="97"></A>            e.printStackTrace();
-<FONT ID="LN">98  </FONT><A NAME="98"></A>        }
-<FONT ID="LN">99  </FONT><A NAME="99"></A>
-<FONT ID="LN">100 </FONT><A NAME="100"></A>    }
+<FONT ID="LN">88  </FONT><A NAME="88"></A>        
+<FONT ID="LN">89  </FONT><A NAME="89"></A>        <FONT ID="SingleLineComment">// init all sound files
+<FONT ID="LN">90  </FONT><A NAME="90"></A></FONT>        AudioGame.getInstance();
+<FONT ID="LN">91  </FONT><A NAME="91"></A>
+<FONT ID="LN">92  </FONT><A NAME="92"></A>        <FONT ID="Try">try</FONT> {
+<FONT ID="LN">93  </FONT><A NAME="93"></A>            <A HREF="../game/Game.java.html">Game</A> game = Game.getInstance();
+<FONT ID="LN">94  </FONT><A NAME="94"></A>            container = <FONT ID="New">new</FONT> AppGameContainer(game);
+<FONT ID="LN">95  </FONT><A NAME="95"></A>            container.setDisplayMode(Globals.APP_WIDTH,Globals.APP_HEIGHT,<FONT ID="False">false</FONT>);
+<FONT ID="LN">96  </FONT><A NAME="96"></A>            container.setTargetFrameRate(<FONT ID="IntegerLiteral">120</FONT>);
+<FONT ID="LN">97  </FONT><A NAME="97"></A>            container.start();
+<FONT ID="LN">98  </FONT><A NAME="98"></A>        } <FONT ID="Catch">catch</FONT> (SlickException e) {
+<FONT ID="LN">99  </FONT><A NAME="99"></A>            e.printStackTrace();
+<FONT ID="LN">100 </FONT><A NAME="100"></A>        }
 <FONT ID="LN">101 </FONT><A NAME="101"></A>
-<FONT ID="LN">102 </FONT><A NAME="102"></A>    <FONT ID="Public">public</FONT> <FONT ID="Float">float</FONT> getPercentLoaded(){
-<FONT ID="LN">103 </FONT><A NAME="103"></A>        <FONT ID="If">if</FONT> (totalCount==<FONT ID="IntegerLiteral">0</FONT>)
-<FONT ID="LN">104 </FONT><A NAME="104"></A>            <FONT ID="Return">return</FONT> <FONT ID="IntegerLiteral">0</FONT>; 
-<FONT ID="LN">105 </FONT><A NAME="105"></A>        <FONT ID="Float">float</FONT> f = ((<FONT ID="Float">float</FONT>)count/(<FONT ID="Float">float</FONT>)totalCount)*<FONT ID="FloatPointLiteral">100.0f</FONT>;
-<FONT ID="LN">106 </FONT><A NAME="106"></A>
-<FONT ID="LN">107 </FONT><A NAME="107"></A>        <FONT ID="Return">return</FONT> f; 
-<FONT ID="LN">108 </FONT><A NAME="108"></A>    }
-<FONT ID="LN">109 </FONT><A NAME="109"></A>}</pre>
+<FONT ID="LN">102 </FONT><A NAME="102"></A>    }
+<FONT ID="LN">103 </FONT><A NAME="103"></A>}</pre>
 </BODY>
 </HTML>

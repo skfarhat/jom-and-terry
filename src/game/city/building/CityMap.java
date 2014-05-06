@@ -112,7 +112,7 @@ public class CityMap implements TileBasedMap {
 				}
 		}
 
-//		printMap();
+		printMap();
 	}
 
 	public void printMap(){ 

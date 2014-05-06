@@ -384,7 +384,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#1214a4" name="Police Collision" width="150" height="60">
+ <objectgroup color="#1214a4" name="Police Collision" width="150" height="60" visible="0">
   <object x="96" y="80" width="256" height="384"/>
   <object x="448" y="80" width="256" height="384"/>
   <object x="96" y="544" width="256" height="160"/>
