@@ -18,7 +18,7 @@ public class AudioGame extends AudioImpl {
 	public static boolean playing = false; 
 	public static HashMap<String, Audio> map = new HashMap<>(10);
 	public static HashMap<String, Sound> soundMap = new HashMap<>(10);
-	
+	public static Sound lastSound; 
 	
 	public static String []filesPlaying; 
 	public static AudioGame audioGame  = new AudioGame();
@@ -67,8 +67,12 @@ public class AudioGame extends AudioImpl {
 		}	
 	}
 	public static void playAsSound(String path){
-		Sound sound = soundMap.get(path); 
+		Sound sound = soundMap.get(path);
+		if (lastSound != null)
+			if (lastSound.playing())
+				lastSound.stop();
 		sound.play();
+		lastSound = sound; 
 	}
 
 

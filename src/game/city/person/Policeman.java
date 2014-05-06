@@ -32,8 +32,6 @@ public abstract class Policeman extends Person implements Savable, Mover{
 	private static String policeSpriteSheet 			= "res/Spritesheets/Police.png";
 	//=================================================================
 	private Image image;
-
-//	protected float score = 0; 
 	protected Point destPoint; 
  
 	protected Building nearByBldg; 
@@ -42,10 +40,8 @@ public abstract class Policeman extends Person implements Savable, Mover{
 	protected boolean userIsPolice; 
 	protected boolean robberIsVisible = false;
 	//=================================================================
-	//  
 	public Robber robber; 
 	protected Circle suspectRegion; 		
-
 	//=================================================================
 
 	/**

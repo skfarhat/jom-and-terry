@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.TimerTask;
 
 import javax.swing.Timer;
 
@@ -29,12 +28,15 @@ public class PolicemanComputer extends Policeman implements Mover {
 
 	private Timer patrolTimer;
 
-	protected boolean isPatrolling = false;
-	protected boolean isFollowingRobber = false;
-	protected boolean isCheckingSuspectRegion = false;
+	enum PoliceState{
+		PATROLLING, 
+		FOLLOWING_ROBBER, 
+		CHECKING_SUSPECT_REGION
+	};
+
+	protected PoliceState policeState; 
 
 	protected Whistle lastWhistleHeard;
-
 	/// 
 	private Path pathToTarget;
 	private Step nextStep; 
@@ -49,28 +51,28 @@ public class PolicemanComputer extends Policeman implements Mover {
 	 * visited it is removed from the ArrayList
 	 */
 	private ArrayList<Point> nextPoints = new ArrayList<>(5);
+	protected Point nextPoint; 
 
 	public PolicemanComputer(Area area, Robber robber, Point position,
 			String name, double velocity) throws SlickException {
 		super(area, robber, position, name, velocity);
 
-		
+
 		// keep changing the position of the policemen until he doesn't collide with anything
 		while (collides()){
-			this.position.setX(Globals.random.nextInt(800));
-			this.position.setY(Globals.random.nextInt(800));
-			this.rect.setX(position.getX());
-			this.rect.setY(position.getY());
+			position.setX(Globals.random.nextInt(800));
+			position.setY(Globals.random.nextInt(800));
+			rect.setX(position.getX());
+			rect.setY(position.getY());
 		}
-		
+
 		stop(); 
-		
+
 		this.userIsPolice = false;
 	}
 
 	public void startPatrol() {
-		isPatrolling = true; 
-		isFollowingRobber = false;
+		policeState = PoliceState.PATROLLING; 
 
 		if (moveTimer !=null)
 		{			
@@ -83,7 +85,7 @@ public class PolicemanComputer extends Policeman implements Mover {
 			public void actionPerformed(ActionEvent e) {
 				Integer index = (new Random()).nextInt(area.getHouses().size());
 				Building bldg = area.getBuildings().get(index);
-				
+
 				Point pnt = bldg.getNearestFreePoint();
 				move(pnt);
 			}
@@ -97,7 +99,11 @@ public class PolicemanComputer extends Policeman implements Mover {
 	public void stopPatrol() {
 		if (patrolTimer != null)
 			patrolTimer.stop();
-		isPatrolling = false;
+	}
+	
+	public void stopMovingTimer() {
+		if (moveTimer != null)
+			moveTimer.stop(); 
 	}
 
 	public void heardWhistle(Whistle whistle){
@@ -105,6 +111,7 @@ public class PolicemanComputer extends Policeman implements Mover {
 			if (whistle.canBeHeard){
 				lastWhistleHeard = whistle;
 				if(Globals.distance(whistle.position, position) < Globals.WHISTLE_HEAR_DISTANCE){
+					System.out.println("Heard whistle");
 					Circle region = new Circle (whistle.position.getX(), whistle.position.getY(), 50.0f); 
 					checkoutRegion(region);
 				}
@@ -114,42 +121,38 @@ public class PolicemanComputer extends Policeman implements Mover {
 	@Override
 	public void draw() {
 		// check if heard whistle
-//		heardWhistle(robber.getWhistle());
+		heardWhistle(robber.getWhistle());
 
 		// draw the computer police only when he is visible to the robber
 		if (robber.canSeePoliceman(this))
 			super.draw();
 
-//				//
-//				// if there are points for the policeman to check
-//				if (nextPoints.size() > 0) {
-//		
-//					// get the next point
-//					Point nextDestinationPoint = nextPoints.get(0);
-//		
-//					if (destPoint != nextDestinationPoint) {
-//						// move to the next destination point
-//						move(nextDestinationPoint);
-//		
-//						this.isCheckingSuspectRegion = true;
-//					}
-//				}
+		//				//
+//						// if there are points for the policeman to check
+//						if (nextPoints.size() > 0) {
+//				
+//							// get the next point
+//							Point nextDestinationPoint = nextPoints.get(0);
+//				
+//							if (destPoint != nextDestinationPoint) {
+//								// move to the next destination point
+//								move(nextDestinationPoint);
+//				
+//								this.isCheckingSuspectRegion = true;
+//							}
+//						}
 
-		// Print: squares
-		if (pathToTarget != null)
-			for (int i=0; i < pathToTarget.getLength(); i++)
-			{
-				Step step = pathToTarget.getStep(i);
-				Rectangle rect = new Rectangle(
-						step.getX()*Globals.TILE_SIZE,  
-						step.getY()*Globals.TILE_SIZE,
-						10,10);
-				Game.getInstance().getContainer().getGraphics().draw(rect);
-			}
-
-		// if the Policeman is neither patrolling nor following the robber then
-		// he should patrol
-
+//		// Print: squares
+//		if (pathToTarget != null)
+//			for (int i=0; i < pathToTarget.getLength(); i++)
+//			{
+//				Step step = pathToTarget.getStep(i);
+//				Rectangle rect = new Rectangle(
+//						step.getX()*Globals.TILE_SIZE,  
+//						step.getY()*Globals.TILE_SIZE,
+//						10,10);
+//				Game.getInstance().getContainer().getGraphics().draw(rect);
+//			}
 
 		// see if the Robber is visible
 		lookForRobber();
@@ -157,44 +160,51 @@ public class PolicemanComputer extends Policeman implements Mover {
 
 	public void checkoutRegion(Circle region) {
 
-		// first stop patroling
-		if (isPatrolling)
+		if (policeState == PoliceState.FOLLOWING_ROBBER)
+			return;
+
+		if (policeState == PoliceState.PATROLLING)
 			stopPatrol();
 
 		if (suspectRegion == region)
 			return; 
 
-		// TODO: might be useless
-		setSuspectRegion(region);
-		isCheckingSuspectRegion = true;		
+		policeState = PoliceState.CHECKING_SUSPECT_REGION;
+		suspectRegion = region;		
 
-		// get a random point inside the region
 		Point randPoint = randomPointInCircle(suspectRegion);
-
-		nextPoints.add(randPoint);
+		move(randPoint);
+//		nextPoints.add(randPoint);
 	}
 
 	public void checkoutHighway(Road road) {
-		// to check out a highway
+//		// to check out a highway
+//
+//		// first stop patroling
+//		if (policeState == PoliceState.PATROLLING)
+//			stopPatrol();
+//
+//		// choose two random points in the highway
+//		Point firstPoint = randomPointInRect(road.getRect());
+//		Point secondPoint = randomPointInRect(road.getRect());
+//
+//		// add the points to the array
+//		nextPoints.add(firstPoint);
+//		nextPoints.add(secondPoint);
+//
+//		// set flag for isCheckingRegion
+//		policeState = PoliceState.CHECKING_SUSPECT_REGION; 
+		
+		if (policeState == PoliceState.FOLLOWING_ROBBER)
+			return;
 
-		// first stop patroling
-		if (isPatrolling)
+		if (policeState == PoliceState.PATROLLING)
 			stopPatrol();
 
-		// choose two random points in the highway
-		Point firstPoint = randomPointInRect(road.getRect());
-		Point secondPoint = randomPointInRect(road.getRect());
+		policeState = PoliceState.CHECKING_SUSPECT_REGION;;		
 
-		// add the points to the array
-		nextPoints.add(firstPoint);
-		nextPoints.add(secondPoint);
-
-		// set flag for isCheckingRegion
-		this.isCheckingSuspectRegion = true;
-	}
-
-	public void setSuspectRegion(Circle suspectRegionCircle) {
-		this.suspectRegion = suspectRegionCircle;
+		Point randPoint = randomPointInRect(road.getRect());
+		move(randPoint);
 	}
 
 	private Point randomPointInRect(Rectangle rect) {
@@ -223,17 +233,16 @@ public class PolicemanComputer extends Policeman implements Mover {
 			followRobber();
 			return true;
 		} 
-		else {
-	
-			isFollowingRobber = false;
+		else if (policeState == PoliceState.CHECKING_SUSPECT_REGION){
+			policeState = PoliceState.CHECKING_SUSPECT_REGION;
 
-			if (!isPatrolling){
+		}
+
+		else { 
+			if (policeState != PoliceState.PATROLLING){
 				startPatrol();
 			}
 		}
-
-		//		if (!this.isPatrolling && !this.isFollowingRobber && !isCheckingSuspectRegion)
-		//			startPatrol();
 
 		return false;
 	}
@@ -242,10 +251,8 @@ public class PolicemanComputer extends Policeman implements Mover {
 		if (patrolTimer !=null){
 			stopPatrol();
 		}
-			
-		isFollowingRobber = true;
-		isPatrolling = false;
-		isCheckingSuspectRegion = false; 
+
+		policeState = PoliceState.FOLLOWING_ROBBER; 
 		Play.getInstance().getRobber().addScore(0.1f);
 
 		move(robber.position);
@@ -277,6 +284,7 @@ public class PolicemanComputer extends Policeman implements Mover {
 
 				if (pathToTarget == null)
 				{
+					arrived(); 
 					moveTimer.stop();
 					moveTimer = null; 
 					return; 
@@ -342,20 +350,27 @@ public class PolicemanComputer extends Policeman implements Mover {
 			moveTimer.start();
 		}
 	}
+	public void arrived(){
+//		System.out.println("Arrived");
+//
+		if (policeState == PoliceState.CHECKING_SUSPECT_REGION) {
+			policeState = PoliceState.PATROLLING; 
 
-	
+		}
+	}
+
 	public boolean collides() {
 		// convert the position of the Player from pixels to 'Tile' position
 		// divide by the tile Size (in this case 16px)
 
-		
+
 		// Collision with boundaries
 		Line[] boundLines = area.getMapBounds();
 		for (Line line : boundLines) {
 			if (line.intersects(this.rect))
 				return true;
 		}
-	
+
 		nearByBldg = null; 
 		boolean isInCollision = false;
 		for (Building bldg: area.getBuildings()) {
@@ -370,9 +385,9 @@ public class PolicemanComputer extends Policeman implements Mover {
 				bldg.setShowBuildingInfo(true);
 			}
 		}
-		final int x = (int)position.getX() / Globals.TILE_SIZE;
-		final int y = (int)position.getY() / Globals.TILE_SIZE;
-		
+		//		final int x = (int)position.getX() / Globals.TILE_SIZE;
+		//		final int y = (int)position.getY() / Globals.TILE_SIZE;
+
 		return area.getCityMap().blocked(this) || isInCollision; 
 	}
 

@@ -263,9 +263,8 @@ public class SecurityGuard extends Person {
 		 * If the security guard can see the robber, and he hasn't already called the police then call them
 		 */
 		if (distanceToRobber < Globals.SECURITY_GUARD_VISION_DISTANCE && !policeCalled)
-		{
-			Point center = new Point(this.position.getX(), this.position.getY());
-			callPolice(center, 800.0f);
+		{ 
+			callPolice();
 		}
 		else if (distanceToRobber > Globals.SECURITY_GUARD_VISION_DISTANCE)
 			policeCalled = false; 
@@ -283,7 +282,7 @@ public class SecurityGuard extends Person {
 	 * 
 	 * @return
 	 */
-	public void callPolice(Point center, float error) {
+	public void callPolice() {
 		policeCalled = true; 
 		guardedBank.callPolice();
 	}

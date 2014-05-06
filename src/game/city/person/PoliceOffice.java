@@ -1,5 +1,6 @@
 package game.city.person;
 
+import game.AudioGame;
 import game.Globals;
 import game.city.Camera;
 import game.city.building.Area;
@@ -34,12 +35,11 @@ public class PoliceOffice implements Savable {
 
 	final Random rand = new Random(System.currentTimeMillis());
 
-	private static final String EMERGENCY_SOUND = "res/Sounds/Emergency.ogg" ;
+	private static final String EMERGENCY_SOUND = "res/Sounds/" ;
 
 	private Integer numberOfPolicemen = 0;  
 	private Integer score = 0;  
 	public ArrayList<Policeman> policeForceArray;
-	private static Audio sound;
 	private static boolean isPlayingSound = false; 
 	private boolean userIsPolice; 
 
@@ -91,12 +91,6 @@ public class PoliceOffice implements Savable {
 		if (policeForceArray.size()>0)
 			selectedPoliceman = policeForceArray.get(0);	// selected policeman is the  first on the list
 
-		// Initialize the Emergency calling sound
-		try {
-			sound = AudioLoader.getStreamingAudio("OGG", ResourceLoader.getResource(EMERGENCY_SOUND));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -115,6 +109,10 @@ public class PoliceOffice implements Savable {
 	}
 
 	public void callPolice(Building bldg){
+
+		System.out.println("call police");
+		AudioGame.playAsSound("Emergency.ogg");
+
 		Point center = bldg.position; 		
 		float error = 10.0f; 
 
@@ -132,15 +130,14 @@ public class PoliceOffice implements Savable {
 		else {
 			// notify on the log
 			String message = String.format("%s being \nrobbed!", bldg.getType());
-//			PlayerLog.setLogText(message);
 			area.getCamera().getPlayerDialog().show(message);
 		}
 
-		playSound();
 	}
 
 	public void callPolice(Road road){ 		
-
+		AudioGame.playAsSound("Emergency.ogg");
+		
 		if (!userIsPolice){
 			for (Policeman police: policeForceArray){	
 
@@ -154,7 +151,6 @@ public class PoliceOffice implements Savable {
 			PlayerLog.setLogText(message);
 		}
 
-		playSound();
 	}
 
 	public void gatherAll(Point position){
@@ -217,22 +213,9 @@ public class PoliceOffice implements Savable {
 		if (!userIsPolice)
 			for (Policeman police: policeForceArray){
 				((PolicemanComputer) police).stopPatrol();
+				((PolicemanComputer) police).stopMovingTimer();
 			}
-	}
-
-	private static void playSound(){
-		if (!isPlayingSound)
-		{
-			sound.playAsSoundEffect(1.0f, 1.0f, false);
-			new javax.swing.Timer(3000, new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					isPlayingSound = false; 
-				}
-			}).start();
-		}
-
-		isPlayingSound = true; 
+		
 	}
 
 	public void processInput(Input input){

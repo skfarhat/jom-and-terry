@@ -36,7 +36,7 @@ public final class Globals {
 
 	// Velocity
 	public static final float VELOCITY_MULTIPLIER = 0.02f; 
-	public static final float ROBBER_VELOCITY = 200.0f;
+	public static final float ROBBER_VELOCITY = 150.0f;
 	public static final float POLICEMAN_VELOCITY = 115.0f;
 	public static final float SECURITY_GUARD_VELOCITY = 80.0f; 
 	
@@ -65,10 +65,10 @@ public final class Globals {
 	public static final float GATHER_SELECTION_ERROR= 30.0f;
 	
 	// Security Guards
-	public static float SECURITY_GUARD_ARREST_DISTANCE = 15.0f;
-	public static float SECURITY_GUARD_VISION_DISTANCE = 130.0f;
-	public static float SECURITY_GUARD_CHASE_DISTANCE = 70.0f;					// distance for which the security guard starts following the robber
-	public static float SECURITY_GUARD_MAX_DISTANCE_FROM_BLDG = 120.0f;			// maximum distance the security guard takes from his guarded bldg
+	public static float SECURITY_GUARD_ARREST_DISTANCE = 25.0f;
+	public static float SECURITY_GUARD_VISION_DISTANCE = 180.0f;
+	public static float SECURITY_GUARD_CHASE_DISTANCE = 100.0f;					// distance for which the security guard starts following the robber
+	public static float SECURITY_GUARD_MAX_DISTANCE_FROM_BLDG = 300.0f;			// maximum distance the security guard takes from his guarded bldg
 	
 	// Camera
 	public static final float CAMERA_SCROLL_SPEED= 2.0f;
@@ -79,9 +79,9 @@ public final class Globals {
 	
 	// Whistle
 	public static final int WHISTLE_DURATION = 500; //4 sec
-	public static final float WHISTLE_HEAR_DISTANCE = 400.0f; // distance needed to hear the whistle in pixels
+	public static final float WHISTLE_HEAR_DISTANCE = 600.0f; // distance needed to hear the whistle in pixels
 	
-	public static final float POLICEMAN_VISION_DISTANCE = 300.0f; 
+	public static final float POLICEMAN_VISION_DISTANCE = 200.0f; 
 	public static final String POLICEMAN_SCORE = "Score";
 	public static final String POLICEMAN_POSITION_X= "Position_X";
 	public static final String POLICEMAN_POSITION_Y= "Position_Y";

@@ -100,12 +100,4 @@ public class Game extends StateBasedGame {
 		}
 
 	}
-
-//	public float getPercentLoaded(){
-//		if (totalCount==0)
-//			return 0; 
-//		float f = ((float)count/(float)totalCount)*100.0f;
-//
-//		return f; 
-//	}
 }
