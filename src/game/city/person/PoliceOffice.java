@@ -29,19 +29,16 @@ import org.newdawn.slick.geom.Rectangle;
 /**
  * The collective pollice officers
  * 
- * @author michael
+ * @author Sami
  *
  */
 public class PoliceOffice implements Savable {
 
 	final Random rand = new Random(System.currentTimeMillis());
 
-	private static final String EMERGENCY_SOUND = "res/Sounds/";
-
 	private Integer numberOfPolicemen = 0;
 	private Integer score = 0;
 	public ArrayList<Policeman> policeForceArray;
-	private static boolean isPlayingSound = false;
 	private boolean userIsPolice;
 
 	private int policemanSelectionIndex = 0;
@@ -64,7 +61,7 @@ public class PoliceOffice implements Savable {
 
 		policeForceArray = new ArrayList<>(numberOfPolicemen);
 		numberOfPolicemen = area.getBuildings().size() / 5; // 1 policeman for 5
-															// buildings
+		// buildings
 
 		// initially the police has maximum score, but it decreases as Robber
 		// robs buildings
@@ -96,8 +93,8 @@ public class PoliceOffice implements Savable {
 
 		if (policeForceArray.size() > 0)
 			selectedPoliceman = policeForceArray.get(0); // selected policeman
-															// is the first on
-															// the list
+		// is the first on
+		// the list
 
 	}
 
@@ -221,12 +218,13 @@ public class PoliceOffice implements Savable {
 	public void stopPolicemenPatrols() {
 
 		// stop the police patrols only if the user is the robber
-		if (!userIsPolice)
+		if (!userIsPolice){
+			System.out.println("Stopping policemen patrols");
 			for (Policeman police : policeForceArray) {
 				((PolicemanComputer) police).stopPatrol();
 				((PolicemanComputer) police).stopMovingTimer();
 			}
-
+		}
 	}
 
 	public void processInput(Input input) {
@@ -259,8 +257,8 @@ public class PoliceOffice implements Savable {
 				boolean intersects = false;
 				for (Building bldg : area.getBuildings())
 					intersects = intersects
-							|| Globals.rectContainsPoint(bldg.getRect(), x, y,
-									Globals.GATHER_SELECTION_ERROR);
+					|| Globals.rectContainsPoint(bldg.getRect(), x, y,
+							Globals.GATHER_SELECTION_ERROR);
 
 				// gather only if the mouse position does not intersect with any
 				// building
@@ -291,7 +289,7 @@ public class PoliceOffice implements Savable {
 				 */
 				if (newSelectedPoliceman == selectedPoliceman)
 					if (policemanSelectionIndex + 1 >= getPoliceForceArray()
-							.size())
+					.size())
 						policemanSelectionIndex = 0;
 					else
 						policemanSelectionIndex++;
@@ -318,32 +316,6 @@ public class PoliceOffice implements Savable {
 		for (Building bldg : area.getBuildings()) {
 			if (bldg.getRect().intersects(rect)) {
 				return bldg;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * @param destX
-	 *            x-position of the mouse input
-	 * @param destY
-	 *            y-position of the mouse input
-	 * @return a policeman object if the destX and destY passed are close to a
-	 *         policeman in the map. Returns null otherwise
-	 */
-	private Policeman selectPoliceman(int destX, int destY) {
-		Camera camera = area.getCamera();
-
-		// create a rectangle and use the intersect method to check whether
-		// the policeman rect intersects with the mouse click
-		Rectangle rect = new Rectangle(camera.getCameraX() + destX
-				- Globals.SELECTION_ERROR / 2, camera.getCameraY() + destY
-				- Globals.SELECTION_ERROR / 2, Globals.SELECTION_ERROR,
-				Globals.SELECTION_ERROR);
-
-		for (Policeman policeman : getPoliceForceArray()) {
-			if (policeman.rect.intersects(rect)) {
-				return policeman;
 			}
 		}
 		return null;

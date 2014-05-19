@@ -20,8 +20,6 @@ public class Game extends StateBasedGame {
 	private static final Game game  = new Game(Globals.gamename);
 
 	private Account account; 
-//	public Integer totalCount = 0; 
-//	public Integer count = 0; // used to count the number of objects that have been created
 
 	public Account getAccount() {
 		return account;

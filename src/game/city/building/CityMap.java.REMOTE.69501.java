@@ -6,7 +6,6 @@ import game.city.person.Policeman;
 import game.city.person.Robber;
 
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.tiled.TiledMap;
 import org.newdawn.slick.util.pathfinding.Mover;
@@ -20,6 +19,7 @@ import org.newdawn.slick.util.pathfinding.TileBasedMap;
  * 
  */
 public class CityMap implements TileBasedMap {
+
 	/**
 	 * A block's state
 	 * 
@@ -102,8 +102,8 @@ public class CityMap implements TileBasedMap {
 						collisionMap[x + i][y + j] = TileBlock.BLOCKED;
 				}
 		}
-		printMap();
 
+		// printMap();
 	}
 
 	/**
@@ -176,20 +176,12 @@ public class CityMap implements TileBasedMap {
 		// if neither make it not-blocked
 		return false;
 	}
+
 	/**
 	 * Used by pathfinder
 	 */
 	@Override
 	public boolean blocked(PathFindingContext ctx, int x, int y) {
-		if (x >= WIDTH)
-			x = WIDTH - 1; 
-		if (y >= HEIGHT)
-			y = HEIGHT - 1;
-		if (y < 0)
-			y = 0; 
-		if (x < 0)
-			x = 0; 
-		
 		Mover mover = ctx.getMover();
 		if (mover instanceof Robber) {
 			if (collisionMap[x][y] == TileBlock.BLOCKED)
@@ -223,6 +215,7 @@ public class CityMap implements TileBasedMap {
 	public int getHeightInTiles() {
 		return HEIGHT;
 	}
+
 	@Override
 	public int getWidthInTiles() {
 		return WIDTH;
@@ -235,27 +228,20 @@ public class CityMap implements TileBasedMap {
 	public int getWidth() {
 		return WIDTH;
 	}
+
 	public int getHeight() {
 		return HEIGHT;
 	}
+
 	public int getTileWidth() {
 		return map.getTileWidth();
 	}
+
 	public int getTileHeight() {
 		return map.getTileHeight();
 	}
 
 	public void render(int x, int y, int sx, int sy, int width, int height) {
 		map.render(x, y, sx, sy, width, height);
-	}
-
-	public boolean isWithinBounds(Point point){
-		
-		// get the coordinates in terms of tiles
-		 int x = (int) (point.getX() / map.getTileWidth()); 
-		 int y = (int) (point.getY() / map.getTileHeight());
-		 return (x>=0) && (x<WIDTH)
-				 && (y>=0) && (y<HEIGHT); 
-		 
 	}
 }

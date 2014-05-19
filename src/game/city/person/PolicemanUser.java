@@ -366,7 +366,6 @@ public class PolicemanUser extends Policeman implements Movable, Mover {
 
 		return area.getCityMap().blocked(this) || isInCollision;
 	}
-
 	public boolean moveRight() {
 		this.currentAnimation.start();
 		this.position
@@ -381,7 +380,6 @@ public class PolicemanUser extends Policeman implements Movable, Mover {
 		}
 		return true;
 	}
-
 	public boolean moveLeft() {
 		this.currentAnimation.start();
 		this.position
@@ -395,7 +393,6 @@ public class PolicemanUser extends Policeman implements Movable, Mover {
 		}
 		return true;
 	}
-
 	public boolean moveUp() {
 		this.currentAnimation.start();
 		this.position
@@ -408,7 +405,6 @@ public class PolicemanUser extends Policeman implements Movable, Mover {
 		}
 		return true;
 	}
-
 	public boolean moveDown() {
 		this.currentAnimation.start();
 		this.position
@@ -421,21 +417,18 @@ public class PolicemanUser extends Policeman implements Movable, Mover {
 		}
 		return true;
 	}
-
 	public void normalForceRight() {
 		this.position
 				.setX((float) (this.position.getX() + Globals.VELOCITY_MULTIPLIER
 						* velocity));
 		this.rect.setX(this.position.getX());
 	}
-
 	public void normalForceLeft() {
 		this.position
 				.setX((float) (this.position.getX() - Globals.VELOCITY_MULTIPLIER
 						* velocity));
 		this.rect.setX(this.position.getX());
 	}
-
 	public void normalForceUp() {
 		this.position
 				.setY((float) (this.position.getY() - Globals.VELOCITY_MULTIPLIER
@@ -443,26 +436,21 @@ public class PolicemanUser extends Policeman implements Movable, Mover {
 
 		this.rect.setY(this.position.getY());
 	}
-
 	public void normalForceDown() {
 		this.position
 				.setY((float) (this.position.getY() + Globals.VELOCITY_MULTIPLIER
 						* velocity));
 		this.rect.setY(this.position.getY());
 	}
-
 	public boolean isSelected() {
 		return isSelected;
 	}
-
 	public void setSelected(boolean isSelected) {
 		this.isSelected = isSelected;
 	}
-
 	public boolean isRobberArrested() {
 		return robberArrested;
 	}
-
 	public boolean isGathering() {
 		return isGathering;
 	}

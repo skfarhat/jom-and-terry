@@ -98,7 +98,7 @@ public final class Globals {
 																// whistle in
 																// pixels
 
-	public static final float POLICEMAN_VISION_DISTANCE = 200.0f;
+	public static final float POLICEMAN_VISION_DISTANCE = 300.0f;
 	public static final String POLICEMAN_SCORE = "Score";
 	public static final String POLICEMAN_POSITION_X = "Position_X";
 	public static final String POLICEMAN_POSITION_Y = "Position_Y";

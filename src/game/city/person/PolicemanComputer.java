@@ -1,5 +1,6 @@
 package game.city.person;
 
+import game.Game;
 import game.Globals;
 import game.city.building.Area;
 import game.city.building.Building;
@@ -8,7 +9,6 @@ import game.states.Play;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.Timer;
@@ -26,7 +26,7 @@ import org.newdawn.slick.util.pathfinding.Path.Step;
 /**
  * A policeman controlled by the computer
  * 
- * @author sami
+ * @author Sami
  * 
  */
 public class PolicemanComputer extends Policeman implements Mover {
@@ -40,7 +40,7 @@ public class PolicemanComputer extends Policeman implements Mover {
 	protected PoliceState policeState;
 
 	protected Whistle lastWhistleHeard;
-	// /
+
 	private Path pathToTarget;
 	private Step nextStep;
 	private Step currentStep;
@@ -49,13 +49,6 @@ public class PolicemanComputer extends Policeman implements Mover {
 
 	AStarPathFinder pathFinder = new AStarPathFinder(area.getCityMap(),
 			Integer.MAX_VALUE, true);
-
-	/**
-	 * Array that stores the points the Policeman should visit. Each time one is
-	 * visited it is removed from the ArrayList
-	 */
-	private ArrayList<Point> nextPoints = new ArrayList<>(5);
-	protected Point nextPoint;
 
 	/**
 	 * Constructor
@@ -120,8 +113,10 @@ public class PolicemanComputer extends Policeman implements Mover {
 	}
 
 	public void stopMovingTimer() {
-		if (moveTimer != null)
+		if (moveTimer != null){
 			moveTimer.stop();
+			moveTimer = null;
+		}
 	}
 
 	/**
@@ -151,33 +146,18 @@ public class PolicemanComputer extends Policeman implements Mover {
 		if (robber.canSeePoliceman(this))
 			super.draw();
 
-		// //
-		// // if there are points for the policeman to check
-		// if (nextPoints.size() > 0) {
-		//
-		// // get the next point
-		// Point nextDestinationPoint = nextPoints.get(0);
-		//
-		// if (destPoint != nextDestinationPoint) {
-		// // move to the next destination point
-		// move(nextDestinationPoint);
-		//
-		// this.isCheckingSuspectRegion = true;
-		// }
-		// }
-
-		// // Print: squares
-		// if (pathToTarget != null)
-		// for (int i=0; i < pathToTarget.getLength(); i++)
-		// {
-		// Step step = pathToTarget.getStep(i);
-		// Rectangle rect = new Rectangle(
-		// step.getX()*Globals.TILE_SIZE,
-		// step.getY()*Globals.TILE_SIZE,
-		// 10,10);
-		// Game.getInstance().getContainer().getGraphics().draw(rect);
-		// }
-
+		// Print: squares
+		if (pathToTarget != null)
+			for (int i=0; i < pathToTarget.getLength(); i++)
+			{
+				Step step = pathToTarget.getStep(i);
+				Rectangle rect = new Rectangle(
+						step.getX()*Globals.TILE_SIZE,
+						step.getY()*Globals.TILE_SIZE,
+						10,10);
+				Game.getInstance().getContainer().getGraphics().draw(rect);
+			}
+		
 		// see if the Robber is visible
 		lookForRobber();
 	}
@@ -203,7 +183,6 @@ public class PolicemanComputer extends Policeman implements Mover {
 
 		Point randPoint = randomPointInCircle(suspectRegion);
 		move(randPoint);
-		// nextPoints.add(randPoint);
 	}
 
 	/**
@@ -212,23 +191,6 @@ public class PolicemanComputer extends Policeman implements Mover {
 	 * @param road
 	 */
 	public void checkoutHighway(Road road) {
-		// // to check out a highway
-		//
-		// // first stop patroling
-		// if (policeState == PoliceState.PATROLLING)
-		// stopPatrol();
-		//
-		// // choose two random points in the highway
-		// Point firstPoint = randomPointInRect(road.getRect());
-		// Point secondPoint = randomPointInRect(road.getRect());
-		//
-		// // add the points to the array
-		// nextPoints.add(firstPoint);
-		// nextPoints.add(secondPoint);
-		//
-		// // set flag for isCheckingRegion
-		// policeState = PoliceState.CHECKING_SUSPECT_REGION;
-
 		if (policeState == PoliceState.FOLLOWING_ROBBER)
 			return;
 
@@ -279,18 +241,24 @@ public class PolicemanComputer extends Policeman implements Mover {
 		if (distance < Globals.POLICEMAN_VISION_DISTANCE) {
 			followRobber();
 			return true;
-		} else if (policeState == PoliceState.CHECKING_SUSPECT_REGION) {
-			policeState = PoliceState.CHECKING_SUSPECT_REGION;
-
 		}
 
-		else {
-			if (policeState != PoliceState.PATROLLING) {
-				startPatrol();
-			}
+		if (policeState == PoliceState.CHECKING_SUSPECT_REGION) {					
+		} 
+		else if (policeState != PoliceState.PATROLLING) {
+			startPatrol();
 		}
-
 		return false;
+	}
+	
+	public boolean isGoingSomewhere(){
+		if (pathToTarget ==null)
+			return false; 
+			
+		if (pathToTargetIndex < pathToTarget.getLength()){
+			return true; 
+		}
+		else return false; 
 	}
 
 	/**
@@ -301,10 +269,18 @@ public class PolicemanComputer extends Policeman implements Mover {
 			stopPatrol();
 		}
 
+		if (moveTimer != null && policeState != PoliceState.FOLLOWING_ROBBER) 
+		{
+			stopPatrol();
+			moveTimer.stop(); 
+			moveTimer = null;
+			return; 
+		}
+		
 		policeState = PoliceState.FOLLOWING_ROBBER;
 		Play.getInstance().getRobber().addScore(0.1f);
 
-		move(robber.position);
+		follow(robber.position);
 	}
 
 	/**
@@ -329,8 +305,8 @@ public class PolicemanComputer extends Policeman implements Mover {
 				int posY = (int) position.getY() / Globals.TILE_SIZE;
 
 				// Target position (rounded)
-				int targetX = (int) destPos.getX() / Globals.TILE_SIZE;
-				int targetY = (int) destPos.getY() / Globals.TILE_SIZE;
+				int targetX = Math.round(destPos.getX() / Globals.TILE_SIZE);
+				int targetY = Math.round(destPos.getY() / Globals.TILE_SIZE);
 
 				pathToTarget = pathFinder.findPath((Mover) thisPC, posX, posY,
 						targetX, targetY);
@@ -349,6 +325,114 @@ public class PolicemanComputer extends Policeman implements Mover {
 					currentStep = pathToTarget.getStep(pathToTargetIndex);
 					nextStep = pathToTarget.getStep(pathToTargetIndex + 1);
 				} else {
+					arrived(); 
+					moveTimer.stop();
+					moveTimer = null;
+					return;
+				}
+
+				if (count == interval) {
+					count = 0; // reset count
+
+					// make sure there are more steps to get
+					if (pathToTargetIndex < pathToTarget.getLength() - 1) {
+						pathToTargetIndex++;
+						currentStep = nextStep;
+						nextStep = pathToTarget.getStep(pathToTargetIndex);
+					}
+					// if there are no more steps cancel the timer
+					else {
+						moveTimer.stop();
+						moveTimer = null;
+						return; // Testing..
+					}
+				}
+
+				int stepX = (nextStep.getX() - currentStep.getX()) * interval;
+				int stepY = (nextStep.getY() - currentStep.getY()) * interval;
+
+				// compute delta of prev and next steps
+				float newX = position.getX() + stepX / interval;
+				float newY = position.getY() + stepY / interval;
+				
+				// to the right
+				if (stepX > 0)
+					currentAnimation = rightWalkAnimation;
+				// to the left
+				else						
+					currentAnimation = leftWalkAnimation;
+				
+				position.setX(newX);
+				position.setY(newY);
+
+				count++;
+			}
+		};
+
+		// Get Path
+		if (moveTimer == null) {
+			// Source position (rounded)
+			int posX = (int) position.getX() / Globals.TILE_SIZE;
+			int posY = (int) position.getY() / Globals.TILE_SIZE;
+
+			// Target position (rounded)
+			int targetX = (int) destPos.getX() / Globals.TILE_SIZE;
+			int targetY = (int) destPos.getY() / Globals.TILE_SIZE;
+
+			pathToTarget = pathFinder.findPath((Mover) this, posX, posY,
+					targetX, targetY);
+			pathToTargetIndex = 0;
+			moveTimer = new Timer(period / interval, moveActionListener);
+			moveTimer.start();
+		}
+	}
+	
+	public void follow(final Point destPos){
+		// Timer Task declaration
+		final int period = 80;
+		final int interval = Globals.TILE_SIZE;
+		final PolicemanComputer thisPC = this;
+
+		final ActionListener moveActionListener = new ActionListener() {
+			int count = 0;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				float distance = (float) Math.sqrt(Math.pow(position.getX()
+						- destPos.getX(), 2.0)
+						+ Math.pow(position.getY() - destPos.getY(),
+								2.0));
+		
+				
+				// Source position (rounded)
+				int posX = (int) position.getX() / Globals.TILE_SIZE;
+				int posY = (int) position.getY() / Globals.TILE_SIZE;
+
+				// Target position (rounded)
+				int targetX = Math.round(destPos.getX() / Globals.TILE_SIZE);
+				int targetY = Math.round(destPos.getY() / Globals.TILE_SIZE);
+
+				if (distance < Globals.POLICEMAN_VISION_DISTANCE) {
+					pathToTarget = pathFinder.findPath((Mover) thisPC, posX, posY,
+							targetX, targetY);
+					pathToTargetIndex = 0;					
+				} 
+
+				if (pathToTarget == null) {
+					arrived();
+					moveTimer.stop();
+					moveTimer = null;
+					return;
+				}
+
+				// After here pathToTarget cannot be equal to null
+
+				if (pathToTargetIndex < pathToTarget.getLength() - 1) {
+					currentStep = pathToTarget.getStep(pathToTargetIndex);
+					nextStep = pathToTarget.getStep(pathToTargetIndex + 1);
+				} else {
+					arrived(); 
 					moveTimer.stop();
 					moveTimer = null;
 					return;
@@ -378,6 +462,14 @@ public class PolicemanComputer extends Policeman implements Mover {
 				float newX = position.getX() + stepX / interval;
 				float newY = position.getY() + stepY / interval;
 
+				// to the right
+				if (stepX > 0)
+					currentAnimation = rightWalkAnimation;
+				// to the left
+				else						
+					currentAnimation = leftWalkAnimation;
+				
+				
 				position.setX(newX);
 				position.setY(newY);
 
@@ -405,10 +497,8 @@ public class PolicemanComputer extends Policeman implements Mover {
 
 	public void arrived() {
 		// System.out.println("Arrived");
-		//
-		if (policeState == PoliceState.CHECKING_SUSPECT_REGION) {
+		if (policeState == PoliceState.CHECKING_SUSPECT_REGION || policeState == PoliceState.FOLLOWING_ROBBER) {
 			policeState = PoliceState.PATROLLING;
-
 		}
 	}
 

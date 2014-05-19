@@ -21,7 +21,7 @@ import org.newdawn.slick.geom.Rectangle;
 /**
  * Buildings abstract class.
  * 
- * @author michael
+ * @author Sami
  */
 public abstract class Building extends Observable implements Savable {
 	private final Area area;
@@ -240,12 +240,13 @@ public abstract class Building extends Observable implements Savable {
 					.nextInt((int) robbingRegion.getWidth()));
 			int y = (int) (robbingRegion.getMinY() + Globals.random
 					.nextInt((int) robbingRegion.getHeight()));
-			;
 
 			p = new Point(x, y);
 
-			b = rect.includes(x, y);
-
+			// make sure the point does not intersect with the building (it is only near it) 
+			// and that it is contained within the map (not outside of the bounds)
+			b = rect.includes(x, y) || !area.getCityMap().isWithinBounds(p);
+					
 		}
 		return p;
 	}
